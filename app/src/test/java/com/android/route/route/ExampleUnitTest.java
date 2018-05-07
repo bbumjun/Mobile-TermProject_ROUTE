@@ -1,4 +1,4 @@
-package com.android.route.route_termproject;
+package com.android.route.route;
 
 import org.junit.Test;
 

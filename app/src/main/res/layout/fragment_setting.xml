@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settingFragment"
+    android:background="@android:color/holo_blue_light"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:text="User Info"
-        android:background="#B7F0B1"
+        android:background="#ffffff"
         />
 
     <RelativeLayout
@@ -44,7 +46,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B7F0B1"
+        android:background="#ffffff"
         >
 
         <TextView
@@ -119,7 +121,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B7F0B1"
+        android:background="#ffffff"
         >
         <TextView
             android:layout_width="match_parent"

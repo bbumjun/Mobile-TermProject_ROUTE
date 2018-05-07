@@ -1,4 +1,4 @@
-package com.android.route.route_termproject;
+package com.android.route.route;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.android.route.route_termproject", appContext.getPackageName());
+        assertEquals("com.android.route.route", appContext.getPackageName());
     }
 }
