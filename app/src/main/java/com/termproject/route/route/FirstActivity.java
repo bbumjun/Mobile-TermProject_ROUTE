@@ -63,8 +63,7 @@ public class FirstActivity extends AppCompatActivity {
         @Override
         public void onAnimationEnd(Animation animation) {
             imageView1.setVisibility(View.GONE);
-            //Intent intent =new Intent (getApplicationContext(),LoginActivity.class);
-         //   startActivity(intent);
+
             List<AuthUI.IdpConfig>providers = Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),RC_SIGN_IN);
 
