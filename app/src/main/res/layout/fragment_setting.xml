@@ -35,12 +35,19 @@
             />
 
         <Button
-            android:layout_alignParentRight="true"
+          android:layout_toLeftOf="@id/deleteAccountBtn"
             android:id="@+id/logoutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
             android:text="Logout" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/deleteAccountBtn"
+            android:text="Withdrawal"
+            android:layout_alignParentRight="true"
+            />
     </RelativeLayout>
 
     <RelativeLayout

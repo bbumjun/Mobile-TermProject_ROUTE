@@ -7,8 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+
 public class LoginActivity extends AppCompatActivity {
     Button loginBtn ;
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -25,4 +28,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
 }
