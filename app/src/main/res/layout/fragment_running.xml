@@ -8,7 +8,6 @@
     android:id="@+id/runningFragment"
     >
 
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -132,7 +131,18 @@
             android:visibility="visible"/>
 
 
+        <RelativeLayout android:layout_below="@+id/startButton"
+            android:id="@+id/mapLayout"
 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            >
+
+
+        </RelativeLayout>
     </RelativeLayout>
+
+
 
 </LinearLayout>
