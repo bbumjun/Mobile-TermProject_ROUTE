@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TableLayout;
 
+import com.google.android.gms.maps.MapFragment;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(),arrFragments);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
