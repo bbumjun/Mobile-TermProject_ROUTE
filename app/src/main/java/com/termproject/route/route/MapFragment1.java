@@ -15,6 +15,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.termproject.route.route.R;
 
 public class MapFragment1 extends Fragment implements OnMapReadyCallback {
 
@@ -41,6 +42,8 @@ public class MapFragment1 extends Fragment implements OnMapReadyCallback {
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mapView = (MapView) rootView.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
+
+
 
         mapView.getMapAsync(this);
 
