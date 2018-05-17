@@ -40,6 +40,7 @@ Button deleteIdBtn;
                 Intent intent =new Intent(getApplicationContext(),SharingActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                finish();
             }
         }
         return true;

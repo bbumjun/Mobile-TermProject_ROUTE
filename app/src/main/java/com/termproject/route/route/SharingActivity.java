@@ -23,11 +23,13 @@ float x;
                 Intent intent =new Intent(getApplicationContext(),RunningActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                finish();
             }
             else if(x>event.getX()) {
                 Intent intent=new Intent(getApplicationContext(),SettingActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                finish();
             }
         }
         return true;

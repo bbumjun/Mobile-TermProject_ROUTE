@@ -22,6 +22,7 @@ float x=0;
                 Intent intent = new Intent(getApplicationContext(),SharingActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                finish();
             }
         }
 
