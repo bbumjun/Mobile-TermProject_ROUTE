@@ -22,6 +22,12 @@ public class FirstActivity extends AppCompatActivity {
     ImageView imageView1;
     Animation fadeInAnimation,fadeOutAnimation;
     private static final int RC_SIGN_IN =123;
+// ...
+
+    // Choose authentication providers
+    List<AuthUI.IdpConfig> providers = Arrays.asList(
+            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
+
     protected void onCreate(Bundle savedinstanceState) {
         super.onCreate(savedinstanceState);
         setContentView(R.layout.activity_first);
@@ -64,10 +70,9 @@ public class FirstActivity extends AppCompatActivity {
         public void onAnimationEnd(Animation animation) {
             imageView1.setVisibility(View.GONE);
 
-            List<AuthUI.IdpConfig>providers = Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
-            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),RC_SIGN_IN);
-
-        }
+         startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),
+                 RC_SIGN_IN);
+         }
 
         @Override
         public void onAnimationRepeat(Animation animation) {
@@ -75,18 +80,22 @@ public class FirstActivity extends AppCompatActivity {
         }
     };
 
-    protected void onActivityResult(int requestCode,int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==RC_SIGN_IN) {
-            IdpResponse response =IdpResponse.fromResultIntent(data);
-            if(resultCode==RESULT_OK) {
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Toast.makeText(getApplication(),"Login success",Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(),RunningActivity.class);
                 startActivity(intent);
+                // ...
             } else {
-
+                // Sign in failed, check response for error code
+                // ...
             }
         }
     }
