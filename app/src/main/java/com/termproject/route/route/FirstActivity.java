@@ -83,7 +83,7 @@ public class FirstActivity extends AppCompatActivity {
             if(resultCode==RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Toast.makeText(getApplication(),"Login success",Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(),RunningActivity.class);
                 startActivity(intent);
             } else {
 
