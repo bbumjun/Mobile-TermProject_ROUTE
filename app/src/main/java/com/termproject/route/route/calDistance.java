@@ -1,3 +1,5 @@
+package com.termproject.route.route;
+
 public class calDistance  {
 public double theta, dist;
 public double bef_lat,bef_long,cur_lat,cur_long;
