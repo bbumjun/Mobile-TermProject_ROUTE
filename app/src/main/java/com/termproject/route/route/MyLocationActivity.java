@@ -32,6 +32,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -65,6 +66,7 @@ public class MyLocationActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 
 
         SupportMapFragment mapFragment =
