@@ -25,7 +25,7 @@
         <activity android:name=".RunningActivity" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
-        <activity android:name=".mapActivity"/>
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
