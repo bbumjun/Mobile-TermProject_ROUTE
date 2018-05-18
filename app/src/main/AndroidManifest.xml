@@ -9,28 +9,28 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/routelogowhite"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/routelogowhite"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".FirstActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+        <activity android:name=".MyLocationActivity"/>
+        <activity android:name=".RunningActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".SharingActivity"/>
+        <activity android:name=".mapActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
-        <activity android:name=".MyLocationActivity"/>
-        <activity android:name=".RunningActivity" />
-        <activity android:name=".SettingActivity" />
 
-        <activity android:name=".SharingActivity"></activity>
     </application>
 
 </manifest>

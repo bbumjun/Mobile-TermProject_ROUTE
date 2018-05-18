@@ -7,12 +7,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import org.w3c.dom.Text;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,11 +37,13 @@ public class FirstActivity extends AppCompatActivity {
 
         imageView1 = (ImageView) findViewById(R.id.startImage);
 
+        TextView textView1 = findViewById(R.id.startText);
         fadeInAnimation= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
         fadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
         fadeInAnimation.setAnimationListener(animationFadeInListener);
         fadeOutAnimation.setAnimationListener(animationFadeOutListener);
         imageView1.startAnimation(fadeInAnimation);
+        textView1.startAnimation(fadeInAnimation);
 
     }
 
