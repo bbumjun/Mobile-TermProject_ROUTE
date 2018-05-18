@@ -1,8 +1,10 @@
-public class calDistance  {
+package com.termproject.route.route;
+
+public class CalDistance {
 public double theta, dist;
 public double bef_lat,bef_long,cur_lat,cur_long;
 
-public calDistance(double bef_lat, double bef_long, double cur_lat ,double cur_long) {
+public CalDistance(double bef_lat, double bef_long, double cur_lat , double cur_long) {
     this.theta=0;
     this.dist=0;
     this.bef_lat=bef_lat;

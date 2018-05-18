@@ -1,6 +1,5 @@
 package com.termproject.route.route;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +29,7 @@ Button start;
 TextView timeText,velocityText,distanceText;
 Handler time_handler;
 GoogleMap googleMap;
+
 private double sum_dist; //총 라이딩 거리
 private double avg_speed; //평균속도
 private int timer=0;
@@ -119,8 +119,8 @@ boolean isReset=true,isBtnClickStart=false;
 
                         cur_lat = latitude;
                         cur_long = longitude;
-                        calDistance = new CalDistance(bef_lat,bef_long,cur_lat,cur_long);
-                        double dist = calDistance.getDistance();
+                        CalDistance = new CalDistance(bef_lat,bef_long,cur_lat,cur_long);
+                        double dist = CalDistance.getDistance();
                         dist = (int)(dist*100)/100.0;
 
                         sum_dist+=dist;
