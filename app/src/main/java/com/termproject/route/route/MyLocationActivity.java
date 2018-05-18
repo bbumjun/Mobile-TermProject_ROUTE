@@ -123,6 +123,7 @@ public class MyLocationActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0) {
                 // create class object
+
                 if (gps == null) {
                     gps = new GPSTracker(MyLocationActivity.this, mHandler);
                 } else {
@@ -134,14 +135,16 @@ public class MyLocationActivity extends AppCompatActivity
                     double latitude = gps.getLatitude();
                     double longitude = gps.getLongitude();
                     // \n is for new line
-                    Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
                 } else {
                     // can't get location
                     // GPS or Network is not enabled
                     // Ask user to enable GPS/network in settings
                     gps.showSettingsAlert();
                 }
+
             }
+
         });
 
 
