@@ -16,7 +16,9 @@
 
 package com.termproject.route.route;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
@@ -29,13 +31,25 @@ import com.termproject.route.route.PermissionUtils;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -63,20 +77,96 @@ public class MyLocationActivity extends AppCompatActivity
      */
     private boolean mPermissionDenied = false;
 
+    EditText editText;
     private GoogleMap mMap;
+
+    GPSTracker gps = null;
+
+    public Handler mHandler;
+
+    public static int RENEW_GPS = 1;
+    public static int SEND_PRINT = 2;
+    Button btnShowLocation;
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-
-
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
         mapFragment.getMapAsync(this);
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    0);
+        }
+
+
+        btnShowLocation = (Button) findViewById(R.id.button1);
+        editText = (EditText) findViewById(R.id.editText);
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == RENEW_GPS) {
+                    makeNewGpsService();
+                }
+                if (msg.what == SEND_PRINT) {
+                    logPrint((String) msg.obj);
+                }
+            }
+        };
+
+        // show location button click event
+        btnShowLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                // create class object
+                if (gps == null) {
+                    gps = new GPSTracker(MyLocationActivity.this, mHandler);
+                } else {
+                    gps.Update();
+                }
+
+                // check if GPS enabled
+                if (gps.canGetLocation()) {
+                    double latitude = gps.getLatitude();
+                    double longitude = gps.getLongitude();
+                    // \n is for new line
+                    Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                } else {
+                    // can't get location
+                    // GPS or Network is not enabled
+                    // Ask user to enable GPS/network in settings
+                    gps.showSettingsAlert();
+                }
+            }
+        });
+
+
     }
+
+    public void makeNewGpsService() {
+        if (gps == null) {
+            gps = new GPSTracker(MyLocationActivity.this, mHandler);
+        } else {
+            gps.Update();
+        }
+
+    }
+
+    public void logPrint(String str) {
+        editText.append(getTimeStr() + " " + str + "\n");
+    }
+
+    public String getTimeStr() {
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat sdfNow = new SimpleDateFormat("MM/dd HH:mm:ss");
+        return sdfNow.format(date);
+    }
+
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -87,16 +177,7 @@ public class MyLocationActivity extends AppCompatActivity
 
         enableMyLocation();
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(-18.142, 178.431), 2));
 
-        // Polylines are useful for marking paths and routes on the map.
-        map.addPolyline(new PolylineOptions().geodesic(true)
-                .add(new LatLng(-33.866, 151.195))  // Sydney
-                .add(new LatLng(-18.142, 178.431))  // Fiji
-                .add(new LatLng(21.291, -157.821))  // Hawaii
-                .add(new LatLng(37.423, -122.091))  // Mountain View
-        );
     }
 
 
