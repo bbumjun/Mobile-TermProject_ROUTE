@@ -21,7 +21,7 @@ Button mapBtn;
         mapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),MyLocationActivity.class);
+                Intent intent = new Intent(getApplicationContext(),mapActivity.class);
                 startActivity(intent);
             }
         });

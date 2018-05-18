@@ -98,6 +98,9 @@ public class MyLocationActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Enables the My Location layer if the fine location permission has been granted.
+     */
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
