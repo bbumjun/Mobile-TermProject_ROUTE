@@ -16,8 +16,16 @@ Button mapBtn;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
-
+        mapBtn = (Button)findViewById(R.id.mapButton);
+        mapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),MyLocationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+
     public boolean onTouchEvent(MotionEvent event) {
 
         if(event.getAction()==MotionEvent.ACTION_DOWN) {
