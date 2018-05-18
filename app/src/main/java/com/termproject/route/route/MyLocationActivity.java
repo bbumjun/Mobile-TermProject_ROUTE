@@ -106,7 +106,7 @@ public class MyLocationActivity extends AppCompatActivity
         btnShowLocation = (Button) findViewById(R.id.button1);
         editText = (EditText) findViewById(R.id.editText);
 
-        mHandler = new Handler() {
+            mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == RENEW_GPS) {
