@@ -16,11 +16,14 @@
 
 package com.termproject.route.route;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.termproject.route.route.PermissionUtils;
 
 import android.Manifest;
@@ -82,11 +85,19 @@ public class MyLocationActivity extends AppCompatActivity
 
         enableMyLocation();
 
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(-18.142, 178.431), 2));
+
+        // Polylines are useful for marking paths and routes on the map.
+        map.addPolyline(new PolylineOptions().geodesic(true)
+                .add(new LatLng(-33.866, 151.195))  // Sydney
+                .add(new LatLng(-18.142, 178.431))  // Fiji
+                .add(new LatLng(21.291, -157.821))  // Hawaii
+                .add(new LatLng(37.423, -122.091))  // Mountain View
+        );
     }
 
-    /**
-     * Enables the My Location layer if the fine location permission has been granted.
-     */
+
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
