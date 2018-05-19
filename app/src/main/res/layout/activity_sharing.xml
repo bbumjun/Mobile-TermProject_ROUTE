@@ -1,9 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SharingActivity">
 
-</android.support.constraint.ConstraintLayout>
+
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RUN"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:layout_alignParentLeft="true"
+        android:textStyle="bold"
+        android:paddingTop="10dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SHARE"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:background="@drawable/shape"
+        android:padding="10dp"
+        android:id="@+id/shareText"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Setting"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:layout_alignParentRight="true"
+        android:textStyle="bold"
+        android:paddingTop="10dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Board"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:layout_centerHorizontal= "true"
+        android:textStyle="bold"
+        android:layout_below="@+id/shareText"
+        android:id="@+id/boardText"
+        android:paddingTop="10dp"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/view1"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/boardText"
+        android:background="#34000000" />
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/view1"
+        android:background="#66000000" />
+
+
+
+
+</RelativeLayout>

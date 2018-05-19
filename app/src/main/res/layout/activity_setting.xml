@@ -1,10 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SHARE"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:layout_alignParentLeft="true"
+        android:textStyle="bold"
+        android:paddingTop="10dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SETTING"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:background="@drawable/shape"
+        android:padding="10dp"
+        android:id="@+id/settingText"/>
+
+
+
+
+
+
+
+
+<LinearLayout
     android:id="@+id/settingFragment"
-    android:background="@android:color/holo_blue_light"
+    android:background="#33FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_below="@id/settingText">
+
 
 
     <TextView
@@ -16,6 +55,7 @@
         />
 
     <RelativeLayout
+        android:id="@+id/userInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -23,15 +63,19 @@
             android:id="@+id/txtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ID :"
-            android:textSize="30dp" />
+            android:layout_centerVertical="true"
+            android:padding="5dp"
+            android:text="ID: "
+            android:textStyle="bold"
+            android:textSize="22dp" />
         <TextView
             android:layout_toRightOf="@+id/txtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/userId"
+            android:layout_centerVertical="true"
             android:text="bumjun6602"
-            android:textSize="30dp"
+            android:textSize="20dp"
             />
 
         <Button
@@ -72,6 +116,8 @@
             android:text="save"
 
             />
+
+
     </RelativeLayout>
 
 
@@ -185,3 +231,6 @@
             />
     </RelativeLayout>
 </LinearLayout>
+
+
+</RelativeLayout>
