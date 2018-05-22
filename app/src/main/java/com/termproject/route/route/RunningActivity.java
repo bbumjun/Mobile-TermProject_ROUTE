@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -44,9 +45,12 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     float x = 0;
     Button mapBtn;
     Button start;
+    Button stop;
+    ProgressDialog mProgressDialog;
     TextView timeText, velocityText, distanceText;
     Handler time_handler;
     GoogleMap googleMap ;
+    Handler handler;
     private LatLng current_point,ex_point;
     private double sum_dist; //총 라이딩 거리
     private double avg_speed; //평균속도
@@ -54,8 +58,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     private String s_lat; //시작지점 경도
     private String s_long; //시작지점 위도
     private String s_time;
-    private double f_lat;// 종료지점 경도
-    private double f_long;//종료지점 위도
+    private String user_id;
+    private String f_lat;// 종료지점 경도
+    private String f_long;//종료지점 위도
+    private String f_time;//종료지점 시간
     private double cur_lat,cur_long;
     double bef_lat,bef_long;
     boolean isReset = true, isBtnClickStart = false;
@@ -81,6 +87,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         setContentView(R.layout.activity_running);
         mapBtn = (Button) findViewById(R.id.mapButton);
         start = (Button) findViewById(R.id.startButton);
+        stop =(Button)findViewById(R.id.stopButton);
         timeText = (TextView) findViewById(R.id.timeText);
         velocityText = (TextView) findViewById(R.id.velocityText);
         distanceText = (TextView) findViewById(R.id.distanceText);
@@ -229,7 +236,68 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             }
         });
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId()== R.id.stopButton){
+                    if(isBtnClickStart==true){
+                        GPSTracker gps = new GPSTracker(getApplicationContext(),time_handler);
+                        if(gps.canGetLocation()){
+                            Log.d("GPS사용","찍힘"+timer);
+                            double latitude = gps.getLatitude();
+                            double longitude = gps.getLongitude();
+                            LatLng latLng = new LatLng(latitude,longitude);
+                            MarkerOptions optFirst = new MarkerOptions();
+                            optFirst.alpha(0.5f);
+                            optFirst.anchor(0.5f,0.5f);
+                            optFirst.position(latLng);
+                            optFirst.title("라이딩 종료 지점");
+                            optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
+                            googleMap.addMarker(optFirst).showInfoWindow();
+
+                            /*종료 지점 위도 경도*/
+                            f_lat = String.valueOf(latitude);
+                            f_long = String.valueOf(longitude);
+                            long now  = System.currentTimeMillis();
+                            Date date = new Date(now);
+                            SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                            f_time = sdfNow.format(date);
+                        }
+                        Toast.makeText(getApplicationContext(),"주행을 종료합니다.",Toast.LENGTH_SHORT).show();
+
+                        time_handler.removeMessages(0);
+                        isBtnClickStart = false;
+
+                        Log.d("최종 라이딩 정보","총 라이딩 시간 : "+timer+ " 총 라이딩 거리 : "+sum_dist);
+                        Log.d("최종 라이딩 정보","시작시간 : " +s_time+ " 시작지점 경도 :"+ s_lat+" 시작지점 위도"+s_long);
+                        Log.d("최종 라이딩 정보","종료시간 : "+f_time+" 종료지점 경도:"+f_lat+" 종료지점 위도 : "+ f_long);
+
+
+                        Log.d("prefs",user_id+" | 라이딩거리  : "+(float)sum_dist+" | 시간 : "+timer+" | 평균속도 : "+(float)avg_speed + " | 포인트 : "+(int)Math.round(sum_dist)*5);
+
+
+                        mProgressDialog.setMessage("주행종료...");
+                        handler = new Handler();
+                        mProgressDialog.setCancelable(false);
+                        mProgressDialog.show();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mProgressDialog!=null && mProgressDialog.isShowing()){
+                                    mProgressDialog.dismiss();
+                                }
+                            }
+                        },1000);
+
+
+                    }else {
+                        Toast.makeText(getApplicationContext(),"타이머가 시작되지 않았습니다.",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
+
         public void makeNewGpsService() {
             if (gps == null) {
                 gps = new GPSTracker(RunningActivity.this, mHandler);
