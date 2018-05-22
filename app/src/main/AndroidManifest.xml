@@ -17,21 +17,23 @@
         android:roundIcon="@mipmap/routelogowhite"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
+
         <activity android:name=".FirstActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
 
+        <activity android:name=".MainActivity"/>
         <activity android:name=".MyLocationActivity"/>
         <activity android:name=".RunningActivity" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
+
     </application>
 
 </manifest>

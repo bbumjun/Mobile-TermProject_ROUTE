@@ -210,14 +210,14 @@ public class GPSTracker extends Service implements LocationListener {
         if(location != null){
             double latitude= location.getLatitude();
             double longitude = location.getLongitude();
-            Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
-            sendString("onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude + " provider:"+location.getProvider()+" mock:"+location.isFromMockProvider());
+            //Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
+      //      sendString("onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude + " provider:"+location.getProvider()+" mock:"+location.isFromMockProvider());
         }
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-        //Toast.makeText(mContext, "onProviderDisabled " + provider, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "onProviderDisabled " + provider, Toast.LENGTH_SHORT).show();
         mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
         sendString( "onProviderDisabled " + provider);
     }
@@ -240,12 +240,14 @@ public class GPSTracker extends Service implements LocationListener {
     public IBinder onBind(Intent arg0) {
         return null;
     }
+
     private void sendString(String str){
-        Message msg = mHandler.obtainMessage();
-        msg.what = MyLocationActivity.SEND_PRINT;
-        msg.obj = new String(str);
-        mHandler.sendMessage(msg);
+  //      Message msg = mHandler.obtainMessage();
+    //    msg.what = MyLocationActivity.SEND_PRINT;
+  //      msg.obj = new String(str);
+   //     mHandler.sendMessage(msg);
     }
+
     public static String printBundle(Bundle extras) {
         StringBuilder sb = new StringBuilder();
         try {
