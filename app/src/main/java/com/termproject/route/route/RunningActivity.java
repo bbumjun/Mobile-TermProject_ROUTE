@@ -134,7 +134,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         double latitude = gps.getLatitude();
                         double longitude = gps.getLongitude();
                         LatLng latLng = new LatLng(latitude, longitude);
+                        //Showing the current Location in Google Map
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
+                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                         MarkerOptions optFirst = new MarkerOptions();
                         optFirst.alpha(0.5f);
                         optFirst.anchor(0.5f, 0.5f);
@@ -172,8 +175,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                             }*/
                             timer++;
                             timeText.setText(timer + "s");
-                            velocityText.setText(avg_speed + " m/s");
-                            distanceText.setText(sum_dist + " m");
+                            if(avg_speed!=0.0) {
+                                velocityText.setText(avg_speed + " m/s");
+                            }
+                            distanceText.setText((int)sum_dist + " m");
                             if (timer % 3 == 0) {
                                 GPSTracker gps = new GPSTracker(RunningActivity.this, time_handler);
                                 if (gps.canGetLocation()) {
@@ -190,7 +195,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                                     sum_dist += dist;
 
                                     /*평균속도 계산하기*/
-                                    avg_speed = dist / timer;
+                                    avg_speed = dist / 3;
                                     avg_speed = (int) (avg_speed * 100) / 100.0;
 
                                     bef_lat = cur_lat;
@@ -198,10 +203,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
                                     LatLng latLng = new LatLng(latitude, longitude);
 
-                                    //Showing the current Location in Google Map
-                                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
                                     /*이전과 현재의 point로 폴리라인을 긋는다.*/
                                     current_point = latLng;
