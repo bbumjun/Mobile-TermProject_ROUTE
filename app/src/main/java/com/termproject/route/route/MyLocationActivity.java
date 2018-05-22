@@ -78,7 +78,7 @@ public class MyLocationActivity extends AppCompatActivity
     private boolean mPermissionDenied = false;
 
     EditText editText;
-    private GoogleMap mMap;
+    public GoogleMap mMap;
 
     GPSTracker gps = null;
 
