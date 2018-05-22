@@ -211,27 +211,27 @@ public class GPSTracker extends Service implements LocationListener {
             double latitude= location.getLatitude();
             double longitude = location.getLongitude();
             //Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
-            sendString("onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude + " provider:"+location.getProvider()+" mock:"+location.isFromMockProvider());
+      //      sendString("onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude + " provider:"+location.getProvider()+" mock:"+location.isFromMockProvider());
         }
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-        //Toast.makeText(mContext, "onProviderDisabled " + provider, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "onProviderDisabled " + provider, Toast.LENGTH_SHORT).show();
         mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
         sendString( "onProviderDisabled " + provider);
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        //Toast.makeText(mContext, "onProviderEnabled " + provider, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "onProviderEnabled " + provider, Toast.LENGTH_SHORT).show();
         mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
         sendString( "onProviderEnabled " + provider);
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        //Toast.makeText(mContext, "onStatusChanged " + provider + " : " + status, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "onStatusChanged " + provider + " : " + status, Toast.LENGTH_SHORT).show();
         mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
         sendString("onStatusChanged " + provider + " : " + status + ":" + printBundle(extras));
     }
@@ -242,10 +242,10 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     private void sendString(String str){
-        Message msg = mHandler.obtainMessage();
-        msg.what = MyLocationActivity.SEND_PRINT;
-        msg.obj = new String(str);
-        mHandler.sendMessage(msg);
+  //      Message msg = mHandler.obtainMessage();
+    //    msg.what = MyLocationActivity.SEND_PRINT;
+  //      msg.obj = new String(str);
+   //     mHandler.sendMessage(msg);
     }
 
     public static String printBundle(Bundle extras) {

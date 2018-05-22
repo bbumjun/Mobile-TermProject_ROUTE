@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity"/>
         <activity android:name=".MyLocationActivity"/>
         <activity android:name=".RunningActivity" />
         <activity android:name=".SettingActivity" />
