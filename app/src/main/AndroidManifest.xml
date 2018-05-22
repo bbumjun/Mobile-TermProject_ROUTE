@@ -21,7 +21,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
 
-        <activity android:name=".FirstActivity">
+        <activity android:name=".RunningActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +30,7 @@
 
         <activity android:name=".MainActivity"/>
         <activity android:name=".MyLocationActivity"/>
-        <activity android:name=".RunningActivity" />
+
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
 

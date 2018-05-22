@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.termproject.route.route.PermissionUtils;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -89,6 +90,7 @@ public class MyLocationActivity extends AppCompatActivity
     Button btnShowLocation;
     LocationManager locationManager;
 
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,8 +103,6 @@ public class MyLocationActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     0);
         }
-
-
         btnShowLocation = (Button) findViewById(R.id.button1);
         editText = (EditText) findViewById(R.id.editText);
 
@@ -179,8 +179,6 @@ public class MyLocationActivity extends AppCompatActivity
         mMap.setOnMyLocationClickListener(this);
 
         enableMyLocation();
-
-
     }
 
 
