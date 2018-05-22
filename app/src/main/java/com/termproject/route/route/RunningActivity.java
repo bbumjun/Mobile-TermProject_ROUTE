@@ -1,5 +1,6 @@
 package com.termproject.route.route;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -28,7 +29,7 @@ public class RunningActivity extends AppCompatActivity {
     Button start;
     TextView timeText, velocityText, distanceText;
     Handler time_handler;
-    GoogleMap googleMap;
+    MyLocationActivity hello;
     private LatLng current_point,ex_point;
     private double sum_dist; //총 라이딩 거리
     private double avg_speed; //평균속도
@@ -59,6 +60,7 @@ public class RunningActivity extends AppCompatActivity {
             }
         });
         start.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("HandlerLeak")
             @Override
             public void onClick(View v) {
                 if (v.getId() == R.id.runningFragment) {
@@ -87,8 +89,8 @@ public class RunningActivity extends AppCompatActivity {
                     optFirst.anchor(0.5f, 0.5f);
                     optFirst.position(latLng);
                     optFirst.title("Running Start Point");
-                    optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.fui_done_check_mark));
-                    googleMap.addMarker(optFirst).showInfoWindow();
+                    //optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.iclau));
+                    hello.mMap.addMarker(optFirst).showInfoWindow();
 
                     /* store the GPS info store*/
                     bef_lat = latitude;
@@ -139,13 +141,13 @@ public class RunningActivity extends AppCompatActivity {
                                 LatLng latLng = new LatLng(latitude, longitude);
 
                                 //Showing the current Location in Google Map
-                                googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                                hello.mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                                googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                              hello.mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
                                 /*이전과 현재의 point로 폴리라인을 긋는다.*/
                                 current_point = latLng;
-                                googleMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point));
+                                hello.mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point));
 
                                 ex_point = latLng;
                                 //마커 설정
@@ -156,7 +158,7 @@ public class RunningActivity extends AppCompatActivity {
                                 optFirst.position(latLng);
                                 optFirst.title("Running Start Point");
                                 optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.fui_done_check_mark));
-                                googleMap.addMarker(optFirst).showInfoWindow();
+                                hello.mMap.addMarker(optFirst).showInfoWindow();
 
                             }
                         }

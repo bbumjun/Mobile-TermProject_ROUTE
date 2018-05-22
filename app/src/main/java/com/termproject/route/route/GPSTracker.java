@@ -210,7 +210,7 @@ public class GPSTracker extends Service implements LocationListener {
         if(location != null){
             double latitude= location.getLatitude();
             double longitude = location.getLongitude();
-            //Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
             sendString("onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude + " provider:"+location.getProvider()+" mock:"+location.isFromMockProvider());
         }
     }
@@ -224,14 +224,14 @@ public class GPSTracker extends Service implements LocationListener {
 
     @Override
     public void onProviderEnabled(String provider) {
-        //Toast.makeText(mContext, "onProviderEnabled " + provider, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "onProviderEnabled " + provider, Toast.LENGTH_SHORT).show();
         mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
         sendString( "onProviderEnabled " + provider);
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        //Toast.makeText(mContext, "onStatusChanged " + provider + " : " + status, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "onStatusChanged " + provider + " : " + status, Toast.LENGTH_SHORT).show();
         mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
         sendString("onStatusChanged " + provider + " : " + status + ":" + printBundle(extras));
     }
@@ -240,14 +240,12 @@ public class GPSTracker extends Service implements LocationListener {
     public IBinder onBind(Intent arg0) {
         return null;
     }
-
     private void sendString(String str){
         Message msg = mHandler.obtainMessage();
         msg.what = MyLocationActivity.SEND_PRINT;
         msg.obj = new String(str);
         mHandler.sendMessage(msg);
     }
-
     public static String printBundle(Bundle extras) {
         StringBuilder sb = new StringBuilder();
         try {
