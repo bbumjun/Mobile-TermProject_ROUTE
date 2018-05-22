@@ -162,7 +162,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         @Override
                         public void handleMessage(Message msg) {
 
-                            time_handler.sendEmptyMessageDelayed(0, 100);
+                            time_handler.sendEmptyMessageDelayed(0, 1000);
 
                             if (msg.what == RENEW_GPS) {
                                 makeNewGpsService();
@@ -186,7 +186,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                                     CalDistance calDistance = new CalDistance(bef_lat, bef_long, cur_lat, cur_long);
                                     double dist = calDistance.getDistance();
                                     dist = (int) (dist * 100) / 100.0;
-//
+
                                     sum_dist += dist;
 
                                     /*평균속도 계산하기*/
@@ -205,7 +205,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
                                     /*이전과 현재의 point로 폴리라인을 긋는다.*/
                                     current_point = latLng;
-                                   // googleMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point));
+                                    googleMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point));
 
                                     ex_point = latLng;
                                     //마커 설정
@@ -263,8 +263,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         // (the camera animates to the user's current position).
         return false;
     }
-
-
+    
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
