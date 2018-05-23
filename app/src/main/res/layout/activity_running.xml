@@ -37,45 +37,44 @@
             <Button
                 android:id="@+id/runText"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/shapewithcolor"
                 android:padding="10dp"
                 android:text="RUNNING"
                 android:textAlignment="center"
-
-                android:textSize="10sp" />
+                android:textSize="20dp"
+                />
 
 
             <Button
                 android:id="@+id/shareText"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:background="@drawable/shape"
                 android:padding="10dp"
                 android:text="SHARE"
                 android:textAlignment="center"
-                android:textSize="10sp"
-
+                android:textSize="20dp"
                 />
 
 
             <Button
                 android:id="@+id/setText"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/shape"
                 android:padding="10dp"
                 android:text="SETTING"
                 android:textAlignment="center"
-                android:textSize="10sp"  />
-
+                android:textSize="20dp"
+                />
 
         </TableRow>
-
 
     </TableLayout>
 
