@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,16 +45,16 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
        // OnMapReadyCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback{
+        ActivityCompat.OnRequestPermissionsResultCallback {
     float x = 0;
     Button mapBtn;
-    Button start;
+    ImageButton start;
     Button stop;
     Button reset;
     TextView timeText, velocityText, distanceText;
     Handler time_handler;
-    GoogleMap googleMap ;
-    private LatLng current_point,ex_point;
+    GoogleMap googleMap;
+    private LatLng current_point, ex_point;
     private double sum_dist; //총 라이딩 거리
     private double avg_speed; //평균속도
     private int timer = 0;
@@ -65,10 +67,11 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     private String user_id;
     ProgressDialog mProgressDialog;
     Handler handler;
-    private double cur_lat,cur_long;
-    double bef_lat,bef_long;
+    private double cur_lat, cur_long;
+    double bef_lat, bef_long;
     boolean isReset = true, isBtnClickStart = false;
     GPSTracker gps = null;
+    ImageButton cameraBtn;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
@@ -81,19 +84,31 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
     public static int RENEW_GPS = 1;
     public static int SEND_PRINT = 2;
-   // Button btnShowLocation;
+    // Button btnShowLocation;
     LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
-        mapBtn = (Button) findViewById(R.id.mapButton);
-        start = (Button) findViewById(R.id.startButton);
+        // mapBtn = (Button) findViewById(R.id.mapButton);
+        start = (ImageButton) findViewById(R.id.startButton);
         timeText = (TextView) findViewById(R.id.timeText);
         velocityText = (TextView) findViewById(R.id.velocityText);
         distanceText = (TextView) findViewById(R.id.distanceText);
-        stop = (Button) findViewById(R.id.stopButton);
+       // stop = (Button) findViewById(R.id.stopButton);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
+        cameraBtn = (ImageButton) findViewById(R.id.cameraButton);
+
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent2 = new Intent("android.media.action.IMAGE_CAPTURE");
+                startActivity(intent2);
+            }
+        });
 
 
         SupportMapFragment mapFragment =
@@ -240,7 +255,9 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             }
         });
-        stop.setOnClickListener(new View.OnClickListener() {
+    }
+
+       /* stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (v.getId() == R.id.stopButton) {
@@ -260,7 +277,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                            // googleMap.addMarker(optFirst).showInfoWindow();
 
                             /*종료 지점 위도 경도*/
-                            f_lat = String.valueOf(latitude);
+                           /* f_lat = String.valueOf(latitude);
                             f_long = String.valueOf(longitude);
                             long now = System.currentTimeMillis();
                             Date date = new Date(now);
@@ -286,7 +303,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         sum_dist=0;
                         googleMap.clear();
 
-
+*/
                       /*  mProgressDialog.setMessage("주행종료...");
                         handler = new Handler();
                         mProgressDialog.setCancelable(false);
@@ -304,11 +321,11 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                     } else {
                         Toast.makeText(getApplicationContext(), "타이머가 시작되지 않았습니다.", Toast.LENGTH_SHORT).show();
                     }*/
-                    }
-                }
-            }
-        });
-    }
+               //     }
+             //   }
+           // }
+        //});
+    //}
         public void makeNewGpsService(){
             if (gps == null) {
                 gps = new GPSTracker(RunningActivity.this, mHandler);
