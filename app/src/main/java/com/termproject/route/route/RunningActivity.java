@@ -3,6 +3,7 @@ package com.termproject.route.route;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,40 +25,27 @@ import java.util.Date;
 
 public class RunningActivity extends AppCompatActivity {
     float x = 0;
-    ImageButton mapBtn, start;
-    TextView timeText, velocityText, distanceText;
-    Handler time_handler;
+    ImageButton mapBtn, start, cameraBtn;
 
-    GoogleMap googleMap;
-    private LatLng current_point,ex_point;
-    private double sum_dist; //총 라이딩 거리
-    private double avg_speed; //평균속도
-    private int timer = 0;
-    private String s_lat; //시작지점 경도
-    private String s_long; //시작지점 위도
-    private String s_time;
-    private double f_lat;// 종료지점 경도
-    private double f_long;//종료지점 위도
-    private double cur_lat,cur_long;
-    double bef_lat,bef_long;
-    boolean isReset = true, isBtnClickStart = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_running);
-        mapBtn = (ImageButton) findViewById(R.id.mapButton);
 
-        mapBtn.setOnClickListener(new View.OnClickListener() {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_running);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
+        cameraBtn=(ImageButton) findViewById(R.id.cameraButton);
+
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MyLocationActivity.class);
-                startActivity(intent);
+            Intent intent2 = new Intent("android.media.action.IMAGE_CAPTURE");
+            startActivity(intent2);
             }
-
         });
-    }
-
+}
 
 
 

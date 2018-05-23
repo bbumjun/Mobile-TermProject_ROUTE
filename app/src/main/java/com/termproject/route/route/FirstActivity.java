@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -44,6 +45,8 @@ public class FirstActivity extends AppCompatActivity {
         fadeOutAnimation.setAnimationListener(animationFadeOutListener);
         imageView1.startAnimation(fadeInAnimation);
         textView1.startAnimation(fadeInAnimation);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
 
     }
 
