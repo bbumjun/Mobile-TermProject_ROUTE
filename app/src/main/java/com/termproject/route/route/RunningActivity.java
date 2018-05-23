@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -29,9 +30,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -44,6 +47,8 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     float x = 0;
     Button mapBtn;
     Button start;
+    Button stop;
+    Button reset;
     TextView timeText, velocityText, distanceText;
     Handler time_handler;
     GoogleMap googleMap ;
@@ -54,8 +59,12 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     private String s_lat; //시작지점 경도
     private String s_long; //시작지점 위도
     private String s_time;
-    private double f_lat;// 종료지점 경도
-    private double f_long;//종료지점 위도
+    private String f_lat;// 종료지점 경도
+    private String f_long;//종료지점 위도
+    private String f_time;
+    private String user_id;
+    ProgressDialog mProgressDialog;
+    Handler handler;
     private double cur_lat,cur_long;
     double bef_lat,bef_long;
     boolean isReset = true, isBtnClickStart = false;
@@ -84,6 +93,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         timeText = (TextView) findViewById(R.id.timeText);
         velocityText = (TextView) findViewById(R.id.velocityText);
         distanceText = (TextView) findViewById(R.id.distanceText);
+        stop = (Button) findViewById(R.id.stopButton);
 
 
         SupportMapFragment mapFragment =
@@ -97,13 +107,13 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
 
         MapsInitializer.initialize(getApplicationContext());
-        mapBtn.setOnClickListener(new View.OnClickListener() {
+      /*  mapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MyLocationActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         start.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("HandlerLeak")
@@ -175,10 +185,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                             }*/
                             timer++;
                             timeText.setText(timer + "S");
-                            if(avg_speed!=0.0) {
+                            if (avg_speed != 0.0) {
                                 velocityText.setText(avg_speed + " KM/H");
                             }
-                            distanceText.setText((int)sum_dist + " M");
+                            distanceText.setText((int) sum_dist + " M");
                             if (timer % 1 == 0) {
                                 GPSTracker gps = new GPSTracker(RunningActivity.this, time_handler);
                                 if (gps.canGetLocation()) {
@@ -195,10 +205,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                                     sum_dist += dist;
 
                                     /*평균속도 계산하기*/
-                                    avg_speed = dist /1 ;
+                                    avg_speed = dist / 1;
                                     avg_speed = (int) (avg_speed * 100) / 100.0;
-                                    LatLng beflatLng = new LatLng(bef_lat,bef_long);
-                                    ex_point=beflatLng;
+                                    LatLng beflatLng = new LatLng(bef_lat, bef_long);
+                                    ex_point = beflatLng;
                                     bef_lat = cur_lat;
                                     bef_long = cur_long;
 
@@ -218,8 +228,8 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                                     optFirst.anchor(0.5f, 0.5f);
                                     optFirst.position(latLng);
                                     optFirst.title("Running Start Point");
-                                    optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
-                                   // googleMap.addMarker(optFirst).showInfoWindow();
+                                    //optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
+                                    googleMap.addMarker(optFirst);
 
                                 }
                             }
@@ -230,14 +240,81 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             }
         });
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.stopButton) {
+                    if (isBtnClickStart == true) {
+                        GPSTracker gps = new GPSTracker(getApplicationContext(), time_handler);
+                        if (gps.canGetLocation()) {
+                            Log.d("GPS사용", "찍힘" + timer);
+                            double latitude = gps.getLatitude();
+                            double longitude = gps.getLongitude();
+                            LatLng latLng = new LatLng(latitude, longitude);
+                            MarkerOptions optFirst = new MarkerOptions();
+                            optFirst.alpha(0.5f);
+                            optFirst.anchor(0.5f, 0.5f);
+                            optFirst.position(latLng);
+                            optFirst.title("라이딩 종료 지점");
+                            optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
+                           // googleMap.addMarker(optFirst).showInfoWindow();
+
+                            /*종료 지점 위도 경도*/
+                            f_lat = String.valueOf(latitude);
+                            f_long = String.valueOf(longitude);
+                            long now = System.currentTimeMillis();
+                            Date date = new Date(now);
+                            SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                            f_time = sdfNow.format(date);
+                        }
+                        Toast.makeText(getApplicationContext(), "주행을 종료합니다.", Toast.LENGTH_SHORT).show();
+
+                        time_handler.removeMessages(0);
+                        isBtnClickStart = false;
+
+                        Log.d("최종 라이딩 정보", "총 라이딩 시간 : " + timer + " 총 라이딩 거리 : " + sum_dist);
+                        Log.d("최종 라이딩 정보", "시작시간 : " + s_time + " 시작지점 경도 :" + s_lat + " 시작지점 위도" + s_long);
+                        Log.d("최종 라이딩 정보", "종료시간 : " + f_time + " 종료지점 경도:" + f_lat + " 종료지점 위도 : " + f_long);
+
+
+                        Log.d("prefs", user_id + " | 라이딩거리  : " + (float) sum_dist + " | 시간 : " + timer + " | 평균속도 : " + (float) avg_speed + " | 포인트 : " + (int) Math.round(sum_dist) * 5);
+                        isReset=true;
+                        timeText.setText("0");
+                        velocityText.setText("0");
+                        distanceText.setText("0");
+                        timer=0;
+                        sum_dist=0;
+                        googleMap.clear();
+
+
+                      /*  mProgressDialog.setMessage("주행종료...");
+                        handler = new Handler();
+                        mProgressDialog.setCancelable(false);
+                        mProgressDialog.show();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                                    mProgressDialog.dismiss();
+                                }
+                            }
+                        }, 1000);
+
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "타이머가 시작되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                    }*/
+                    }
+                }
+            }
+        });
     }
-        public void makeNewGpsService() {
+        public void makeNewGpsService(){
             if (gps == null) {
                 gps = new GPSTracker(RunningActivity.this, mHandler);
             } else {
                 gps.Update();
             }
-
         }
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
