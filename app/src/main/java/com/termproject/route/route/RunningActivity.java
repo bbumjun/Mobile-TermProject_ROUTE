@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -49,6 +50,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     float x = 0;
     Button mapBtn;
     ImageButton start;
+    ToggleButton sound;
     Button stop;
     Button reset;
     TextView timeText, velocityText, distanceText;
@@ -93,6 +95,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         setContentView(R.layout.activity_running);
         // mapBtn = (Button) findViewById(R.id.mapButton);
         start = (ImageButton) findViewById(R.id.startButton);
+        sound=(ToggleButton) findViewById(R.id.soundButton);
         timeText = (TextView) findViewById(R.id.timeText);
         velocityText = (TextView) findViewById(R.id.velocityText);
         distanceText = (TextView) findViewById(R.id.distanceText);

@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
         android:allowBackup="true"
@@ -30,12 +31,13 @@
 
         <activity android:name=".MainActivity"/>
         <activity android:name=".RunningActivity"/>
-
+        <activity android:name=".Debug"/>
         <activity android:name=".MyLocationActivity"/>
 
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
-
+<service android:name=".LoopbackService"
+    android:exported="false"/>
     </application>
 
 </manifest>
