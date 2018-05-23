@@ -7,38 +7,105 @@
     android:layout_height="match_parent"
     android:id="@+id/runningFragment"
     >
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Map"
-        android:id="@+id/mapButton"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#25848E"
+        />
 
 
 
     <RelativeLayout
+        android:id="@+id/menuLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_light"
+        />
 
+
+    <TableLayout
+        android:id="@+id/tableMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
         >
+
+
+        <TableRow android:layout_width="match_parent">
+
+
+            <Button
+                android:id="@+id/runText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shapewithcolor"
+                android:padding="10dp"
+                android:text="RUNNING"
+                android:textAlignment="center"
+
+                android:textSize="10sp" />
+
+
+            <Button
+                android:id="@+id/shareText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/shape"
+                android:padding="10dp"
+                android:text="SHARE"
+                android:textAlignment="center"
+                android:textSize="10sp"
+
+                />
+
+
+            <Button
+                android:id="@+id/setText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape"
+                android:padding="10dp"
+                android:text="SETTING"
+                android:textAlignment="center"
+                android:textSize="10sp"  />
+
+
+        </TableRow>
+
+
+    </TableLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/statusMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tableMenu">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TIME"
-            android:textStyle="bold"
             android:padding="5dp"
-            android:id="@+id/time"/>
+            android:id="@+id/time"
+            android:textColor="#E94C41"
+            android:textStyle="bold|italic"/>
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="3.23"
-            android:padding="5dp"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
             android:textSize="30dp"
             android:id="@+id/timeText"
-            android:layout_below="@+id/time"/>
+            android:layout_below="@+id/time"
+            android:textStyle="bold|italic" />
 
 
         <TextView
@@ -49,26 +116,38 @@
             android:layout_gravity=""
             android:padding="5dp"
             android:text="Velocity"
-            android:textStyle="bold" />
+            android:textColor="#E94C41"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5.6 Km/h"
+            android:text="5.6"
             android:padding="5dp"
             android:id="@+id/velocityText"
             android:layout_below="@+id/velocity"
+            android:layout_toLeftOf="@id/kmhText"
             android:textSize="30dp"
-            android:layout_alignParentRight="true"/>
+            />
         <TextView
+            android:id="@+id/kmhText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calorie"
-            android:layout_below="@+id/timeText"
+            android:layout_alignBaseline="@+id/velocityText"
+            android:layout_alignBottom="@+id/velocityText"
+            android:layout_alignEnd="@+id/distance"
+            android:text="Km/h"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+        <TextView
             android:id="@+id/calorie"
-            android:textStyle="bold"
-            android:layout_margin="5dp"
-            android:layout_alignParentLeft="true"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/distance"
+            android:padding="5dp"
+            android:text="Calorie"
+            android:textColor="#E94C41"
+            android:textStyle="bold|italic"/>
 
 
         <TextView
@@ -77,46 +156,64 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/calorie"
             android:padding="5dp"
-            android:text="148Kcal"
-            android:textSize="30dp" />
-
+            android:text="148"
+            android:textSize="20dp"
+            android:textStyle="bold" />
         <TextView
+            android:id="@+id/KcalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Distance"
-            android:textStyle="bold"
-            android:layout_gravity=""
+            android:layout_alignBaseline="@+id/calorieText"
+            android:layout_below="@+id/calorie"
+            android:layout_toRightOf="@id/calorieText"
+            android:text="Kcal"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/distance"
-
-            android:layout_margin="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/velocityText"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/velocity"
+            android:layout_below="@+id/velocityText"
+            android:layout_marginTop="20dp"
+            android:padding="5dp"
+            android:text="Distance"
+            android:textColor="#E94C41"
+            android:textStyle="bold|italic"/>
 
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="6.5Km"
-            android:padding="5dp"
             android:id="@+id/distanceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/distance"
+            android:layout_toLeftOf="@+id/kmText"
+            android:padding="5dp"
+            android:text="6.5"
             android:textSize="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/distance"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start"
-            android:id="@+id/startButton"
+            android:textStyle="bold" />
 
-            android:layout_toLeftOf="@+id/stopButton"
-            android:layout_centerInParent="true"/>
-        <Button
+        <TextView
+            android:id="@+id/kmText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stop"
-            android:id="@+id/stopButton"
+            android:layout_alignBaseline="@+id/distanceText"
+            android:layout_alignBottom="@+id/distanceText"
+            android:layout_alignParentRight="true"
+            android:padding="5dp"
+            android:text="Km"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+        <ImageButton
+            android:id="@+id/startButton"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_centerInParent="true"
-            android:layout_marginRight="50dp"/>
+            android:background="#00FFFFFF"
+            android:scaleType="fitXY"
+            android:src="@drawable/startrun"
+            android:visibility="visible" />
 
         <View
             android:layout_width="match_parent"
@@ -124,13 +221,57 @@
             android:layout_centerInParent="true"
             android:visibility="visible"/>
     </RelativeLayout>
-<fragment
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/realtimeMap"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MapsActivity"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@+id/distance"
+            android:layout_alignParentTop="true"
+            android:id="@+id/viewview">
+
+
+            <ImageButton
+
+                android:id="@+id/cameraButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="left"
+                android:adjustViewBounds="false"
+                android:background="#00FFFFFF"
+                android:cropToPadding="false"
+                android:scaleType="fitXY"
+                android:src="@drawable/camera" />
+
+            <ToggleButton
+                android:id="@+id/soundButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:adjustViewBounds="false"
+                android:background="@drawable/soundicon"
+                android:cropToPadding="false"
+                android:scaleType="fitXY" />
+
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/realtimeMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MapsActivity"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        />
 </LinearLayout>
