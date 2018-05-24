@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.termproject.route.route">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -21,7 +23,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
 
-        <activity android:name=".RunningActivity">
+        <activity android:name=".FirstActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +32,7 @@
 
         <activity android:name=".MainActivity"/>
         <activity android:name=".MyLocationActivity"/>
-
+        <activity android:name=".RunningActivity"/>
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
 

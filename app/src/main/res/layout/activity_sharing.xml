@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SharingActivity">
+   >
     <TableLayout
             android:id="@+id/tableMenu"
             android:layout_width="match_parent"
@@ -84,27 +86,37 @@
                 android:text="add Route" />
 
 
-            <View
-                android:id="@+id/view1"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-
-                android:layout_below="@+id/boardText"
-                android:paddingTop="50dp"
-                android:background="#34000000"
-                android:layout_marginTop="10dp"/>
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-
-                android:layout_below="@+id/view1"
-                android:background="#66000000"
-                android:paddingTop="50dp"
-                android:layout_marginTop="10dp"/>
-
-
         </RelativeLayout>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:layout_below="@+id/boardText"
+            android:paddingTop="50dp"
+            android:layout_marginTop="10dp"/>
+
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:adjustViewBounds="false"
+
+            android:cropToPadding="false"
+
+            android:paddingTop="50dp" />
+
+
+
+    </LinearLayout>
 </LinearLayout>
+</ScrollView>
