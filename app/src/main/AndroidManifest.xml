@@ -31,9 +31,8 @@
 
         <activity android:name=".MainActivity"/>
         <activity android:name=".RunningActivity"/>
-        <activity android:name=".Debug"/>
         <activity android:name=".MyLocationActivity"/>
-
+        <activity android:name=".Debug"/>
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
 <service android:name=".LoopbackService"

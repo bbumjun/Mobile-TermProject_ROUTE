@@ -88,6 +88,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     public static int SEND_PRINT = 2;
     // Button btnShowLocation;
     LocationManager locationManager;
+    Debug m = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,14 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         getSupportActionBar().setCustomView(R.layout.abs_layout);
         cameraBtn = (ImageButton) findViewById(R.id.cameraButton);
 
+
+        sound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Debug m=new Debug();
+                m.tog(v);
+            }
+        });
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,8 +121,6 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 startActivity(intent2);
             }
         });
-
-
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.realtimeMap);
         mapFragment.getMapAsync(this);
@@ -247,7 +254,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                                     optFirst.position(latLng);
                                     optFirst.title("Running Start Point");
                                     //optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
-                                    googleMap.addMarker(optFirst);
+                                   // googleMap.addMarker(optFirst);
 
                                 }
                             }
