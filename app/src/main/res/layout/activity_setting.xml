@@ -13,44 +13,40 @@
         <TableRow android:layout_width="match_parent">
 
 
-            <Button
+            <ImageButton
                 android:id="@+id/runText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
                 android:background="@drawable/shape"
+                android:cropToPadding="false"
                 android:padding="10dp"
-                android:text="RUNNING"
-                android:textAlignment="center"
-                android:textSize="20dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/travel"
                 />
 
 
-            <Button
+            <ImageButton
                 android:id="@+id/shareText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
                 android:background="@drawable/shape"
+                android:cropToPadding="false"
                 android:padding="10dp"
-                android:text="SHARE"
-                android:textAlignment="center"
-                android:textSize="20dp"
-                />
+                android:scaleType="centerInside"
+                android:src="@drawable/share" />
 
 
-            <Button
+            <ImageButton
                 android:id="@+id/setText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+
                 android:background="@drawable/shapewithcolor"
+                android:src="@drawable/settings"
+                android:scaleType="centerInside"
                 android:padding="10dp"
-                android:text="SETTING"
-                android:textAlignment="center"
-                android:textSize="20dp"
                 />
 
         </TableRow>
@@ -96,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/txtView"
-                android:text="bumjun6602"
+                android:text="chany219"
 
                 android:textSize="20dp" />
 
@@ -108,6 +104,7 @@
                 android:text="Logout"
                 android:textColor="#1994F9"
                 android:textSize="12sp"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/shapebutton"
                 />
 
@@ -126,6 +123,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:background="#ffffff">
 
             <TextView
@@ -144,6 +142,7 @@
                 android:layout_alignParentRight="true"
                 android:text="save"
                 android:textColor="#1994F9"
+                android:padding="5dp"
                 android:textSize="12sp"
                 android:background="@drawable/shapebutton"
 

@@ -1,6 +1,7 @@
 package com.termproject.route.route;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -14,6 +15,8 @@ float x;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sharing);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
 
 
         Button addBtn=(Button) findViewById(R.id.addBtn);
@@ -23,6 +26,32 @@ float x;
             public void onClick(View v) {
                 Intent intent2 = new Intent("android.media.action.IMAGE_CAPTURE");
                 startActivity(intent2);
+            }
+        });
+
+
+
+        ImageButton runningBtn = findViewById(R.id.runText);
+
+        runningBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),RunningActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+
+        ImageButton settingBtn = findViewById(R.id.setText);
+
+        settingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),SettingActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
