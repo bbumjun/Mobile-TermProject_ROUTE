@@ -48,8 +48,8 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
         ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
         ImageView imageView2 =(ImageView)findViewById(R.id.imageView2);
 
-        Glide.with(this).using(new FirebaseImageLoader()).load(imageRef1).into(imageView1);
-        Glide.with(this).using(new FirebaseImageLoader()).load(imageRef2).into(imageView2);
+     //   Glide.with(this).using(new FirebaseImageLoader()).load(imageRef1).into(imageView1);
+      //  Glide.with(this).using(new FirebaseImageLoader()).load(imageRef2).into(imageView2);
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -116,8 +116,7 @@ protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
         }
         if(event.getAction()==MotionEvent.ACTION_UP) {
             if(x<event.getX()) {
-                Intent intent =new Intent(getApplicationContext(),RunningActivity.class);
-                startActivity(intent);
+
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 finish();
             }

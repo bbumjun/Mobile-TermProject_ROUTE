@@ -175,7 +175,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
                         googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
-                        MarkerOptions optFirst = new MarkerOptions();
+                                             MarkerOptions optFirst = new MarkerOptions();
                         optFirst.alpha(0.5f);
                         optFirst.anchor(0.5f, 0.5f);
                         optFirst.position(latLng);
@@ -203,15 +203,15 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         public void handleMessage(Message msg) {
 
                             time_handler.sendEmptyMessageDelayed(0, 1000);
-
+                            /*
                             if (msg.what == RENEW_GPS) {
                                 makeNewGpsService();
                             }
-
+*/
                             timer++;
                             timeText.setText(timer + "S");
                             if (avg_speed != 0.0) {
-                                velocityText.setText(avg_speed + " KM/H");
+                                velocityText.setText(avg_speed+"");
                             }
                             distanceText.setText((int) sum_dist + " M");
                             if (timer % 1 == 0) {
@@ -539,7 +539,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 Intent intent = new Intent(getApplicationContext(), SharingActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+
             }
         }
 
