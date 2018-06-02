@@ -6,11 +6,17 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -20,10 +26,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,6 +44,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -50,7 +60,6 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     float x = 0;
     Button mapBtn;
     ImageButton start;
-    ToggleButton sound;
     Button stop;
     Button reset;
     TextView timeText, velocityText, distanceText;
@@ -74,7 +83,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     boolean isReset = true, isBtnClickStart = false;
     GPSTracker gps = null;
     ImageButton cameraBtn;
-
+    FrameLayout container;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     /**
@@ -88,7 +97,6 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     public static int SEND_PRINT = 2;
     // Button btnShowLocation;
     LocationManager locationManager;
-    Debug m = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,23 +104,15 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         setContentView(R.layout.activity_running);
         // mapBtn = (Button) findViewById(R.id.mapButton);
         start = (ImageButton) findViewById(R.id.startButton);
-        sound=(ToggleButton) findViewById(R.id.soundButton);
         timeText = (TextView) findViewById(R.id.timeText);
         velocityText = (TextView) findViewById(R.id.velocityText);
         distanceText = (TextView) findViewById(R.id.distanceText);
-       // stop = (Button) findViewById(R.id.stopButton);
+        stop = (Button) findViewById(R.id.stopButton);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
         cameraBtn = (ImageButton) findViewById(R.id.cameraButton);
 
-
-        sound.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Debug m=new Debug();
-                m.tog(v);
-            }
-        });
+        container = (FrameLayout)findViewById(R.id.mapLayout);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,6 +121,8 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 startActivity(intent2);
             }
         });
+
+
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.realtimeMap);
         mapFragment.getMapAsync(this);
@@ -172,7 +174,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         //Showing the current Location in Google Map
                         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(40));
+                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
                         MarkerOptions optFirst = new MarkerOptions();
                         optFirst.alpha(0.5f);
                         optFirst.anchor(0.5f, 0.5f);
@@ -205,9 +207,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                             if (msg.what == RENEW_GPS) {
                                 makeNewGpsService();
                             }
-                            /*if (msg.what == SEND_PRINT) {
-                                logPrint((String) msg.obj);
-                            }*/
+
                             timer++;
                             timeText.setText(timer + "S");
                             if (avg_speed != 0.0) {
@@ -254,7 +254,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                                     optFirst.position(latLng);
                                     optFirst.title("Running Start Point");
                                     //optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
-                                   // googleMap.addMarker(optFirst);
+                               //     googleMap.addMarker(optFirst);
 
                                 }
                             }
@@ -265,7 +265,124 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             }
         });
+
+
+        stop.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+
+                String folder = "Test_Directory"; // 폴더 이름
+
+
+
+                try {
+
+                    // 현재 날짜로 파일을 저장하기
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+
+                    // 년월일시분초
+
+                    Date currentTime_1 = new Date();
+
+                    String dateString = formatter.format(currentTime_1);
+
+                    File sdCardPath = Environment.getExternalStorageDirectory();
+
+                    File dirs = new File(Environment.getExternalStorageDirectory(), folder);
+
+
+
+                    if (!dirs.exists()) { // 원하는 경로에 폴더가 있는지 확인
+
+                        dirs.mkdirs(); // Test 폴더 생성
+
+                        Log.d("CAMERA_TEST", "Directory Created");
+
+                    }
+
+                    container.buildDrawingCache();
+
+                    Bitmap captureView = container.getDrawingCache();
+
+                    FileOutputStream fos;
+
+                    String save;
+
+
+
+                    try {
+
+                        save = sdCardPath.getPath() + "/" + folder + "/" + dateString + ".jpg";
+
+                        // 저장 경로
+
+                        fos = new FileOutputStream(save);
+
+                        captureView.compress(Bitmap.CompressFormat.JPEG, 100, fos); // 캡쳐
+
+
+
+                        // 미디어 스캐너를 통해 모든 미디어 리스트를 갱신시킨다.
+
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
+
+                                Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+
+                    } catch (FileNotFoundException e) {
+
+                        e.printStackTrace();
+
+                    }
+
+                    Toast.makeText(getApplicationContext(), dateString + ".jpg 저장",
+
+                            Toast.LENGTH_LONG).show();
+
+                } catch (Exception e) {
+
+                    // TODO: handle exception
+
+                    Log.e("Screen", "" + e.toString());
+
+                }
+
+            }
+
+
+
+
+
+
+        });
+
+
+
     }
+    public File ScreenShot(View view){
+        view.setDrawingCacheEnabled(true);  //화면에 뿌릴때 캐시를 사용하게 한다
+
+        Bitmap screenBitmap = view.getDrawingCache();   //캐시를 비트맵으로 변환
+
+        String filename;
+        filename= new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        File file = new File(Environment.getExternalStorageDirectory()+"/Pictures", filename);  //Pictures폴더 screenshot.png 파일
+        FileOutputStream os = null;
+        try{
+            os = new FileOutputStream(file);
+            screenBitmap.compress(Bitmap.CompressFormat.PNG, 90, os);   //비트맵을 PNG파일로 변환
+            os.close();
+        }catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
+
+        view.setDrawingCacheEnabled(false);
+        return file;
+    }
+
+
 
        /* stop.setOnClickListener(new View.OnClickListener() {
             @Override
