@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-   >
-    <TableLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TableLayout
             android:id="@+id/tableMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,8 +29,7 @@
                     android:padding="10dp"
                     android:text="RUNNING"
                     android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+                    android:textSize="20dp" />
 
 
                 <Button
@@ -41,8 +41,7 @@
                     android:padding="10dp"
                     android:text="SHARE"
                     android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+                    android:textSize="20dp" />
 
 
                 <Button
@@ -55,14 +54,14 @@
                     android:padding="10dp"
                     android:text="SETTING"
                     android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+                    android:textSize="20dp" />
 
             </TableRow>
         </TableLayout>
 
 
         <RelativeLayout
+            android:id="@+id/relative"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -87,36 +86,18 @@
 
 
         </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:adjustViewBounds="false"
-            android:cropToPadding="false"
-            android:layout_below="@+id/boardText"
-            android:paddingTop="50dp"
-            android:layout_marginTop="10dp"/>
-
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:adjustViewBounds="false"
-
-            android:cropToPadding="false"
-
-            android:paddingTop="50dp" />
-
-
-
     </LinearLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipe_layout">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
-</ScrollView>

@@ -156,7 +156,6 @@ public class MyLocationActivity extends AppCompatActivity
         } else {
             gps.Update();
         }
-
     }
 
     public void logPrint(String str) {
