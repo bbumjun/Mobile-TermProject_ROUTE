@@ -97,7 +97,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     public static int SEND_PRINT = 2;
     // Button btnShowLocation;
     LocationManager locationManager;
-
+    final int PICTURE_REQUEST_CODE = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +121,20 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 startActivity(intent2);
             }
         });
+
+        cameraBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+                //사진을 여러개 선택할수 있도록 한다
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"),  PICTURE_REQUEST_CODE);
+            }
+        });
+
+
+
 
 
         SupportMapFragment mapFragment =
