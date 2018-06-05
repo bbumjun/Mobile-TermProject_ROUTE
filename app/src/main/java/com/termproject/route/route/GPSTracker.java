@@ -38,7 +38,6 @@ public class GPSTracker extends Service implements LocationListener {
 
     // flag for GPS status
     boolean canGetLocation = false;
-
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
@@ -52,7 +51,7 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    private Handler mHandler;
+    private Handler mHandler ;
 
     public GPSTracker(Context context, Handler handler) {
         this.mContext = context;
@@ -149,7 +148,7 @@ public class GPSTracker extends Service implements LocationListener {
             latitude = location.getLatitude();
         }
 
-        // return latitude
+
         return latitude;
     }
 
@@ -208,32 +207,30 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         if(location != null){
-            double latitude= location.getLatitude();
-            double longitude = location.getLongitude();
-            //Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
-      //      sendString("onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude + " provider:"+location.getProvider()+" mock:"+location.isFromMockProvider());
-        }
+             latitude= location.getLatitude();
+             longitude = location.getLongitude();
+
+            Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
+
+            if(mHandler!=null) {
+                mHandler.sendEmptyMessage(newRunningActivity.NEW_LOCATION);
+            }
+         }
     }
 
     @Override
     public void onProviderDisabled(String provider) {
         Toast.makeText(mContext, "onProviderDisabled " + provider, Toast.LENGTH_SHORT).show();
-        mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
-        sendString( "onProviderDisabled " + provider);
     }
 
     @Override
     public void onProviderEnabled(String provider) {
         Toast.makeText(mContext, "onProviderEnabled " + provider, Toast.LENGTH_SHORT).show();
-        mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
-        sendString( "onProviderEnabled " + provider);
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         Toast.makeText(mContext, "onStatusChanged " + provider + " : " + status, Toast.LENGTH_SHORT).show();
-        mHandler.sendEmptyMessage(MyLocationActivity.RENEW_GPS);
-        sendString("onStatusChanged " + provider + " : " + status + ":" + printBundle(extras));
     }
 
     @Override
@@ -241,12 +238,7 @@ public class GPSTracker extends Service implements LocationListener {
         return null;
     }
 
-    private void sendString(String str){
-  //      Message msg = mHandler.obtainMessage();
-    //    msg.what = MyLocationActivity.SEND_PRINT;
-  //      msg.obj = new String(str);
-   //     mHandler.sendMessage(msg);
-    }
+
 
     public static String printBundle(Bundle extras) {
         StringBuilder sb = new StringBuilder();

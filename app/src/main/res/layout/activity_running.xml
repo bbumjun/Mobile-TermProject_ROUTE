@@ -98,10 +98,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3.23"
             android:paddingLeft="5dp"
             android:paddingTop="5dp"
             android:textSize="30dp"
+            android:text="0h 0m 0s"
             android:id="@+id/timeText"
             android:layout_below="@+id/time"
             android:textStyle="bold|italic" />
@@ -121,12 +121,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5.6"
+            android:text="0.0"
             android:padding="5dp"
             android:id="@+id/velocityText"
             android:layout_below="@+id/velocity"
             android:layout_toLeftOf="@id/kmhText"
             android:textSize="30dp"
+            android:textStyle="bold"
             />
         <TextView
             android:id="@+id/kmhText"
@@ -155,7 +156,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/calorie"
             android:padding="5dp"
-            android:text="148"
+            android:text="0"
             android:textSize="20dp"
             android:textStyle="bold" />
         <TextView
@@ -189,7 +190,7 @@
             android:layout_below="@+id/distance"
             android:layout_toLeftOf="@+id/kmText"
             android:padding="5dp"
-            android:text="6.5"
+            android:text="0.0"
             android:textSize="30dp"
             android:textStyle="bold" />
 
