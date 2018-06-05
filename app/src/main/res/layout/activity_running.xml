@@ -231,7 +231,7 @@
             android:visibility="visible"/>
     </RelativeLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -272,7 +272,7 @@
 
         </RelativeLayout>
 
-    </FrameLayout>
+    </LinearLayout>
 <FrameLayout
     android:id="@+id/mapLayout"
     android:layout_width="match_parent"
