@@ -1,118 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-   >
+    tools:context=".SharingActivity">
+
+
     <TableLayout
-            android:id="@+id/tableMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*">
+        android:id="@+id/tableMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*">
 
 
-            <TableRow android:layout_width="match_parent">
+        <TableRow android:layout_width="match_parent">
+
+            <ImageButton
+                android:id="@+id/runText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/shape"
+                android:cropToPadding="false"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/travel"
+                />
 
 
-                <Button
-                    android:id="@+id/runText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/shape"
-                    android:padding="10dp"
-                    android:text="RUNNING"
-                    android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+            <ImageButton
+                android:id="@+id/shareText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/shapewithcolor"
+                android:cropToPadding="false"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/share" />
 
 
-                <Button
-                    android:id="@+id/shareText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/shapewithcolor"
-                    android:padding="10dp"
-                    android:text="SHARE"
-                    android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+            <ImageButton
+                android:id="@+id/setText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/shape"
+                android:src="@drawable/settings"
+                android:scaleType="centerInside"
+                android:padding="10dp"
+                />
+
+        </TableRow>
+    </TableLayout>
 
 
-                <Button
-                    android:id="@+id/setText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/shape"
-                    android:padding="10dp"
-                    android:text="SETTING"
-                    android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
-
-            </TableRow>
-        </TableLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/boardText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:paddingTop="10dp"
-                android:text="Board"
-                android:textAlignment="center"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-
-            <Button
-                android:id="@+id/addBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="add Route" />
-
-
-        </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/boardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="10dp"
+            android:text="Board"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/imageView1"
+
+        <Button
+            android:id="@+id/addBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="add Route" />
+
+
+        <View
+            android:id="@+id/view1"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:adjustViewBounds="false"
-            android:cropToPadding="false"
+            android:layout_height="200dp"
+
             android:layout_below="@+id/boardText"
+            android:paddingTop="50dp"
+            android:background="#34000000"
+            android:layout_marginTop="10dp"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+
+            android:layout_below="@+id/view1"
+            android:background="#66000000"
             android:paddingTop="50dp"
             android:layout_marginTop="10dp"/>
 
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:adjustViewBounds="false"
-
-            android:cropToPadding="false"
-
-            android:paddingTop="50dp" />
+    </RelativeLayout>
 
 
-
-    </LinearLayout>
 </LinearLayout>
+

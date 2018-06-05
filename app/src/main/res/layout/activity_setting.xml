@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <TableLayout
         android:id="@+id/tableMenu"
@@ -11,50 +10,48 @@
         android:layout_height="wrap_content"
         android:stretchColumns="*">
 
-
         <TableRow android:layout_width="match_parent">
 
-            <Button
+
+            <ImageButton
                 android:id="@+id/runText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
                 android:background="@drawable/shape"
+                android:cropToPadding="false"
                 android:padding="10dp"
-                android:text="RUNNING"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                android:scaleType="centerInside"
+                android:src="@drawable/travel"
+                />
 
-            <Button
+
+            <ImageButton
                 android:id="@+id/shareText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
                 android:background="@drawable/shape"
+                android:cropToPadding="false"
                 android:padding="10dp"
-                android:text="SHARE"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                android:scaleType="centerInside"
+                android:src="@drawable/share" />
 
-            <Button
+
+            <ImageButton
                 android:id="@+id/setText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+
                 android:background="@drawable/shapewithcolor"
+                android:src="@drawable/settings"
+                android:scaleType="centerInside"
                 android:padding="10dp"
-                android:text="SETTING"
-                android:textAlignment="center"
-                android:textSize="20dp" />
+                />
 
         </TableRow>
-
     </TableLayout>
 
-
-    -
 
     <LinearLayout
         android:id="@+id/settingFragment"
@@ -64,17 +61,15 @@
         android:background="#33FFFFFF"
         android:orientation="vertical">
 
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:background="#ffffff"
             android:text="User Info"
-            android:textSize="20dp"
-            android:textStyle="bold|italic" />
-
-
-        -
+            android:layout_marginTop="5dp"
+            android:textStyle="bold|italic"
+            android:textSize="20dp" />
 
         <RelativeLayout
             android:id="@+id/userInfo"
@@ -97,7 +92,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/txtView"
-                android:text="bumjun6602"
+                android:text="chany219"
+
                 android:textSize="20dp" />
 
             <Button
@@ -105,29 +101,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/deleteAccountBtn"
-                android:background="@drawable/shapebutton"
                 android:text="Logout"
                 android:textColor="#1994F9"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/shapebutton"
+                />
 
             <Button
                 android:id="@+id/deleteAccountBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:textColor="#1994F9"
                 android:background="@drawable/shapebutton"
                 android:text="Withdrawal"
-                android:textColor="#1994F9"
-                android:textSize="10sp" />
+                android:textSize="10sp"/>
 
         </RelativeLayout>
-
-
-        -
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:background="#ffffff">
 
             <TextView
@@ -136,30 +132,40 @@
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Velocity Control"
-                android:textSize="20dp" />
+                android:textSize="20dp"
+
+                />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/shapebutton"
                 android:text="save"
                 android:textColor="#1994F9"
-                android:textSize="12sp" />
+                android:padding="5dp"
+                android:textSize="12sp"
+                android:background="@drawable/shapebutton"
+
+                />
+
 
         </RelativeLayout>
 
 
-        -
-
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+
+            >
 
             <NumberPicker
+
                 android:id="@+id/picker1"
+
                 android:layout_width="wrap_content"
+
                 android:layout_height="wrap_content"
+
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="53dp" />
@@ -183,6 +189,7 @@
                 android:layout_marginEnd="67dp"
                 android:layout_marginTop="33dp"
                 android:textOff="Max"
+
                 android:textOn="Max" />
 
             <ToggleButton
@@ -195,11 +202,7 @@
                 android:layout_marginTop="105dp"
                 android:textOff="Min"
                 android:textOn="Min" />
-
         </RelativeLayout>
-
-
-        -
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -218,15 +221,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/shapebutton"
                 android:text="save"
+                android:textSize="12sp"
+                android:background="@drawable/shapebutton"
                 android:textColor="#1994F9"
-                android:textSize="12sp" />
 
+                />
         </RelativeLayout>
-
-
-        -
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -264,9 +265,8 @@
                 android:layout_below="@+id/textView2"
                 android:max="200"
                 android:progress="50" />
-
         </RelativeLayout>
-
     </LinearLayout>
+
 
 </RelativeLayout>

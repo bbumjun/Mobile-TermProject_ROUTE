@@ -1,3 +1,4 @@
+/*
 package com.termproject.route.route;
 
 import android.Manifest;
@@ -86,10 +87,12 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     FrameLayout container;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-    /**
+    */
+/**
      * Flag indicating whether a requested permission has been denied after returning in
      * {@link #onRequestPermissionsResult(int, String[], int[])}.
-     */
+     *//*
+
     private boolean mPermissionDenied = false;
     public Handler mHandler;
 
@@ -103,16 +106,14 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
         // mapBtn = (Button) findViewById(R.id.mapButton);
-        start = (ImageButton) findViewById(R.id.startButton);
         timeText = (TextView) findViewById(R.id.timeText);
         velocityText = (TextView) findViewById(R.id.velocityText);
         distanceText = (TextView) findViewById(R.id.distanceText);
-        stop = (Button) findViewById(R.id.stopButton);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
         cameraBtn = (ImageButton) findViewById(R.id.cameraButton);
 
-        container = (FrameLayout)findViewById(R.id.mapLayout);
+
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,13 +135,15 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
 
         MapsInitializer.initialize(getApplicationContext());
-      /*  mapBtn.setOnClickListener(new View.OnClickListener() {
+      */
+/*  mapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MyLocationActivity.class);
                 startActivity(intent);
             }
-        });*/
+        });*//*
+
 
         start.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("HandlerLeak")
@@ -184,7 +187,9 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
                         googleMap.addMarker(optFirst).showInfoWindow();
 
-                        /* store the GPS info store*/
+                        */
+/* store the GPS info store*//*
+
                         bef_lat = latitude;
                         bef_long = longitude;
                         s_lat = String.valueOf(latitude);
@@ -195,7 +200,9 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         s_time = sdfNow.format(date);
 
-                        /*Start latitude,longitude*/
+                        */
+/*Start latitude,longitude*//*
+
 
                     }
                     time_handler = new Handler() {
@@ -203,11 +210,13 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         public void handleMessage(Message msg) {
 
                             time_handler.sendEmptyMessageDelayed(0, 1000);
-                            /*
+                            */
+/*
                             if (msg.what == RENEW_GPS) {
                                 makeNewGpsService();
                             }
-*/
+*//*
+
                             timer++;
                             timeText.setText(timer + "S");
                             if (avg_speed != 0.0) {
@@ -229,7 +238,9 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
                                     sum_dist += dist;
 
-                                    /*평균속도 계산하기*/
+                                    */
+/*평균속도 계산하기*//*
+
                                     avg_speed = dist / 1;
                                     avg_speed = (int) (avg_speed * 100) / 100.0;
                                     LatLng beflatLng = new LatLng(bef_lat, bef_long);
@@ -241,7 +252,9 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
 
 
-                                    /*이전과 현재의 point로 폴리라인을 긋는다.*/
+                                    */
+/*이전과 현재의 point로 폴리라인을 긋는다.*//*
+
                                     current_point = latLng;
                                     googleMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(10.0f).geodesic(true).add(latLng).add(ex_point));
 
@@ -384,7 +397,8 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
 
 
-       /* stop.setOnClickListener(new View.OnClickListener() {
+       */
+/* stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (v.getId() == R.id.stopButton) {
@@ -403,8 +417,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                             optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
                            // googleMap.addMarker(optFirst).showInfoWindow();
 
-                            /*종료 지점 위도 경도*/
-                           /* f_lat = String.valueOf(latitude);
+                            /*종료 지점 위도 경도*//*
+
+                           */
+/* f_lat = String.valueOf(latitude);
                             f_long = String.valueOf(longitude);
                             long now = System.currentTimeMillis();
                             Date date = new Date(now);
@@ -430,8 +446,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         sum_dist=0;
                         googleMap.clear();
 
-*/
-                      /*  mProgressDialog.setMessage("주행종료...");
+*//*
+
+                      */
+/*  mProgressDialog.setMessage("주행종료...");
                         handler = new Handler();
                         mProgressDialog.setCancelable(false);
                         mProgressDialog.show();
@@ -447,7 +465,8 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
                     } else {
                         Toast.makeText(getApplicationContext(), "타이머가 시작되지 않았습니다.", Toast.LENGTH_SHORT).show();
-                    }*/
+                    }*//*
+
                //     }
              //   }
            // }
@@ -521,9 +540,11 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         }
     }
 
-    /**
+    */
+/**
      * Displays a dialog with error message explaining that the location permission is missing.
-     */
+     *//*
+
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
@@ -531,4 +552,4 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
 
 
 
-}
+}*/

@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/runningFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/runningFragment"
+    android:orientation="vertical"
+
     >
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#25848E"
-        />
+<View
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:background="#25848E"
+    />
 
 
 
@@ -20,221 +21,240 @@
         android:id="@+id/menuLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
 
-
-    <TableLayout
-        android:id="@+id/tableMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*"
         >
 
 
-        <TableRow android:layout_width="match_parent">
-
-
-            <Button
-                android:id="@+id/runText"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/shapewithcolor"
-                android:padding="10dp"
-                android:text="RUNNING"
-                android:textAlignment="center"
-
-                android:textSize="10sp" />
-
-
-            <Button
-                android:id="@+id/shareText"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@drawable/shape"
-                android:padding="10dp"
-                android:text="SHARE"
-                android:textAlignment="center"
-                android:textSize="10sp"
-
-                />
-
-
-            <Button
-                android:id="@+id/setText"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/shape"
-                android:padding="10dp"
-                android:text="SETTING"
-                android:textAlignment="center"
-                android:textSize="10sp"  />
-
-
-        </TableRow>
-
-
-    </TableLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/statusMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tableMenu">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TIME"
-            android:padding="5dp"
-            android:id="@+id/time"
-            android:textColor="#E94C41"
-            android:textStyle="bold|italic"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingTop="5dp"
-            android:textSize="30dp"
-            android:text="0h 0m 0s"
-            android:id="@+id/timeText"
-            android:layout_below="@+id/time"
-            android:textStyle="bold|italic" />
-
-
-        <TextView
-            android:id="@+id/velocity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_gravity=""
-            android:padding="5dp"
-            android:text="Velocity"
-            android:textColor="#E94C41"
-            android:textStyle="bold|italic" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0.0"
-            android:padding="5dp"
-            android:id="@+id/velocityText"
-            android:layout_below="@+id/velocity"
-            android:layout_toLeftOf="@id/kmhText"
-            android:textSize="30dp"
-            android:textStyle="bold"
-            />
-        <TextView
-            android:id="@+id/kmhText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/velocityText"
-            android:layout_alignBottom="@+id/velocityText"
-            android:layout_alignEnd="@+id/distance"
-            android:text="Km/h"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/calorie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/distance"
-            android:padding="5dp"
-            android:text="Calorie"
-            android:textColor="#E94C41"
-            android:textStyle="bold|italic"/>
-
-
-        <TextView
-            android:id="@+id/calorieText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/calorie"
-            android:padding="5dp"
-            android:text="0"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/KcalText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/calorieText"
-            android:layout_below="@+id/calorie"
-            android:layout_toRightOf="@id/calorieText"
-            android:text="Kcal"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/velocity"
-            android:layout_below="@+id/velocityText"
-            android:layout_marginTop="20dp"
-            android:padding="5dp"
-            android:text="Distance"
-            android:textColor="#E94C41"
-            android:textStyle="bold|italic"/>
-
-
-        <TextView
-            android:id="@+id/distanceText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/distance"
-            android:layout_toLeftOf="@+id/kmText"
-            android:padding="5dp"
-            android:text="0.0"
-            android:textSize="30dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/kmText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/distanceText"
-            android:layout_alignBottom="@+id/distanceText"
-            android:layout_alignParentRight="true"
-            android:padding="5dp"
-            android:text="Km"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-        <ImageButton
-            android:id="@+id/startButton"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerInParent="true"
-            android:background="#00FFFFFF"
-            android:scaleType="fitXY"
-            android:src="@drawable/startrun"
-            android:visibility="visible" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stop"
-            android:id="@+id/stopButton"
-            android:layout_below="@+id/startButton"
-            android:layout_marginTop="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginRight="50dp"/>
-        <View
+        <TableLayout
+            android:id="@+id/tableMenu"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_centerInParent="true"
-            android:visibility="visible"/>
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
+
+
+            <TableRow android:layout_width="match_parent">
+
+
+                <ImageButton
+                    android:id="@+id/runText"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/shapewithcolor"
+                    android:cropToPadding="false"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/travel"
+                    />
+
+
+                <ImageButton
+                    android:id="@+id/shareText"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/shape"
+                    android:cropToPadding="false"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/share" />
+
+
+                <ImageButton
+                    android:id="@+id/setText"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+
+                    android:background="@drawable/shape"
+                    android:src="@drawable/settings"
+                    android:scaleType="centerInside"
+                    android:padding="10dp"
+                    />
+
+
+            </TableRow>
+
+
+        </TableLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/statusMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tableMenu">
+
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Time"
+                android:textColor="#E94C41"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/time"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:text="0:0'0''"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/velocity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+
+                android:padding="5dp"
+                android:text="Velocity"
+                android:layout_margin="2dp"
+                android:textColor="#E94C41"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/velocityText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/velocity"
+                android:layout_toLeftOf="@id/kmhText"
+                android:paddingTop="5dp"
+                android:text="0.0"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/kmhText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/velocityText"
+                android:layout_alignBottom="@+id/velocityText"
+                android:layout_alignEnd="@+id/distance"
+                android:padding="5dp"
+                android:text="Km/h"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/calorie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/distance"
+                android:padding="5dp"
+                android:text="Calorie"
+                android:textColor="#E94C41"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/calorieText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/calorie"
+                android:padding="5dp"
+                android:text="15"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/KcalText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/calorieText"
+                android:layout_below="@+id/calorie"
+                android:layout_toRightOf="@id/calorieText"
+                android:text="Kcal"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/velocity"
+                android:layout_below="@+id/velocityText"
+                android:layout_marginTop="20dp"
+                android:padding="5dp"
+                android:text="Distance"
+                android:textColor="#E94C41"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/distanceText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/distance"
+                android:layout_toLeftOf="@+id/kmText"
+                android:paddingTop="5dp"
+                android:paddingRight="1dp"
+                android:text="0.0"
+
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/kmText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/distanceText"
+                android:layout_alignBottom="@+id/distanceText"
+                android:layout_alignParentRight="true"
+                android:text="Km"
+                android:textSize="20dp"
+                android:paddingRight="5dp"
+                android:textStyle="bold" />
+
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="200dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:foreground="#23111111"
+                android:visibility="visible" />
+
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_centerInParent="true"
+                android:foreground="#23111111"
+                android:visibility="visible" />
+
+
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/realtimeMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".newRunningActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -259,9 +279,14 @@
                 android:src="@drawable/camera" />
 
             <ToggleButton
-                android:id="@+id/soundButton"
+                android:id="@+id/on"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:checked="false"
+                android:onClick="tog"
+                android:text="ToggleButton"
+                android:textOff="OFF"
+                android:textOn="ON"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="right"
                 android:adjustViewBounds="false"
@@ -269,23 +294,22 @@
                 android:cropToPadding="false"
                 android:scaleType="fitXY" />
 
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/startshape"
+                android:text="Start"
+                android:visibility="visible" />
+
+
+
 
         </RelativeLayout>
 
-    </LinearLayout>
-<FrameLayout
-    android:id="@+id/mapLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <fragment
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/realtimeMap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MapsActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        />
-</FrameLayout>
+    </FrameLayout>
 
 </LinearLayout>

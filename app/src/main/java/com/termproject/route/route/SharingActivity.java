@@ -1,11 +1,11 @@
 package com.termproject.route.route;
-
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -21,14 +20,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
+import android.widget.ImageButton;
 
 public class SharingActivity extends AppCompatActivity {
 float x;
 int GALLERY_CODE=10;
 private String selectedImagePath;
-Button runningBtn,settingBtn;
+
 FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
 
 
@@ -41,15 +40,14 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sharing);
 
-        runningBtn=(Button)findViewById(R.id.runText);
-        settingBtn=(Button)findViewById(R.id.setText);
+
         addButton =(Button)findViewById(R.id.addBtn);
 
         StorageReference imageRef1 = storageRef.child("images/image1.jpg");
         StorageReference imageRef2 = storageRef.child("images/image2.jpg");
 
-        ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
-        ImageView imageView2 =(ImageView)findViewById(R.id.imageView2);
+     //   ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
+     //   ImageView imageView2 =(ImageView)findViewById(R.id.imageView2);
 
      //   Glide.with(this).using(new FirebaseImageLoader()).load(imageRef1).into(imageView1);
       //  Glide.with(this).using(new FirebaseImageLoader()).load(imageRef2).into(imageView2);
@@ -66,6 +64,24 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
             }
         });
 
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
+
+
+        Button addBtn=(Button) findViewById(R.id.addBtn);
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new Intent("android.media.action.IMAGE_CAPTURE");
+                startActivity(intent2);
+            }
+        });
+
+
+        ImageButton runningBtn = findViewById(R.id.runText);
+
         runningBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,6 +89,10 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
                 finish();
             }
         });
+
+
+        ImageButton settingBtn = findViewById(R.id.setText);
+
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,7 +103,10 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
             }
         });
 
+
+
     }
+
 protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if(resultCode==RESULT_OK) {
@@ -110,7 +133,6 @@ protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
         }
     });
 }
-
     public String getPath(Uri uri) {
 
         if( uri == null ) {

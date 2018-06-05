@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.content.Intent;
 import android.location.Location;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,27 +42,23 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     Handler gpsHandler,timeHandler;
     TimeRunnable runnable;
     GPSTracker gps;
-    ImageButton startBtn;
-    Button tab1,tab2,tab3,stopBtn,shareBtn,settingBtn;
+    ImageButton shareBtn,settingBtn;
+    Button tab1,tab2,tab3,startBtn,stopBtn;
     TextView timeText,velocityText,distanceText,calorieText;
-    FrameLayout container;
+
     Marker curMarker;
 public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_running);
 
-    shareBtn=(Button)findViewById(R.id.shareText);
-    settingBtn=(Button)findViewById(R.id.setText);
     timeText=(TextView)findViewById(R.id.timeText);
     calorieText=(TextView)findViewById(R.id.calorieText);
-    startBtn = (ImageButton)findViewById(R.id.startButton);
+    startBtn = (Button) findViewById(R.id.startButton);
+    shareBtn=(ImageButton)findViewById(R.id.shareText);
+    settingBtn=(ImageButton)findViewById(R.id.setText);
     velocityText = (TextView) findViewById(R.id.velocityText);
     distanceText = (TextView) findViewById(R.id.distanceText);
-    container = (FrameLayout)findViewById(R.id.mapLayout);
-    tab1=(Button)findViewById(R.id.runText);
-    tab2=(Button)findViewById(R.id.shareText);
-    tab3=(Button)findViewById(R.id.setText);
-    stopBtn=(Button)findViewById(R.id.stopButton);
+
     timeHandler= new Handler();
     gpsHandler=new Handler();
     runnable = new TimeRunnable();
@@ -162,6 +159,7 @@ public void onCreate(Bundle savedInstanceState) {
                                                      distanceText.setText(sum_dist + "");
                                                      calorieText.setText(cur_lat + " " + cur_long);
                                                      Log.d("bef time & cur time",befTime+" "+curTime);
+
                                                  }
                                              }
                                          });
@@ -219,7 +217,7 @@ class TimeRunnable implements Runnable {
             tempMinute = (time % 3600) / 60;
             tempSecond = time % 60;
 
-            timeText.setText(tempHour + "h " + tempMinute + "m " + tempSecond + "s");
+            timeText.setText(tempHour + ": " + tempMinute + "' " + tempSecond + "''");
 
 
     }
