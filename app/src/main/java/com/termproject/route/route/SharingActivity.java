@@ -28,6 +28,7 @@ public class SharingActivity extends AppCompatActivity {
 float x;
 int GALLERY_CODE=10;
 private String selectedImagePath;
+Button runningBtn,settingBtn;
 FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
 
 
@@ -40,6 +41,8 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sharing);
 
+        runningBtn=(Button)findViewById(R.id.runText);
+        settingBtn=(Button)findViewById(R.id.setText);
         addButton =(Button)findViewById(R.id.addBtn);
 
         StorageReference imageRef1 = storageRef.child("images/image1.jpg");
@@ -62,6 +65,24 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
                 startActivityForResult(intent,GALLERY_CODE);
             }
         });
+
+        runningBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                finish();
+            }
+        });
+        settingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(),SettingActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                finish();
+            }
+        });
+
     }
 protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -108,27 +129,5 @@ protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
         return uri.getPath();
     }
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction()==MotionEvent.ACTION_DOWN) {
-            x=event.getX();
-        }
-        if(event.getAction()==MotionEvent.ACTION_UP) {
-            if(x<event.getX()) {
-
-                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-                finish();
-            }
-            else if(x>event.getX()) {
-                Intent intent=new Intent(getApplicationContext(),SettingActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-                finish();
-            }
-        }
-        return true;
-
-    }
 
 }

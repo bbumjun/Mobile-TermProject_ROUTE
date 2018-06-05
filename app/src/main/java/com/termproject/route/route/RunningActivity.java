@@ -529,22 +529,6 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
-    public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            x = event.getX();
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (x > event.getX()) {
-                Intent intent = new Intent(getApplicationContext(), SharingActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
-            }
-        }
-
-
-        return true;
-    }
 
 }
