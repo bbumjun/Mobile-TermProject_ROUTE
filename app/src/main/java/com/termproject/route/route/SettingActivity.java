@@ -24,12 +24,8 @@ Button deleteIdBtn,runningBtn,sharingBtn;
 
         logoutBtn = (Button)findViewById(R.id.logoutBtn);
         deleteIdBtn =(Button)findViewById(R.id.deleteAccountBtn);
-        NumberPicker picker1 = (NumberPicker)findViewById(R.id.picker1);
+        com.shawnlin.numberpicker.NumberPicker picker1 = findViewById(R.id.number_picker);
 
-
-        picker1.setMinValue(0);
-        picker1.setMaxValue(50);
-        picker1.setWrapSelectorWheel(false);
 
 
         ImageButton runningBtn = findViewById(R.id.runText);
@@ -38,6 +34,7 @@ Button deleteIdBtn,runningBtn,sharingBtn;
             @Override
             public void onClick(View v) {
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                finish();
             }
         });
 

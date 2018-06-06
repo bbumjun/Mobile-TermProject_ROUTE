@@ -17,6 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildscript {
+        repositories {
+            jcenter()
+        }
+    }
 }
 
 dependencies {
@@ -68,4 +74,7 @@ dependencies {
 
 dependencies {
     compile 'com.airbnb.android:lottie:2.3.0'
+    compile 'com.shawnlin:number-picker:2.4.6'
 }
+
+
