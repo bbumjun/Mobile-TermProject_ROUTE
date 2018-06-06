@@ -65,3 +65,7 @@ dependencies {
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:+'
 }
+
+dependencies {
+    compile 'com.airbnb.android:lottie:2.3.0'
+}

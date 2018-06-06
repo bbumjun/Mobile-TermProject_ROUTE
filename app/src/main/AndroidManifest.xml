@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
 
@@ -29,7 +28,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
+            android:value="AIzaSyDziXcewJ4a6tqnIw_QCaEr0hFbD5q3cmE" />
 
         <activity android:name=".FirstActivity">
             <intent-filter>
@@ -41,7 +40,7 @@
         <activity android:name=".MainActivity"/>
 
         <activity android:name=".MyLocationActivity"/>
-        <activity android:name=".RunningActivity"/>
+
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
 
