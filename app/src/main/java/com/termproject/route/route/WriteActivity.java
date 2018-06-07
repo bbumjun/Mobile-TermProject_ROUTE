@@ -93,7 +93,7 @@ public class WriteActivity extends AppCompatActivity {
     public static int position=0;
     public final static int REQUEST_CODE = 1;
     boolean isCompleteAll = false;
-    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.appspot.com/files/Post/";
+    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Post";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +101,7 @@ public class WriteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_write);
         addButton=(Button)findViewById(R.id.goToGallery);
         editText=(EditText)findViewById(R.id.routeTheText);
-        currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        postRef=new Firebase(FIREBASE_POST_URL);
         /*rv = (RecyclerView)findViewById(R.id.recView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
@@ -148,15 +148,25 @@ public class WriteActivity extends AppCompatActivity {
           /* if (photos != null) {
                 selectedPhotos.addAll(photos);
             }*/
+            currentUser= FirebaseAuth.getInstance().getCurrentUser();
+
             thePost posting = new thePost();
-            NickName=setProfile();
+            if(currentUser!=null) {
+                NickName = currentUser.getDisplayName();
+                boolean emailVerified = currentUser.isEmailVerified();
+
+                Uid = currentUser.getUid();
+                Log.d("abcd","hello"+" ");
+            }
+            else
+                Log.d("abcde","bye"+" ");
             posting.setName(NickName);
             posting.setRoute(routeInfo);
             int k=photos.size();
             ArrayList<Uri> imageUri = new ArrayList<Uri>();
             for(int i=0;i<k;i++){
                 imageUri.add(i,Uri.fromFile(new File(photos.get(i))));
-                upLoadImages(posting,k,currentUser.getUid(),NickName,imageUri);
+                upLoadImages(posting,k,Uid,NickName,imageUri);
             }
 
 
@@ -179,8 +189,9 @@ public class WriteActivity extends AppCompatActivity {
 
         for (int i = 0; i < list.size(); ++i) {
             childRef[i] = ref.child(uid + "/" + filterName + "/" + (num + i) + ".jpeg");
+           // Log.e("Taggg",filterName);
            // arrayList.add(childRef[i].getPath());
-            Log.e(TAG, childRef[i].getPath().toString());
+            Log.e("TAGG", childRef[i].getPath().toString());
             uploadTask[i] = childRef[i].putFile(list.get(i));
 
             uploadTask[i].addOnFailureListener(new OnFailureListener() {
@@ -197,17 +208,17 @@ public class WriteActivity extends AppCompatActivity {
                 }
             });
         }
-        postRef.child(filterName).child("f").setValue(arrayList);
+      postRef.child("f").setValue(arrayList);
 
     }
 
 
-    private String setProfile() {
+  /*  private String setProfile() {
         //path = FilterManger.getInstance().requestProfile();
 
         String a=(currentUser.getDisplayName());
         return a;
-    }
+    }*/
     /*class MyViewHolder extends RecyclerView.ViewHolder{
         TextView userId;
         ImageView mapView;

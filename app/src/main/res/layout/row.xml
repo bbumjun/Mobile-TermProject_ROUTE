@@ -4,12 +4,7 @@
     android:orientation="vertical"
     >
 
-        <TextView
-            android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="text"
-            android:textSize="20dp"
-            android:id="@+id/userId"/>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp"

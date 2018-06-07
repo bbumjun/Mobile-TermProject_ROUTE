@@ -78,7 +78,7 @@ private String selectedImagePath;
     private List<thePost> mPost = new ArrayList<>();
     private  List<String> mKeys = new ArrayList<>();
     private FirebaseUser currentUser;
-    private MyAdapter myAdapter;
+    private SharingActivity.MyAdapter myAdapter;
     private ClipData clipData;
     private Uri photoUri;
     private Query mapRef;
@@ -91,6 +91,9 @@ private String selectedImagePath;
     public static final String FIREBASE_STORAGE = "gs://routetermproject-f7baa.appspot.com";
     FirebaseStorage storage = FirebaseStorage.getInstance(FIREBASE_STORAGE);
     StorageReference ref = storage.getReference();
+    public SharingActivity(){
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +105,9 @@ private String selectedImagePath;
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
         mLinearLayoutManager.setStackFromEnd(true);
+        myAdapter= new SharingActivity.MyAdapter();
         rv.setLayoutManager(mLinearLayoutManager);
+        rv.setAdapter(myAdapter);
         //mPost = new thePost();
         runningBtn=(Button)findViewById(R.id.runText);
         settingBtn=(Button)findViewById(R.id.setText);
@@ -206,22 +211,7 @@ private String selectedImagePath;
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        ArrayList<String> photos = null;
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-            if (data != null) {
-                photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
-            }
-            if (photos != null) {
-                selectedPhotos.addAll(photos);
-            }
-           final mAdapter theAdapter = new mAdapter(getLayoutInflater(),photos);
-
-        }
-    }
     class MyViewHolder extends RecyclerView.ViewHolder{
         TextView userId;
         ImageView mapView;
@@ -238,9 +228,9 @@ private String selectedImagePath;
     }
     class mAdapter extends PagerAdapter{
         LayoutInflater inflater;
-        ArrayList<String> imageUrls;
+        List<String> imageUrls;
 
-        public mAdapter(LayoutInflater inflater, ArrayList arrayList){
+        public mAdapter(LayoutInflater inflater, List arrayList){
             this.inflater=inflater;
             this.imageUrls=arrayList;
         }
@@ -282,13 +272,11 @@ private String selectedImagePath;
         @Override
         public void onBindViewHolder(final SharingActivity.MyViewHolder holder,final int position){
             final thePost post = mPost.get(position);
-            //final mAdapter m = new mAdapter(getLayoutInflater(),post.getHello());
-            //Gson gson = new Gson();
-
+            final mAdapter pager = new mAdapter(getLayoutInflater(),post.getHello());
             //ArrayList<String> arrayList = gson.fromJson(post.getImageUrl(), new TypeToken<ArrayList<String>>(){}.getType());
-            holder.routeView.setText("111");
-            holder.userId.setText("333");
-
+            holder.routeView.setText(post.getRoute());
+            holder.userId.setText(post.getName());
+    pager.notifyDataSetChanged();
             holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
