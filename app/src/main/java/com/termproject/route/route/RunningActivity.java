@@ -76,6 +76,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     private String f_long;//종료지점 위도
     private String f_time;
     private String user_id;
+
     ProgressDialog mProgressDialog;
     Handler handler;
     private double cur_lat, cur_long;
@@ -111,14 +112,12 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
         cameraBtn = (ImageButton) findViewById(R.id.cameraButton);
-
         container = (FrameLayout)findViewById(R.id.mapLayout);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent2 = new Intent("android.media.action.IMAGE_CAPTURE");
-                startActivity(intent2);
+               //sendTakePhotoIntent();
             }
         });
 

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.termproject.route.route">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -11,7 +14,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/routelogowhite"
@@ -22,6 +27,18 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.termproject.route.route.newRunningActivity.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"
+                tools:replace="android:resource"/>
+        </provider>
 
         <activity android:name=".FirstActivity">
             <intent-filter>
@@ -29,12 +46,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".newRunningActivity"/>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".MyLocationActivity"/>
-        <activity android:name=".RunningActivity"/>
+        <activity android:name=".newRunningActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".MyLocationActivity" />
+        <activity android:name=".RunningActivity" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".SharingActivity"/>
+        <activity android:name=".SharingActivity" />
+        <activity android:name=".WriteActivity" />
+        <activity android:name="com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name="com.yongbeam.y_photopicker.util.photopicker.PhotoPagerActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
 
     </application>
 

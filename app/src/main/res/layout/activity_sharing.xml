@@ -85,34 +85,15 @@
 
         </RelativeLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:adjustViewBounds="false"
-            android:cropToPadding="false"
-            android:layout_below="@+id/boardText"
-            android:paddingTop="50dp"
-            android:layout_marginTop="10dp"/>
-
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:adjustViewBounds="false"
-
-            android:cropToPadding="false"
-
-            android:paddingTop="50dp" />
-
-
-
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:id="@+id/recView">
+    </android.support.v7.widget.RecyclerView>
+</RelativeLayout>
 </LinearLayout>

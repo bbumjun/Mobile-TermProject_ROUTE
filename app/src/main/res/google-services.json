@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "755396744880-l4kbvp1df5ju2pmr5t8k7fhiro9d7g2n.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.termproject.route.route",
-            "certificate_hash": "ad7ecde8f49c202c7d27471fc0c8550e06c9395a"
-          }
-        },
-        {
           "client_id": "755396744880-dgcn1scpn0d9r2jlu62opt9tvk3fcrgh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
