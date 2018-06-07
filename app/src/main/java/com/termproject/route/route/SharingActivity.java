@@ -71,14 +71,6 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
 
         Button addBtn=(Button) findViewById(R.id.addBtn);
 
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent2 = new Intent("android.media.action.IMAGE_CAPTURE");
-                startActivity(intent2);
-            }
-        });
-
 
         ImageButton runningBtn = findViewById(R.id.runText);
 
@@ -116,6 +108,7 @@ protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
                 Toast.makeText(getApplicationContext(), "Image Path = "+selectedImagePath, Toast.LENGTH_SHORT).show();
             }
         }
+
     Uri file = Uri.fromFile(new File(selectedImagePath));
     StorageReference uploadRef = storageRef.child("images/"+file.getLastPathSegment());
     UploadTask uploadTask = uploadRef.putFile(file);

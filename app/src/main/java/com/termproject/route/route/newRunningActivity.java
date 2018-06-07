@@ -1,6 +1,7 @@
 package com.termproject.route.route;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -11,14 +12,20 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -44,7 +51,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static com.yongbeam.y_photopicker.util.photopicker.utils.ImageCaptureManager.REQUEST_TAKE_PHOTO;
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
@@ -64,9 +77,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     TextView timeText, velocityText, distanceText;
     Marker curMarker;
 
-    //
+    private static final int MY_PERMISSION_CAMERA =1111;
 
-
+    Uri imageUri;
+    Uri photoURI, albumURI;
     LocationService myService;
     static boolean status;
     LocationManager locationManager;
@@ -75,8 +89,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     static long startTime, endTime;
     static ProgressDialog locate;
     static int p = 0;
-
-
+    String mCurrentPhotoPath;
+    ImageView iv_view;
     private ServiceConnection sc = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -137,7 +151,11 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     }
 
 
-    //
+
+    public void onPause() {
+        super.onPause();
+        gps.stopUsingGPS();
+    }
 
 
     float speed = 0;
@@ -187,6 +205,14 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         gps = new GPSTracker(newRunningActivity.this, gpsHandler);
 
+
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                captureCamera();
+
+            }
+        });
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -434,7 +460,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         });
 
 
-        //
     }
 
 
@@ -567,5 +592,110 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         alert.show();
     }
 
+    private void galleryAddPic() {
+        Log.i ("galleryAddPic","Call");
+        Intent mediaScanIntent =new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f =new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+        Toast.makeText(this ,"저장되었습니다.",Toast.LENGTH_SHORT).show();
+
+    }
+    private void captureCamera() {
+        String state = Environment.getExternalStorageState();
+
+        if(Environment.MEDIA_MOUNTED.equals(state)) {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            if(takePictureIntent.resolveActivity(getPackageManager())!=null){
+                File photoFile =null;
+                try{
+                    photoFile = createImageFile();
+                }catch (IOException e) {
+                    Log.e("captureCamera Error", e.toString());
+                }
+                if(photoFile!=null) {
+                    Uri providerURI = FileProvider.getUriForFile(this,getPackageName(),photoFile);
+                    imageUri=providerURI;
+
+
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,providerURI);
+
+                    startActivityForResult(takePictureIntent,REQUEST_TAKE_PHOTO);
+                }
+            }
+        } else {
+            Toast.makeText(this, "저장공간 접근 불가", Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+
+    public File createImageFile() throws  IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_"+timeStamp+".jpg";
+        File imageFile =null;
+        File storageDir =new File(Environment.getExternalStorageDirectory()+"/Route","");
+
+        if(!storageDir.exists()) {
+            Log.i("mCurrentPhotoPath1",storageDir.toString());
+            storageDir.mkdirs();
+
+        }
+        imageFile =new File(storageDir,imageFileName) ;
+        mCurrentPhotoPath = imageFile.getAbsolutePath();
+
+        return imageFile;
+
+    }
+
+    protected  void onActivityResult(int requestCode,int resultCode, Intent data ) {
+        if(requestCode==REQUEST_TAKE_PHOTO) {
+                if(resultCode== Activity.RESULT_OK) {
+                    try{
+                        Log.i("REQUEST_TAKE_PHOTO","OK");
+                        galleryAddPic();
+
+                        iv_view.setImageURI(imageUri);
+                    } catch (Exception e) {
+                        Log.e("REQUEST_TAKE_PHOTO",e.toString());
+
+                    }
+                } else {
+                    Toast.makeText(this,"취소",Toast.LENGTH_SHORT).show();
+                }
+
+        }
+    }
+
+    private void checkPermission() {
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED) {
+
+            if((ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))||
+                    (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA))) {
+                new AlertDialog.Builder(this)
+                        .setTitle("알림")
+                        .setMessage("저장소 권한이 거부되었습니다. 사용을 원하시면 해당 권한을 직접 허용해 주세요.")
+                        .setNeutralButton("설정",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface,int i) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.setData(Uri.parse("package:" + getPackageName()));
+                                startActivity(intent);
+                            }
+                        })
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+
+                                    finish();
+                                }
+
+                        })
+                        .setCancelable(false).create().show();
+            } else {
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA},MY_PERMISSION_CAMERA);
+            }
+        }
+    }
 }
 
