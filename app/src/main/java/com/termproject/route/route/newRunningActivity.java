@@ -37,6 +37,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -80,7 +81,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     int time = 0, curTime = 0, befTime = 0;
     double bef_lat = 0, bef_long = 0, cur_lat = 0, cur_long = 0, sum_dist = 0, velocity = 0, avg_speed = 0;
     LatLng ex_point, cur_point, first_point;
-    boolean isRunning = true, isStarted = false;
+    static boolean isRunning = true, isStarted = false;
     Handler gpsHandler, timeHandler;
     TimeRunnable runnable;
     GPSTracker gps;
@@ -88,6 +89,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     Button tab1, tab2, tab3, startBtn, stopBtn;
     TextView timeText, velocityText, distanceText;
     Marker curMarker;
+    static RelativeLayout statusScreen;
+    Thread timeThread = new Thread();
+    Thread GPSThread = new Thread();
+    static int speedValue2=100;
+    static boolean onoffBoolean=false;
+    static int minmaxValue=0;
 
     //
 
@@ -194,6 +201,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         cameraButton = (FloatingActionButton) findViewById(R.id.cameraButton);
         on = (FloatingActionButton) findViewById(R.id.on);
 
+        statusScreen = findViewById(R.id.status);
+
+        speedValue2=SettingActivity.speedValue;
 
         dist = (TextView) findViewById(R.id.distanceText);
         //time2 = (TextView) findViewById(R.id.timetext);
@@ -206,6 +216,22 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         stop = (Button) findViewById(R.id.stop);
 
 
+        //
+
+        TextView minmax =findViewById(R.id.minMax);
+        TextView limitSpeed2 = findViewById(R.id.limitSpeed);
+        TextView onoff = findViewById(R.id.onoff);
+
+
+
+        limitSpeed2.setText(speedValue2+"");
+        onoff.setText(onoffBoolean+"");
+        minmax.setText(minmaxValue+"");
+
+
+        LocationService.limitSpeed=speedValue2; // speed Value for Limit
+        LocationService.limitCode=minmaxValue; // 1 for Max 2 for Min
+        //
 
         timeHandler = new Handler();
         gpsHandler = new Handler();
@@ -361,9 +387,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
                     try {
 
-                        Thread timeThread = new Thread(new Runnable() {
+                        timeThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
+                                time=0;
                                 while (isStarted) {
                                     try {
                                         Thread.sleep(1000);
@@ -378,7 +405,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         });
 
 
-                        Thread GPSThread = new Thread(new Runnable() {
+                        GPSThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
 
@@ -507,7 +534,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
                 isStarted = false;
 
-
                 if (pause.getText().toString().equalsIgnoreCase("pause")) {
                     pause.setText("Resume");
                     p = 1;
@@ -521,6 +547,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         return;
                     }
                     pause.setText("Pause");
+                    timeThread.run();
                     p = 0;
 
                 }
@@ -541,9 +568,16 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 pause.setText("Pause");
                 pause.setVisibility(View.GONE);
                 stop.setVisibility(View.GONE);
-                time=0;
                 LocationService.distance=0;
+
                 p = 0;
+
+
+                stopService(new Intent(getApplicationContext(), LocationService.class));
+                isStarted=false;
+                time=0;
+                timeText.setText("  00:00'00'' ");
+
             }
         });
 

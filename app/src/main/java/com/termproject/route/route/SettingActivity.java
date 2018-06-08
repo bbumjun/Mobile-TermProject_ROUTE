@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +39,11 @@ ToggleButton toggleLimit;
 RadioGroup minmax;
 RadioButton max,min;
 Uri photoUrl;
-boolean emailVerified;
+    static int speedValue=20;
+    static boolean toggleon=false;
+
+com.shawnlin.numberpicker.NumberPicker picker1;
+    boolean emailVerified;
 String uid;
     private static final int RC_SIGN_IN =123;
 
@@ -61,13 +66,17 @@ String uid;
         toggleLimit =findViewById(R.id.toggleLimit);
 
 
+        picker1 = findViewById(R.id.number_picker);
 
         minmax=findViewById(R.id.minmax);
         min=findViewById(R.id.min);
         max=findViewById(R.id.max);
 
 
+        toggleLimit.setChecked(newRunningActivity.onoffBoolean);
 
+
+        picker1.setValue(newRunningActivity.speedValue2);
 
 
 
@@ -125,6 +134,9 @@ String uid;
         runningBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), newRunningActivity.class);
+                startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 finish();
             }
@@ -149,10 +161,11 @@ String uid;
             @Override
             public void onClick(View v) {
                 if (toggleLimit.isChecked()){
-
-                    com.shawnlin.numberpicker.NumberPicker picker1 = findViewById(R.id.number_picker);
-                    int speedValue=picker1.getValue();
-
+                    toggleon=true;
+                    speedValue=picker1.getValue();
+                    LocationService.limitSpeed=speedValue;
+                    newRunningActivity.speedValue2=speedValue;
+                    newRunningActivity.onoffBoolean=true;
                     String minmaxText="";
                     speedlimit.setText(speedValue+"km/h");
 
@@ -161,17 +174,26 @@ String uid;
 
                     if (max.getId()==radioId){
                         minmaxText="Max";
-                    }
 
+                        newRunningActivity.minmaxValue=1;
+                        LocationService.limitCode=1;
+                    }
                     if (min.getId()==radioId){
                         minmaxText="Min";
+                        LocationService.limitCode=2;
+                        newRunningActivity.minmaxValue=2;
                     }
 
                     speedlimit.setText(minmaxText+" "+speedValue+"km/h");
 
 
                 } else {
-                    speedlimit.setText("Speed Safety Function OFF");
+                    speedlimit.setText("OFF");
+                    LocationService.limitSpeed=100;
+                    LocationService.limitCode=0;
+                    newRunningActivity.minmaxValue=0;
+                    toggleon=false;
+                    newRunningActivity.onoffBoolean=false;
                 }
 
             }
