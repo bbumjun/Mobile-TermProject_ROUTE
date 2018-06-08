@@ -82,4 +82,6 @@ dependencies {
 
 dependencies {
     implementation 'com.google.firebase:firebase-database:11.8.0'
+    implementation 'net.danlew:android.joda:2.9.0'
+    implementation 'me.grantland:autofittextview:0.2.+'
 }
