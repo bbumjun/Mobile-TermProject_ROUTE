@@ -91,7 +91,7 @@ public class Debug extends AppCompatActivity implements Parcelable{
         audioSource=1;
 
         if(temp) {
-         //   tog(findViewById(R.id.soundButton));
+           // tog(findViewById(R.id.soundButton));
         }
     }
 

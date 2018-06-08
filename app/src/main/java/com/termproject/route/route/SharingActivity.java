@@ -3,6 +3,7 @@ package com.termproject.route.route;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,18 +67,19 @@ import static android.net.Uri.parse;
 public class SharingActivity extends AppCompatActivity {
 float x,u;
 int GALLERY_CODE=10;
+
 final int PICTURE_REQUEST_CODE = 100;
     private Firebase postRef;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private String selectedImagePath;
     private DatabaseReference databaseReference;
 
-    Button runningBtn,settingBtn;
+    ImageButton runningBtn,settingBtn;
+    Button addButton;
 
     private static final String TAG = SharingActivity.class.getName();
 
     // Create a storage reference from our app
-    Button addButton;
     private LinearLayoutManager mLinearLayoutManager;
     //FirebaseStorage storage=FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
 
@@ -114,14 +117,14 @@ final int PICTURE_REQUEST_CODE = 100;
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
         mLinearLayoutManager.setStackFromEnd(true);
-
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         myAdapter= new SharingActivity.MyAdapter();
         rv.setLayoutManager(mLinearLayoutManager);
         rv.setAdapter(myAdapter);
 
         //mPost = new thePost();
-        runningBtn=(Button)findViewById(R.id.runText);
-        settingBtn=(Button)findViewById(R.id.setText);
+        runningBtn=(ImageButton)findViewById(R.id.runText);
+        settingBtn=(ImageButton)findViewById(R.id.setText);
         addButton =(Button)findViewById(R.id.addBtn);
 
         mapRef = new Firebase(FIREBASE_POST_URL).orderByChild("writeTime");
@@ -243,6 +246,7 @@ final int PICTURE_REQUEST_CODE = 100;
         LayoutInflater inflater;
         List<String> imageUrls;
 
+
         public mAdapter(LayoutInflater inflater, List arrayList){
             this.inflater=inflater;
             this.imageUrls=arrayList;
@@ -256,7 +260,7 @@ final int PICTURE_REQUEST_CODE = 100;
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             View view = inflater.inflate(R.layout.row, null);
             ImageView imageView = view.findViewById(R.id.mapImage);
-            Glide.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).centerCrop().into(imageView);
+            Glide.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).into(imageView);
             container.addView(view);
             return view;
         }
@@ -272,6 +276,7 @@ final int PICTURE_REQUEST_CODE = 100;
     }
     class MyAdapter extends RecyclerView.Adapter<SharingActivity.MyViewHolder> {
 
+
         @Override
         public SharingActivity.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = getLayoutInflater().inflate(R.layout.sharing_card_view, null);
@@ -282,14 +287,20 @@ final int PICTURE_REQUEST_CODE = 100;
         @Override
         public void onBindViewHolder(final SharingActivity.MyViewHolder holder,final int position){
             final thePost post = mPost.get(position);
-            final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final mAdapter pager = new mAdapter(inflater,post.getImageUrl());
+            Log.d("TAGGGGG",pager.inflater.toString());
+            pager.inflater.inflate(R.layout.row,null);
+            Log.d("TAGGGGG",pager.inflater.toString());
+            Log.d("TAGGG",pager.imageUrls.get(0));
+            Log.d("TAGGG",pager.imageUrls.get(1));
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
-            holder.time.setText(post.getTime());
+//            holder.time.setText("1");
             pager.notifyDataSetChanged();
             holder.viewPager.setAdapter(pager);
             pager.notifyDataSetChanged();
-            holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+         /*   holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -304,7 +315,7 @@ final int PICTURE_REQUEST_CODE = 100;
                 public void onPageScrollStateChanged(int state) {
 
                 }
-            });
+            });*/
         }
         @Override
         public int getItemCount(){

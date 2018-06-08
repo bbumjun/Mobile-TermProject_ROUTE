@@ -52,6 +52,13 @@
         <activity android:name=".SharingActivity" />
         <activity android:name=".WriteActivity" />
 
+
+        <activity android:name=".WebActivity"/>
+        <activity android:name="com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity android:name="com.yongbeam.y_photopicker.util.photopicker.PhotoPagerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <service
             android:name=".LoopbackService"
             android:exported="false" />
@@ -61,7 +68,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".MapActivity"></activity>
     </application>
 
 </manifest>
