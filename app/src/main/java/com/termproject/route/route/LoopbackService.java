@@ -1,5 +1,6 @@
 package com.termproject.route.route;
 
+import android.Manifest;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.Service;
@@ -8,6 +9,7 @@ import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
+import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -26,26 +28,47 @@ import java.nio.ByteBuffer;
  * helper methods.
  */
 public class LoopbackService extends Service {
+
+    int audioSource = MediaRecorder.AudioSource.MIC;
+    int inputHz = 48000;
+    int outputHz = 48000;
+    int audioEncoding = AudioFormat.ENCODING_PCM_FLOAT;
+    int bufferSize = AudioRecord.getMinBufferSize(inputHz, AudioFormat.CHANNEL_IN_MONO, audioEncoding);
+    int numFrames = 500;
+    int rblock = AudioRecord.READ_NON_BLOCKING;
+    int wblock = AudioTrack.WRITE_NON_BLOCKING;
+
+
+    boolean useArray = false;
+
+
+    // Requesting permission to RECORD_AUDIO
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private boolean permissionToRecordAccepted = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+
+
+    private boolean playBack;
+
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     private AudioRecord recorder;
     private AudioTrack player;
 
-    // Handler that receives messages from the thread
+    boolean temp = playBack = false;
+
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
             super(looper);
         }
+
         @Override
         public void handleMessage(Message msg) {
-            /*
-            final RunningActivity d= (RunningActivity) msg.obj;
-
             recorder = new AudioRecord.Builder()
-                    .setAudioSource(d.audioSource)
+                    .setAudioSource(audioSource)
                     .setAudioFormat(new AudioFormat.Builder()
-                            .setEncoding(d.audioEncoding)
-                            .setSampleRate(d.inputHz)
+                            .setEncoding(audioEncoding)
+                            .setSampleRate(inputHz)
                             .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
                             .build())
                     .build();
@@ -55,69 +78,45 @@ public class LoopbackService extends Service {
                             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                             .build())
                     .setAudioFormat(new AudioFormat.Builder()
-                            .setEncoding(d.audioEncoding)
-                            .setSampleRate(d.inputHz)
+                            .setEncoding(audioEncoding)
+                            .setSampleRate(inputHz)
                             .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                             .build())
                     .build();
-            player.setPlaybackRate(d.outputHz);
+            player.setPlaybackRate(outputHz);
 
             recorder.startRecording();
             player.play();
-            final int bufferSize=recorder.getBufferSizeInFrames();
+            final int bufferSize = recorder.getBufferSizeInFrames();
             final int sizef;
-            switch (d.audioEncoding) {
-                case AudioFormat.ENCODING_PCM_8BIT:
-                    sizef = 1;
-                    break;
-                case AudioFormat.ENCODING_PCM_16BIT:
-                    sizef = 2;
-                    break;
-                case AudioFormat.ENCODING_PCM_FLOAT:
-                    sizef = 4;
-                    break;
-                default: sizef=0;
-            }
-
-            recorder.setPositionNotificationPeriod(d.numFrames);
+            sizef = 4;
+            recorder.setPositionNotificationPeriod(numFrames);
             recorder.setRecordPositionUpdateListener(new AudioRecord.OnRecordPositionUpdateListener() {
-                byte[] datab = new byte[d.numFrames];
-                short[] datas = new short[d.numFrames];
-                float[] dataf = new float[d.numFrames];
+                float[] dataf = new float[numFrames];
                 ByteBuffer data = ByteBuffer.allocateDirect(bufferSize * sizef);
+
                 @Override
-                public void onPeriodicNotification(AudioRecord recorder){
-                    int read=0;
-                    if(d.useArray) {
-                        switch (d.audioEncoding) {
-                            case AudioFormat.ENCODING_PCM_8BIT:
-                                read = recorder.read(datab, 0, d.numFrames, d.rblock);
-                                if (read != AudioRecord.ERROR_INVALID_OPERATION)
-                                    player.write(datab, 0, read, d.wblock);
-                                break;
-                            case AudioFormat.ENCODING_PCM_16BIT:
-                                read = recorder.read(datas, 0, d.numFrames, d.rblock);
-                                if (read != AudioRecord.ERROR_INVALID_OPERATION)
-                                    player.write(datas, 0, read, d.wblock);
-                                break;
-                            case AudioFormat.ENCODING_PCM_FLOAT:
-                                read = recorder.read(dataf, 0, d.numFrames, d.rblock);
-                                if (read != AudioRecord.ERROR_INVALID_OPERATION)
-                                    player.write(dataf, 0, read, d.wblock);
-                                break;
-                        }
-                    }else {
-                        read = recorder.read(data, d.numFrames * sizef, d.rblock);
+                public void onPeriodicNotification(AudioRecord recorder) {
+                    int read = 0;
+                    if (useArray) {
+                        read = recorder.read(dataf, 0, numFrames, rblock);
                         if (read != AudioRecord.ERROR_INVALID_OPERATION)
-                            player.write(data, read, d.wblock);
+                            player.write(dataf, 0, read, wblock);
+
+                    } else {
+                        read = recorder.read(data, numFrames * sizef, rblock);
+                        if (read != AudioRecord.ERROR_INVALID_OPERATION)
+                            player.write(data, read, wblock);
                         data.clear();
                     }
                 }
-                public void onMarkerReached(AudioRecord recorder){}
+
+                public void onMarkerReached(AudioRecord recorder) {
+                }
             });
-            */
         }
     }
+
 
     @Nullable
     @Override
@@ -131,6 +130,8 @@ public class LoopbackService extends Service {
         // separate thread because the service normally runs in the process's
         // main thread, which we don't want to block.  We also make it
         // background priority so CPU-intensive work will not disrupt our UI.Intent notificationIntent = new Intent(this, ExampleActivity.class);
+
+
         startForeground(1, new Notification());
         HandlerThread thread = new HandlerThread("dur");
         thread.start();
@@ -144,19 +145,17 @@ public class LoopbackService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-        Message msg = mServiceHandler.obtainMessage();
-        msg.obj = intent.getExtras().getParcelable("info");
-        mServiceHandler.sendMessage(msg);
-
-        // If we get killed, after returning from here, restart
         return START_STICKY;
     }
 
+
     @Override
-    public void onDestroy(){
+
+    public void onDestroy() {
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
         recorder.release();
         player.release();
     }
+
 
 }

@@ -44,6 +44,7 @@
 
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
+        <activity android:name=".WebActivity"/>
 
 
         <service

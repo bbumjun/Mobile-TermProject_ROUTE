@@ -1,6 +1,7 @@
 package com.termproject.route.route;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -11,16 +12,23 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.MediaStore;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -31,6 +39,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,7 +53,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
+
+/*
+
+ D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389022, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
+ D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_UP, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389183, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
+
+
+ */
+
+import android.media.session.MediaSessionManager.OnActiveSessionsChangedListener;
+
+import static android.view.KeyEvent.ACTION_DOWN;
+import static android.view.KeyEvent.ACTION_UP;
+import static android.view.KeyEvent.KEYCODE_HEADSETHOOK;
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
@@ -66,6 +91,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
     //
 
+    private Uri imgUri, photoURI, albumURI;
+
+    private boolean playBack;
 
     LocationService myService;
     static boolean status;
@@ -151,10 +179,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
 
         timeText = (TextView) findViewById(R.id.timeText);
         calorieText = (TextView) findViewById(R.id.calorieText);
-        startBtn = (Button) findViewById(R.id.startButton);
+        startBtn = (Button) findViewById(R.id.dustButton);
         shareBtn = (ImageButton) findViewById(R.id.shareText);
         settingBtn = (ImageButton) findViewById(R.id.setText);
         //velocityText = (TextView) findViewById(R.id.velocityText);
@@ -189,13 +219,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
         startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //start
-
-            }
-        });
+                @Override
+                public void onClick(View view){
+                    Intent intent = new Intent(getApplicationContext(), WebActivity.class);
+                    startActivity(intent);
+                }
+            });
 
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,6 +235,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
+
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,6 +245,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -222,6 +253,89 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
 
         });
+
+
+
+
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//
+//                public void takePhoto(){
+//
+//                    // 촬영 후 이미지 가져옴
+//
+//                    String state = Environment.getExternalStorageState();
+//
+//
+//                    if(Environment.MEDIA_MOUNTED.equals(state)){
+//
+//                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//
+//                        if(intent.resolveActivity(getPackageManager())!=null){
+//
+//                            File photoFile = null;
+//
+//                            try{
+//
+//                                photoFile = createImageFile();
+//
+//                            }catch (IOException e){
+//
+//                                e.printStackTrace();
+//
+//                            }
+//
+//                            if(photoFile!=null){
+//
+//                                Uri providerURI = FileProvider.getUriForFile(this,getPackageName(),photoFile);
+//
+//                                imgUri = providerURI;
+//
+//                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, providerURI);
+//
+//                                startActivityForResult(intent, FROM_CAMERA);
+//
+//                            }
+//                        }
+//                    }else{
+//
+//                        Log.v("알림", "저장공간에 접근 불가능");
+//                        return;
+//
+//                    }
+//                }
+//          }
+
+            }
+        });
+
+
+
+
+        /*
+
+
+        on.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+                if(playBack == false){
+                    playBack=true;
+                }else playBack =false;
+
+                if (!playBack) {
+                    stopService(new Intent(this, LoopbackService.class);
+                    return;
+                }
+                else startService(new Intent(this, LoopbackService.class).putExtra(this,"hi"));
+
+            }
+
+        });
+
+
+     */
 
 
         //
