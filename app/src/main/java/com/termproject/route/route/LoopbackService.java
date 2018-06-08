@@ -30,9 +30,10 @@ import java.nio.ByteBuffer;
 public class LoopbackService extends Service {
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
-    private AudioRecord recorder;
-    private AudioTrack player;
-    static float gain =0.3f;
+    static public AudioRecord recorder=null;
+    static public AudioTrack player=null;
+    static float gain =1.0f;
+    static boolean isLoop=false;
 
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
@@ -61,19 +62,13 @@ public class LoopbackService extends Service {
                             .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                             .build())
                     .build();
+
             player.setPlaybackRate(d.outputHz);
-
-
-
-
-
-
-
             player.setVolume(gain);
-
 
             recorder.startRecording();
             player.play();
+            isLoop=true;
 
 
 
@@ -167,6 +162,7 @@ public class LoopbackService extends Service {
     @Override
     public void onDestroy(){
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
+        isLoop=false;
         recorder.release();
         player.release();
     }

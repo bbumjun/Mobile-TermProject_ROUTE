@@ -170,6 +170,15 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
     };
 
+    private LoopbackService lbs = new LoopbackService(){
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            stopService(new Intent(this,LoopbackService.class));
+        }
+    };
+
+
     void bindService() {
         if (status == true)
             return;
@@ -272,6 +281,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         LocationService.limitSpeed = speedValue2; // speed Value for Limit
         LocationService.limitCode = minmaxValue; // 1 for Max 2 for Min
         //
+
+
+
 
         timeHandler = new Handler();
         gpsHandler = new Handler();
@@ -757,6 +769,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         super.onDestroy();
         if (status == true)
             unbindService();
+        if(LoopbackService.isLoop){
+            unbindService(sc);
+        }
     }
 
 

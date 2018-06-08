@@ -1,6 +1,8 @@
 package com.termproject.route.route;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -39,9 +41,11 @@ ToggleButton toggleLimit;
 SeekBar aroundSeek;
 RadioGroup minmax;
 RadioButton max,min;
+
 Uri photoUrl;
     static int speedValue=20;
     static boolean toggleon=false;
+    boolean isloop=false;
 
 com.shawnlin.numberpicker.NumberPicker picker1;
     boolean emailVerified;
@@ -57,6 +61,8 @@ String uid;
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
 
+
+        isloop = LoopbackService.isLoop;
         logoutBtn = (Button)findViewById(R.id.logoutBtn);
         deleteIdBtn =(Button)findViewById(R.id.deleteIDBtn);
         userIcon = (ImageView) findViewById(R.id.userIcon) ;
@@ -219,7 +225,10 @@ String uid;
         volume.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                LoopbackService.gain=aroundSeek.getProgress();
+                     float temp =((float)(aroundSeek.getProgress())/100);
+                LoopbackService.gain=temp;
+                Toast.makeText(getApplicationContext(),"Around Volume Setting :" + temp*100 + "%",Toast.LENGTH_LONG).show();
+
             }
         });
 

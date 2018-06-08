@@ -28,7 +28,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:paddingTop="10dp"
-            android:text="Running with Our User Tracking Experience"
+            android:text="Running with Our User Tracking Experience "
             android:textColor="#023141"
             android:textStyle="italic|bold" />
 
