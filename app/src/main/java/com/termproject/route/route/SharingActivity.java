@@ -38,6 +38,7 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -67,7 +68,9 @@ int GALLERY_CODE=10;
 final int PICTURE_REQUEST_CODE = 100;
     private Firebase postRef;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
-private String selectedImagePath;
+    private String selectedImagePath;
+    private DatabaseReference databaseReference;
+
     Button runningBtn,settingBtn;
 
     private static final String TAG = SharingActivity.class.getName();
@@ -89,12 +92,13 @@ private String selectedImagePath;
     public final static int REQUEST_CODE = 1;
     public final static int REQUEST_WRITE=0;
     boolean isCompleteAll = false;
-    private FirebaseDatabase mDatabase;
+    //private FirebaseDatabase mDatabase;
 
-    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Post";
-    public static final String FIREBASE_STORAGE = "gs://routetermproject-f7baa.appspot.com";
-    FirebaseStorage storage = FirebaseStorage.getInstance(FIREBASE_STORAGE);
+    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
+    public static final String FIREBASE_STORAGE = "gs://routetermproject-f7baa.appspot.com/route";
+    FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference ref = storage.getReference();
+
 
     public SharingActivity(){
 
@@ -105,20 +109,23 @@ private String selectedImagePath;
         Firebase.setAndroidContext(this);
        // JodaTimeAndroid.init(this);
         setContentView(R.layout.activity_sharing);
-
+        databaseReference=FirebaseDatabase.getInstance().getReference();
         rv = (RecyclerView)findViewById(R.id.recView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
         mLinearLayoutManager.setStackFromEnd(true);
+
         myAdapter= new SharingActivity.MyAdapter();
         rv.setLayoutManager(mLinearLayoutManager);
         rv.setAdapter(myAdapter);
+
         //mPost = new thePost();
         runningBtn=(Button)findViewById(R.id.runText);
         settingBtn=(Button)findViewById(R.id.setText);
         addButton =(Button)findViewById(R.id.addBtn);
 
         mapRef = new Firebase(FIREBASE_POST_URL).orderByChild("writeTime");
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,7 +152,7 @@ private String selectedImagePath;
         mapRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("TAGG","?!?!?!?!");
+
                 thePost value = dataSnapshot.getValue(thePost.class);
                 String key = dataSnapshot.getKey();
                 if(s==null){
@@ -159,12 +166,13 @@ private String selectedImagePath;
                         mKeys.add(key);
                     }
                 }
-//                myAdapter.notifyDataSetChanged();
+
+
+                myAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
                 String key = dataSnapshot.getKey();
                 thePost value = dataSnapshot.getValue(thePost.class);
                 int index = mKeys.indexOf(key);
@@ -213,11 +221,7 @@ private String selectedImagePath;
                 firebaseError.toException().printStackTrace();
             }
         });
-
-
     }
-
-
     class MyViewHolder extends RecyclerView.ViewHolder{
         TextView userId;
         TextView time;
