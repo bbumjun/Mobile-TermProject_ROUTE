@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.termproject.route.route"
-        minSdkVersion 25
+        minSdkVersion 23
         targetSdkVersion 27
 
         versionCode 1
@@ -17,9 +17,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildscript {
+        repositories {
+            jcenter()
+        }
+    }
 }
-//apply plugin: 'com.google.gms.google-services'
+
 dependencies {
+    implementation 'com.firebase:firebase-client-android:2.5.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
@@ -39,8 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:11.8.0'
     implementation 'com.google.firebase:firebase-storage:11.8.0'
     implementation 'com.firebaseui:firebase-ui-storage:0.6.0'
-    implementation 'com.firebase:firebase-client-android:2.5.0'
-    'com.google.firebase:firebase-database:11.8.0'
+    implementation 'com.google.firebase:firebase-database:11.8.0'
 }
 dependencies {
     // ...

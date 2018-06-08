@@ -21,6 +21,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Set;
 
 /**
@@ -35,6 +37,9 @@ public class GPSTracker extends Service implements LocationListener {
 
     // flag for network status
     boolean isNetworkEnabled = false;
+
+    LatLng latLng;
+
 
     // flag for GPS status
     boolean canGetLocation = false;
@@ -61,6 +66,8 @@ public class GPSTracker extends Service implements LocationListener {
     public void Update(){
         getLocation();
     }
+
+
     public Location getLocation() {
 
         if ( Build.VERSION.SDK_INT >= 23 &&
@@ -83,6 +90,9 @@ public class GPSTracker extends Service implements LocationListener {
                 // no network provider is enabled
             } else {
                 this.canGetLocation = true;
+
+
+
                 // First get location from Network Provider
                 if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(
@@ -99,11 +109,14 @@ public class GPSTracker extends Service implements LocationListener {
                         }
                     }
                 }
+
+
+
+
                 // if GPS Enabled get lat/long using GPS Services
                 if (isGPSEnabled) {
                     if (location == null) {
-                        locationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER,
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                         Log.d("GPS Enabled", "GPS Enabled");
@@ -117,6 +130,9 @@ public class GPSTracker extends Service implements LocationListener {
                         }
                     }
                 }
+
+
+
             }
 
         } catch (Exception e) {
@@ -139,6 +155,7 @@ public class GPSTracker extends Service implements LocationListener {
             locationManager.removeUpdates(GPSTracker.this);
         }
     }
+
 
     /**
      * Function to get latitude
@@ -207,15 +224,14 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         if(location != null){
-             latitude= location.getLatitude();
-             longitude = location.getLongitude();
+            latitude= location.getLatitude();
+            longitude = location.getLongitude();
 
-            Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
 
             if(mHandler!=null) {
                 mHandler.sendEmptyMessage(newRunningActivity.NEW_LOCATION);
             }
-         }
+        }
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,8 +46,12 @@ public class FirstActivity extends AppCompatActivity {
         fadeOutAnimation.setAnimationListener(animationFadeOutListener);
         imageView1.startAnimation(fadeInAnimation);
         textView1.startAnimation(fadeInAnimation);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.abs_layout);
+        getSupportActionBar().setDisplayOptions(android.support.v7.app.ActionBar.DISPLAY_USE_LOGO);
+
+
+        LottieAnimationView lottie = (LottieAnimationView) findViewById(R.id.lottie);
+        lottie.playAnimation();
+        lottie.loop(true);
 
     }
 

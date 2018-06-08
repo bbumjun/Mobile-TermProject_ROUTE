@@ -14,46 +14,40 @@
 
             <TableRow android:layout_width="match_parent">
 
-
-                <Button
-                    android:id="@+id/runText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/shape"
-                    android:padding="10dp"
-                    android:text="RUNNING"
-                    android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+            <ImageButton
+                android:id="@+id/runText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/shape"
+                android:cropToPadding="false"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/travel"
+                />
 
 
-                <Button
-                    android:id="@+id/shareText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/shapewithcolor"
-                    android:padding="10dp"
-                    android:text="SHARE"
-                    android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+            <ImageButton
+                android:id="@+id/shareText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/shapewithcolor"
+                android:cropToPadding="false"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/share" />
 
 
-                <Button
-                    android:id="@+id/setText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/shape"
-                    android:padding="10dp"
-                    android:text="SETTING"
-                    android:textAlignment="center"
-                    android:textSize="20dp"
-                    />
+            <ImageButton
+                android:id="@+id/setText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/shape"
+                android:src="@drawable/settings"
+                android:scaleType="centerInside"
+                android:padding="10dp"
+                />
 
             </TableRow>
         </TableLayout>
