@@ -8,18 +8,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.CAMERA"/>
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
-
-
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/routelogowhite"
@@ -29,7 +23,19 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDziXcewJ4a6tqnIw_QCaEr0hFbD5q3cmE" />
+            android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.termproject.route.route.newRunningActivity.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"
+                tools:replace="android:resource"/>
+        </provider>
 
         <activity android:name=".FirstActivity">
             <intent-filter>
@@ -39,12 +45,11 @@
         </activity>
         <activity android:name=".newRunningActivity"/>
         <activity android:name=".MainActivity"/>
-
         <activity android:name=".MyLocationActivity"/>
-
+        <activity android:name=".RunningActivity"/>
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
-        <activity android:name=".WebActivity"/>
+       <activity android:name=".WriteActivity"/>
 
 
         <service

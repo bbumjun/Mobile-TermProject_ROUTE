@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SharingActivity">
-
-
+   >
     <TableLayout
-        android:id="@+id/tableMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*">
+            android:id="@+id/tableMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
 
 
-        <TableRow android:layout_width="match_parent">
+            <TableRow android:layout_width="match_parent">
 
             <ImageButton
                 android:id="@+id/runText"
@@ -52,57 +49,41 @@
                 android:padding="10dp"
                 />
 
-        </TableRow>
-    </TableLayout>
+            </TableRow>
+        </TableLayout>
 
 
-    <RelativeLayout
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/boardText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="10dp"
+                android:text="Board"
+                android:textAlignment="center"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+            <Button
+                android:id="@+id/addBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="add Route" />
+        </RelativeLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/boardText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="10dp"
-            android:text="Board"
-            android:textAlignment="center"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-
-        <Button
-            android:id="@+id/addBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="add Route" />
-
-
-        <View
-            android:id="@+id/view1"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-
-            android:layout_below="@+id/boardText"
-            android:paddingTop="50dp"
-            android:background="#34000000"
-            android:layout_marginTop="10dp"/>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-
-            android:layout_below="@+id/view1"
-            android:background="#66000000"
-            android:paddingTop="50dp"
-            android:layout_marginTop="10dp"/>
-
-
-    </RelativeLayout>
-
-
+        android:layout_height="match_parent"
+        android:id="@+id/recView">
+    </android.support.v7.widget.RecyclerView>
 </LinearLayout>
-
+</LinearLayout>

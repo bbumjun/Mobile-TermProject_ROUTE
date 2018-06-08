@@ -3,6 +3,7 @@ package com.termproject.route.route;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
+
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,7 +38,10 @@ import com.firebase.client.Query;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.util.DateTime;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -49,11 +54,17 @@ import com.yongbeam.y_photopicker.util.photopicker.utils.YPhotoPickerIntent;
 
 //import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -65,9 +76,9 @@ public class WriteActivity extends AppCompatActivity {
     int GALLERY_CODE=10;
     final int PICTURE_REQUEST_CODE = 100;
     private Firebase postRef;
-
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
-    private String selectedImagePath;
+    private String path,Uid,EmailId,routeInfo,theTime;
+    private DatabaseReference mDatabase;
     Button runningBtn,settingBtn;
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
     private static final String TAG = WriteActivity.class.getName();
@@ -77,28 +88,29 @@ public class WriteActivity extends AppCompatActivity {
     EditText editText;
 
     private LinearLayoutManager mLinearLayoutManager;
-    //FirebaseStorage storage=FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
     StorageReference ref = storage.getReference();
- //   private List<thePost> mPost = new ArrayList<>();
+    private List<thePost> mPost = new ArrayList<>();
     private  List<String> mKeys = new ArrayList<>();
     private FirebaseUser currentUser;
-   // private MyAdapter myAdapter;
+    //private SharingActivity.MyAdapter myAdapter;
     private ClipData clipData;
     private Uri photoUri;
     private RecyclerView mRecyclerView;
     private Query mapRef;
     final int REQ_CODE_SELECT_IMAGE=100;
     private RecyclerView rv;
+    public static int position=0;
     public final static int REQUEST_CODE = 1;
     boolean isCompleteAll = false;
-    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.appspot.com/files/Post/";
+    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
-    //    setContentView(R.layout.activity_write);
-    //    addButton=(Button)findViewById(R.id.goToGallery);
-    //    editText=(EditText)findViewById(R.id.routeTheText);
+        setContentView(R.layout.activity_write);
+        addButton=(Button)findViewById(R.id.goToGallery);
+        editText=(EditText)findViewById(R.id.routeTheText);
+        postRef=new Firebase(FIREBASE_POST_URL);
         /*rv = (RecyclerView)findViewById(R.id.recView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
@@ -118,12 +130,13 @@ public class WriteActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 YPhotoPickerIntent intent = new YPhotoPickerIntent(WriteActivity.this);
-                intent.setMaxSelectCount(10);
+                intent.setMaxSelectCount(20);
                 intent.setShowCamera(true);
-                intent.setShowGif(false);
-                intent.setSelectCheckBox(true);
+                intent.setShowGif(true);
+                intent.setSelectCheckBox(false);
                 intent.setMaxGrideItemCount(3);
                 startActivityForResult(intent, REQUEST_CODE);
+                routeInfo=editText.getText().toString();
             }
 
         });
@@ -141,23 +154,108 @@ public class WriteActivity extends AppCompatActivity {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
             }
-
-            for(int i=0;i<photos.size();i++) {
-                Log.d("TAG",i + photos.toString());
-            }
-            /*
-
+          /* if (photos != null) {
+                selectedPhotos.addAll(photos);
+            }*/
+            currentUser= FirebaseAuth.getInstance().getCurrentUser();
 
             thePost posting = new thePost();
-            posting.setId("hello1");
-            posting.setRoute("bye1");
-            posting.setHello(photos);
-            new Firebase(SharingActivity.FIREBASE_POST_URL).push().setValue(posting);
-*/
+            if(currentUser!=null) {
+               String mail  = currentUser.getEmail();
+                int ids = mail.indexOf("@");
+                EmailId = mail.substring(0,ids);
+                boolean emailVerified = currentUser.isEmailVerified();
+
+                Uid = currentUser.getUid();
+                Log.d("abcd","hello"+" ");
+            }
+            else
+                Log.d("abcde","bye"+" ");
+            posting.setName(EmailId);
+            posting.setRoute(routeInfo);
+            String timeStamp = new SimpleDateFormat("yyyy MM dd HH mm ss").format(new Date());
+            theTime=timeStamp;
+            posting.setTime(theTime);
+            int k=photos.size();
+            ArrayList<Uri> imageUri = new ArrayList<Uri>();
+            for(int i=0;i<k;i++){
+                imageUri.add(i,Uri.fromFile(new File(photos.get(i))));
+            }
+            //posting.setImageUrl(imageUri);
+            upLoadImages(posting,k,Uid,EmailId,imageUri);
+
+
+
+           /* Uri file = Uri.fromFile(new File(selectedImagePath));
+            StorageReference uploadRef = storageRef.child("images/"+file.getLastPathSegment());
+            UploadTask uploadTask = uploadRef.putFile(file);
+
+            new Firebase(SharingActivity.FIREBASE_POST_URL).push().setValue(posting);*/
+
         }
     }
-    /*
-    class MyViewHolder extends RecyclerView.ViewHolder{
+    /*1.post 수정함
+                    2.이미지 업로드 하기*/
+
+    public void upLoadImages(thePost posting,int num, String uid, String id, ArrayList<Uri> list) {
+        StorageReference[] upLoadRef = new StorageReference[list.size()];
+        UploadTask[] uploadTask = new UploadTask[list.size()];
+        ArrayList<String> theAddress= new ArrayList<String>();
+        final List arrayList = posting.getImageUrl();
+
+        for (int i = 0; i < list.size(); ++i) {
+            upLoadRef[i] = ref.child("route/"+uid + "/" + id + "/" + (num + i) + ".jpeg");
+            uploadTask[i] = upLoadRef[i].putFile(list.get(i));
+
+            uploadTask[i].addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    isCompleteAll = false;
+                    Toast.makeText(getApplicationContext(),"Failure",Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    isCompleteAll = true;
+                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+                }
+            });
+        theAddress.add(i,upLoadRef[i].toString());
+        }
+        posting.setImageUrl(theAddress);
+      //postRef.child("Post").child(filterName).child("UID").child(uid).child("ImageList").setValue(arrayList);
+       postRef.child(uid).setValue(posting);
+    }
+  /*  String getDiffTimeText(long targetTime) {
+        DateTime curDateTime = new DateTime();
+        DateTime targetDateTime = new DateTime().withMillis(targetTime);
+
+        int diffDay = Days.daysBetween(curDateTime, targetDateTime).getDays();
+        int diffHours = Hours.hoursBetween(targetDateTime, curDateTime).getHours();
+        int diffMinutes = Minutes.minutesBetween(targetDateTime, curDateTime).getMinutes();
+        if (diffDay == 0) {
+            if(diffHours == 0 && diffMinutes == 0){
+                return "방금전";
+            }
+            if(diffHours > 0){
+                return "" + diffHours + "시간 전";
+            }
+            return "" + diffMinutes + "분 전";
+
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            return format.format(new Date(targetTime));
+        }
+    }
+*/
+
+  /*  private String setProfile() {
+        //path = FilterManger.getInstance().requestProfile();
+
+        String a=(currentUser.getDisplayName());
+        return a;
+    }*/
+    /*class MyViewHolder extends RecyclerView.ViewHolder{
         TextView userId;
         ImageView mapView;
         TextView routeView;
@@ -171,7 +269,6 @@ public class WriteActivity extends AppCompatActivity {
             viewPager=itemView.findViewById(R.id.vp);
         }
     }
-
     class mAdapter extends PagerAdapter{
         LayoutInflater inflater;
         ArrayList<String> imageUrls;
@@ -205,7 +302,7 @@ public class WriteActivity extends AppCompatActivity {
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);
         }
-    }
+    }*//*
     class MyAdapter extends RecyclerView.Adapter<WriteActivity.MyViewHolder> {
 
         @Override
@@ -285,8 +382,8 @@ public class WriteActivity extends AppCompatActivity {
         }
         return hello;
     }
-
-   /public void upLoadImages(int position, int num, String uid, String filterName, ArrayList<Uri> list) {
+*/
+   /* public void upLoadImages(int position, int num, String uid, String filterName, ArrayList<Uri> list) {
         StorageReference[] childRef = new StorageReference[list.size()];
         UploadTask[] uploadTask = new UploadTask[list.size()];
         thePost newPost = mPost.get(position);

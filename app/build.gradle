@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:11.8.0'
     implementation 'com.google.firebase:firebase-storage:11.8.0'
     implementation 'com.firebaseui:firebase-ui-storage:0.6.0'
+    implementation 'com.google.firebase:firebase-database:11.8.0'
 }
 dependencies {
     // ...
@@ -76,10 +77,17 @@ dependencies {
 dependencies {
     implementation 'com.airbnb.android:lottie:2.3.0'
     implementation 'com.shawnlin:number-picker:2.4.6'
+}
+dependencies {
     implementation 'com.github.yongbeam:Android-Y-PhotoPicker:0.0.5'
-
+}
+dependencies {
+    implementation 'com.google.api-client:google-api-client:1.22.0'
+    implementation 'com.google.http-client:google-http-client-gson:1.22.0'
 }
 
 dependencies {
     implementation 'com.google.firebase:firebase-database:11.8.0'
+    implementation 'net.danlew:android.joda:2.9.0'
+    implementation 'me.grantland:autofittextview:0.2.+'
 }
