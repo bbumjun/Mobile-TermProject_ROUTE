@@ -91,3 +91,7 @@ dependencies {
     implementation 'net.danlew:android.joda:2.9.0'
     implementation 'me.grantland:autofittextview:0.2.+'
 }
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:+'
+}
