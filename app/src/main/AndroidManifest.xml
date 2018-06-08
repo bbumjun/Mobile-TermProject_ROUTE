@@ -39,8 +39,7 @@
         <activity android:name=".newRunningActivity"/>
         <activity android:name=".MainActivity"/>
 
-        <activity android:name=".MyLocationActivity"/>
-
+        <activity android:name=".WriteActivity"/>
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
         <activity android:name="com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity"

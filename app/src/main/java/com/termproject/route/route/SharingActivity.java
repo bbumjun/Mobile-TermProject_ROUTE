@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -20,8 +21,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity;
+import com.yongbeam.y_photopicker.util.photopicker.utils.YPhotoPickerIntent;
+
 import java.io.File;
+import java.util.ArrayList;
+
 import android.widget.ImageButton;
+
+import static com.termproject.route.route.WriteActivity.REQUEST_CODE;
 
 public class SharingActivity extends AppCompatActivity {
 float x;
@@ -33,7 +41,7 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
 
     // Create a storage reference from our app
     StorageReference storageRef = storage.getReference();
-    StorageReference imageRef = storageRef.child("images");
+    StorageReference routeRef =storageRef.child("route/");
     Button addButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +64,22 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+/*
                 // select a picture in gallery
                 Intent intent =new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 startActivityForResult(intent,GALLERY_CODE);
+                */
+                YPhotoPickerIntent intent = new YPhotoPickerIntent(SharingActivity.this);
+                intent.setMaxSelectCount(5);
+                intent.setShowCamera(true);
+                intent.setShowGif(false);
+                intent.setSelectCheckBox(true);
+                intent.setMaxGrideItemCount(3);
+                startActivityForResult(intent, REQUEST_CODE);
             }
+
+
         });
 
 
@@ -98,7 +116,24 @@ FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7b
 
 
     }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        ArrayList<String> photos = null;
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            if (data != null) {
+                photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
+            }
+
+            for (int i = 0; i < photos.size(); i++) {
+                Log.d("TAG", i + photos.toString());
+                Uri file = Uri.fromFile(new File(photos.get(i)));
+                StorageReference uploadRef =routeRef.child("picture"+i);
+                UploadTask uploadTask = uploadRef.putFile(file);
+            }
+        }
+    }
+/*
 protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if(resultCode==RESULT_OK) {
@@ -126,6 +161,7 @@ protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
         }
     });
 }
+*/
     public String getPath(Uri uri) {
 
         if( uri == null ) {

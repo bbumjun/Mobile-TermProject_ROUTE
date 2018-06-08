@@ -38,8 +38,8 @@ public class LoopbackService extends Service {
         }
         @Override
         public void handleMessage(Message msg) {
-            /*
-            final RunningActivity d= (RunningActivity) msg.obj;
+
+            final newRunningActivity d= (newRunningActivity) msg.obj;
 
             recorder = new AudioRecord.Builder()
                     .setAudioSource(d.audioSource)
@@ -115,7 +115,7 @@ public class LoopbackService extends Service {
                 }
                 public void onMarkerReached(AudioRecord recorder){}
             });
-            */
+
         }
     }
 

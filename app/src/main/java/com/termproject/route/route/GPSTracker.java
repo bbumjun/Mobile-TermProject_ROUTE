@@ -227,7 +227,6 @@ public class GPSTracker extends Service implements LocationListener {
             latitude= location.getLatitude();
             longitude = location.getLongitude();
 
-            Toast.makeText(mContext, "onLocationChanged is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_SHORT).show();
 
             if(mHandler!=null) {
                 mHandler.sendEmptyMessage(newRunningActivity.NEW_LOCATION);

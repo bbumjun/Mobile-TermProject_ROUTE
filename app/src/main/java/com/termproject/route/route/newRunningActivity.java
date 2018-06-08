@@ -11,14 +11,21 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.Image;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -38,6 +45,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -60,7 +68,7 @@ import java.util.Date;
 import static com.yongbeam.y_photopicker.util.photopicker.utils.ImageCaptureManager.REQUEST_TAKE_PHOTO;
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, Parcelable {
 
     public static int NEW_LOCATION = 1;
     GoogleMap mMap;
@@ -68,16 +76,35 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     int time = 0, curTime = 0, befTime = 0;
     double bef_lat = 0, bef_long = 0, cur_lat = 0, cur_long = 0, sum_dist = 0, velocity = 0, avg_speed = 0;
     LatLng ex_point, cur_point, first_point;
-    boolean isRunning = true, isStarted = false;
+    boolean isStarted = false,hearBtnisOff=true;
     Handler gpsHandler, timeHandler;
     TimeRunnable runnable;
     GPSTracker gps;
     ImageButton shareBtn, settingBtn;
-    Button tab1, tab2, tab3, startBtn, stopBtn;
+    Button  startBtn;
     TextView timeText, velocityText, distanceText;
     Marker curMarker;
 
     private static final int MY_PERMISSION_CAMERA =1111;
+
+    private static final String LOG_TAG = "newRunningActivity";
+    //settings
+    int audioSource = MediaRecorder.AudioSource.MIC;
+    int inputHz;
+    int outputHz; /* in Hz*/
+    int audioEncoding;
+    int bufferSize;
+    int numFrames;
+    int rblock= AudioRecord.READ_NON_BLOCKING,wblock= AudioTrack.WRITE_NON_BLOCKING;
+    boolean useArray=false;
+    // Requesting permission to RECORD_AUDIO
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private boolean permissionToRecordAccepted = false;
+    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private boolean playBack;
+    AudioRecord recorder;
+    AudioTrack player;
+
 
     Uri imageUri;
     Uri photoURI, albumURI;
@@ -138,6 +165,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(this,LoopbackService.class));
+
         if (status == true)
             unbindService();
     }
@@ -156,19 +185,42 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         super.onPause();
         gps.stopUsingGPS();
     }
+    public void tog (View view) {
+        playBack = hearBtnisOff;
+        if (!playBack) {
+            stopService(new Intent(this, LoopbackService.class));
+            hearBtnisOff=false;
+            return;
+        }
+        startService(new Intent(this, LoopbackService.class).putExtra("info", this));
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+
+        if (!permissionToRecordAccepted) finish();
+
+    }
 
     float speed = 0;
     public Animation fab_open, fab_close;
     public Boolean isFabOpen = false;
-    public FloatingActionButton fab, on, cameraButton;
+    public FloatingActionButton fab, hearButton, cameraButton;
 
 
     int MY_LOCATION_REQUEST_CODE;
-
+    public newRunningActivity() {};
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
+        setSettings();
 
         timeText = (TextView) findViewById(R.id.timeText);
         calorieText = (TextView) findViewById(R.id.calorieText);
@@ -180,7 +232,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         cameraButton = (FloatingActionButton) findViewById(R.id.cameraButton);
-        on = (FloatingActionButton) findViewById(R.id.on);
+        hearButton= (FloatingActionButton) findViewById(R.id.on);
 
 
         dist = (TextView) findViewById(R.id.distanceText);
@@ -210,9 +262,11 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
                 captureCamera();
-
+                checkPermission();
             }
         });
+
+
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -461,8 +515,65 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
     }
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    public void setSettings(){
+        boolean temp=playBack;
+        playBack=false;
+        numFrames=500;
+        rblock=AudioRecord.READ_NON_BLOCKING;
+        wblock=AudioTrack.WRITE_NON_BLOCKING;
+
+        useArray=false;
+        inputHz=48000;
+        outputHz=48001;
+        audioEncoding= AudioFormat.ENCODING_PCM_FLOAT;
+        bufferSize =  AudioRecord.getMinBufferSize(inputHz, AudioFormat.CHANNEL_IN_MONO, audioEncoding);
+        audioSource=1;
+
+        if(temp) {
+            tog(findViewById(R.id.on));
+        }
+    }
 
 
+    protected newRunningActivity(Parcel in) {
+        audioSource = in.readInt();
+        inputHz = in.readInt();
+        outputHz = in.readInt();
+        audioEncoding = in.readInt();
+        bufferSize = in.readInt();
+        numFrames = in.readInt();
+        rblock = in.readInt();
+        useArray = in.readByte() != 0x00;
+        permissionToRecordAccepted = in.readByte() != 0x00;
+    }
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(audioSource);
+        dest.writeInt(inputHz);
+        dest.writeInt(outputHz);
+        dest.writeInt(audioEncoding);
+        dest.writeInt(bufferSize);
+        dest.writeInt(numFrames);
+        dest.writeInt(rblock);
+        dest.writeByte((byte) (useArray ? 0x01 : 0x00));
+        dest.writeByte((byte) (permissionToRecordAccepted ? 0x01 : 0x00));
+    }
+
+    @SuppressWarnings("unused")
+    public static final Creator<newRunningActivity> CREATOR = new Creator<newRunningActivity>() {
+        @Override
+        public newRunningActivity createFromParcel(Parcel in) {
+            return new newRunningActivity(in);
+        }
+
+        @Override
+        public newRunningActivity[] newArray(int size) {
+            return new newRunningActivity[size];
+        }
+    };
     class TimeRunnable implements Runnable {
         public void run() {
 
@@ -544,15 +655,16 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         if (isFabOpen) {
             cameraButton.startAnimation(fab_close);
-            on.startAnimation(fab_close);
+            hearButton.startAnimation(fab_close);
             cameraButton.setClickable(false);
-            on.setClickable(false);
+            hearButton.setClickable(false);
             isFabOpen = false;
         } else {
+
             cameraButton.startAnimation(fab_open);
-            on.startAnimation(fab_open);
+            hearButton.startAnimation(fab_open);
             cameraButton.setClickable(true);
-            on.setClickable(true);
+            hearButton.setClickable(true);
             isFabOpen = true;
         }
     }
@@ -632,10 +744,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public File createImageFile() throws  IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyy MM dd HH mm ss").format(new Date());
         String imageFileName = "JPEG_"+timeStamp+".jpg";
         File imageFile =null;
-        File storageDir =new File(Environment.getExternalStorageDirectory()+"/Route","");
+        File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures","Route");
 
         if(!storageDir.exists()) {
             Log.i("mCurrentPhotoPath1",storageDir.toString());
