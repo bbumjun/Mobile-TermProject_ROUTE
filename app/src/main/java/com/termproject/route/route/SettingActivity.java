@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -29,13 +30,13 @@ import java.util.List;
 
 public class SettingActivity extends AppCompatActivity {
 float x;
-Button logoutBtn;
-Button deleteIdBtn;
+Button logoutBtn, deleteIdBtn, volume;
 ImageButton runningBtn,shareBtn;
 ImageView userIcon, icon;
 TextView userId, userUid;
 TextView speedlimit;
 ToggleButton toggleLimit;
+SeekBar aroundSeek;
 RadioGroup minmax;
 RadioButton max,min;
 Uri photoUrl;
@@ -64,7 +65,7 @@ String uid;
         userUid=(TextView) findViewById(R.id.userUid) ;
         speedlimit= findViewById(R.id.speedlimit);
         toggleLimit =findViewById(R.id.toggleLimit);
-
+        volume = findViewById(R.id.volume);
 
         picker1 = findViewById(R.id.number_picker);
 
@@ -72,19 +73,17 @@ String uid;
         min=findViewById(R.id.min);
         max=findViewById(R.id.max);
 
+        aroundSeek = findViewById(R.id.aroundSeek);
 
         toggleLimit.setChecked(newRunningActivity.onoffBoolean);
 
 
         picker1.setValue(newRunningActivity.speedValue2);
 
-
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
         if (user != null) {
-
             //photoUrl = user.getPhotoUrl();
             String mail  = user.getEmail();
             int ids = mail.indexOf("@");
@@ -94,7 +93,6 @@ String uid;
 
 
         //photoUrl=user.getPhotoUrl();
-
         userId.setText(user.getDisplayName());
         String mail  = user.getEmail();
         int ids = mail.indexOf("@");
@@ -104,30 +102,9 @@ String uid;
 
         userIcon.setImageURI(photoUrl);
 
-
-
-
-
-
-
-
-
-/*
-        06-07 15:18:18.092 11902-11902/com.termproject.route.route D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45042678, downTime=45042678, deviceId=2, displayId=0, source=0x101 }
-        06-07 15:18:18.109 11902-11902/com.termproject.route.route D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_UP, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45042838, downTime=45042678, deviceId=2, displayId=0, source=0x101 }
-
-*/
-
-
+//        06-07 15:18:18.092 11902-11902/com.termproject.route.route D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45042678, downTime=45042678, deviceId=2, displayId=0, source=0x101 }
+//        06-07 15:18:18.109 11902-11902/com.termproject.route.route D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_UP, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45042838, downTime=45042678, deviceId=2, displayId=0, source=0x101 }
         //user.getPhotoUrl();
-
-
-
-
-
-
-
-
 
         runningBtn = findViewById(R.id.runText);
 
@@ -239,6 +216,12 @@ String uid;
 
 
 
+        volume.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                LoopbackService.gain=aroundSeek.getProgress();
+            }
+        });
 
 
     }

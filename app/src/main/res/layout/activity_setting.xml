@@ -308,7 +308,7 @@
                     android:paddingLeft="5dp"/>
 
                 <Button
-                    android:id="@+id/save"
+                    android:id="@+id/volume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -340,26 +340,26 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:max="200"
+                    android:max="100"
                     android:progress="50" />
 
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/seekBar2"
+                    android:layout_above="@+id/aroundSeek"
                     android:layout_alignParentStart="true"
                     android:padding="5dp"
                     android:text="Around Volume" />
 
                 <SeekBar
-                    android:id="@+id/seekBar2"
+                    android:id="@+id/aroundSeek"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentStart="true"
                     android:layout_marginBottom="29dp"
-                    android:max="200"
+                    android:max="100"
                     android:progress="50" />
             </RelativeLayout>
 

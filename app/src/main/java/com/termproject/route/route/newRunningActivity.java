@@ -11,8 +11,12 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.Image;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,10 +24,13 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -73,7 +80,45 @@ import static android.view.KeyEvent.ACTION_UP;
 import static android.view.KeyEvent.KEYCODE_HEADSETHOOK;
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, Parcelable {
+
+    private static final String LOG_TAG = "newRunningActivity";
+    //settings
+    int audioSource = MediaRecorder.AudioSource.MIC;
+    int inputHz;
+    int outputHz; /* in Hz*/
+    int audioEncoding;
+    int bufferSize;
+    int numFrames;
+    int rblock = AudioRecord.READ_NON_BLOCKING, wblock = AudioTrack.WRITE_NON_BLOCKING;
+    boolean useArray = false;
+    // Requesting permission to RECORD_AUDIO
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private boolean permissionToRecordAccepted = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+    static boolean playBack = false;
+    int on = 0;
+
+    public newRunningActivity() {
+    }
+
+    ;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+
+        if (!permissionToRecordAccepted) finish();
+
+    }
+
+
+    //for Sound
 
     public static int NEW_LOCATION = 1;
     GoogleMap mMap;
@@ -92,20 +137,19 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     static RelativeLayout statusScreen;
     Thread timeThread = new Thread();
     Thread GPSThread = new Thread();
-    static int speedValue2=100;
-    static boolean onoffBoolean=false;
-    static int minmaxValue=0;
+    static int speedValue2 = 100;
+    static boolean onoffBoolean = false;
+    static int minmaxValue = 0;
 
     //
 
     private Uri imgUri, photoURI, albumURI;
 
-    private boolean playBack;
 
     LocationService myService;
     static boolean status;
     LocationManager locationManager;
-    static TextView dist, time2, speed2 ,kmText, calorieText;
+    static TextView dist, time2, speed2, kmText, calorieText;
     Button start, pause, stop;
     static long startTime, endTime;
     static ProgressDialog locate;
@@ -156,12 +200,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (status == true)
-            unbindService();
-    }
+
 
     @Override
     public void onBackPressed() {
@@ -178,7 +217,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     float speed = 0;
     public Animation fab_open, fab_close;
     public Boolean isFabOpen = false;
-    public FloatingActionButton fab, on, cameraButton;
+    public FloatingActionButton fab, soundBtn, cameraButton;
 
 
     int MY_LOCATION_REQUEST_CODE;
@@ -188,6 +227,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_running);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
         timeText = (TextView) findViewById(R.id.timeText);
         calorieText = (TextView) findViewById(R.id.calorieText);
@@ -199,11 +239,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         cameraButton = (FloatingActionButton) findViewById(R.id.cameraButton);
-        on = (FloatingActionButton) findViewById(R.id.on);
+        soundBtn = findViewById(R.id.on);
+
 
         statusScreen = findViewById(R.id.status);
 
-        speedValue2=SettingActivity.speedValue;
+        speedValue2 = SettingActivity.speedValue;
 
         dist = (TextView) findViewById(R.id.distanceText);
         //time2 = (TextView) findViewById(R.id.timetext);
@@ -218,19 +259,18 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         //
 
-        TextView minmax =findViewById(R.id.minMax);
+        TextView minmax = findViewById(R.id.minMax);
         TextView limitSpeed2 = findViewById(R.id.limitSpeed);
         TextView onoff = findViewById(R.id.onoff);
 
 
+        limitSpeed2.setText(speedValue2 + "");
+        onoff.setText(onoffBoolean + "");
+        minmax.setText(minmaxValue + "");
 
-        limitSpeed2.setText(speedValue2+"");
-        onoff.setText(onoffBoolean+"");
-        minmax.setText(minmaxValue+"");
 
-
-        LocationService.limitSpeed=speedValue2; // speed Value for Limit
-        LocationService.limitCode=minmaxValue; // 1 for Max 2 for Min
+        LocationService.limitSpeed = speedValue2; // speed Value for Limit
+        LocationService.limitCode = minmaxValue; // 1 for Max 2 for Min
         //
 
         timeHandler = new Handler();
@@ -245,12 +285,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
         startBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view){
-                    Intent intent = new Intent(getApplicationContext(), WebActivity.class);
-                    startActivity(intent);
-                }
-            });
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), WebActivity.class);
+                startActivity(intent);
+            }
+        });
 
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,8 +319,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
 
         });
-
-
 
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -337,31 +375,25 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         });
 
 
-
-
-        /*
-
-
-        on.setOnClickListener(new View.OnClickListener(){
+        soundBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-
-                if(playBack == false){
-                    playBack=true;
-                }else playBack =false;
-
-                if (!playBack) {
-                    stopService(new Intent(this, LoopbackService.class);
-                    return;
+            public void onClick(View view) {
+                switch (on) {
+                    case 0:
+                        playBack = true;
+                        setSettings();
+                        Log.d("info1", "토글 온 ");
+                        on = 1;
+                        break;
+                    case 1:
+                        playBack = false;
+                        setSettings();
+                        Log.d("info1", "토글 오프 ");
+                        on = 0;
+                        break;
                 }
-                else startService(new Intent(this, LoopbackService.class).putExtra(this,"hi"));
-
             }
-
         });
-
-
-     */
 
 
         //
@@ -370,7 +402,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 if (!isStarted) {
                     MarkerOptions optFirst = new MarkerOptions();
@@ -390,7 +421,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         timeThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                time=0;
+                                time = 0;
                                 while (isStarted) {
                                     try {
                                         Thread.sleep(1000);
@@ -419,8 +450,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                 curTime = time;
                                                 gps.Update();
 
-
-                                                //speed=Location.getSpeed();
                                                 double cur_speed = 0.0;
                                                 double latitude = gps.getLatitude();
                                                 double longitude = gps.getLongitude();
@@ -432,22 +461,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     Log.d("Same Location", "time : " + time);
                                                     befTime = time;
                                                 } else {
-                                                    /*
-                                                    CalDistance calDistance = new CalDistance(bef_lat, bef_long, cur_lat, cur_long);
-                                                    double dist = calDistance.getDistance() / 100;
-                                                    dist = (int) (dist * 100) / 100.0;
-                                                    sum_dist += dist;
-                                                    sum_dist = (int) (sum_dist * 1000) / 10000.0;
-                                                    if ((curTime - befTime) != 0) {
-                                                        avg_speed = dist * 3.6 * (1 / Math.abs(curTime - befTime));
-                                                    }
-                                                    avg_speed = (int) (avg_speed * 1000) / 1000.0;
-                                                    if ((curTime - befTime) != 0) {
-                                                        cur_speed = dist / 0.36;
-                                                    }
-                                                    cur_speed = (int) (cur_speed * 10000) / 1000.0;
 
-                                                    */
                                                     if (curMarker != null) {
                                                         curMarker.remove();
                                                     }
@@ -472,19 +486,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     mMap.addMarker(optCurrent).showInfoWindow();
 
 
-                                                    //velocityText.setText(gps.location.getSpeed()+"");
-
                                                     Log.d("Speed", gps.location.getSpeed() + "");
-                                                    //velocityText.setText(cur_speed + "");
-                                                    //distanceText.setText(sum_dist + "");
-                                                    //calorieText.setText(cur_lat + " " + cur_long);
                                                     Log.d("bef time & cur time", befTime + " " + curTime);
 
                                                     mMap.moveCamera(CameraUpdateFactory.newLatLng(curLatLng));
                                                 }
                                             }
                                         });
-
 
                                     } catch (Exception e) {
                                     }
@@ -568,14 +576,14 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 pause.setText("Pause");
                 pause.setVisibility(View.GONE);
                 stop.setVisibility(View.GONE);
-                LocationService.distance=0;
+                LocationService.distance = 0;
 
                 p = 0;
 
 
                 stopService(new Intent(getApplicationContext(), LocationService.class));
-                isStarted=false;
-                time=0;
+                isStarted = false;
+                time = 0;
                 timeText.setText("  00:00'00'' ");
 
             }
@@ -667,15 +675,15 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         if (isFabOpen) {
             cameraButton.startAnimation(fab_close);
-            on.startAnimation(fab_close);
+            soundBtn.startAnimation(fab_close);
             cameraButton.setClickable(false);
-            on.setClickable(false);
+            soundBtn.setClickable(false);
             isFabOpen = false;
         } else {
             cameraButton.startAnimation(fab_open);
-            on.startAnimation(fab_open);
+            soundBtn.startAnimation(fab_open);
             cameraButton.setClickable(true);
-            on.setClickable(true);
+            soundBtn.setClickable(true);
             isFabOpen = true;
         }
     }
@@ -714,6 +722,87 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
     }
+
+
+    public void wow() {
+        if (!playBack) {
+            stopService(new Intent(this, LoopbackService.class));
+            return;
+        }
+        startService(new Intent(this, LoopbackService.class).putExtra("info", this));
+
+    }
+
+    public void setSettings() {
+        boolean temp = playBack;
+        Log.d("wow", "" + temp);
+
+        numFrames = 500;
+        rblock = AudioRecord.READ_NON_BLOCKING;
+        wblock = AudioTrack.WRITE_NON_BLOCKING;
+        useArray = false;
+        inputHz = 48000;
+        outputHz = 48001;
+        audioEncoding = AudioFormat.ENCODING_PCM_FLOAT;
+        bufferSize = AudioRecord.getMinBufferSize(inputHz, AudioFormat.CHANNEL_IN_MONO, audioEncoding);
+        audioSource = 1;
+
+
+        wow();
+        playBack = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (status == true)
+            unbindService();
+    }
+
+
+
+    protected newRunningActivity(Parcel in) {
+        audioSource = in.readInt();
+        inputHz = in.readInt();
+        outputHz = in.readInt();
+        audioEncoding = in.readInt();
+        bufferSize = in.readInt();
+        numFrames = in.readInt();
+        rblock = in.readInt();
+        useArray = in.readByte() != 0x00;
+        permissionToRecordAccepted = in.readByte() != 0x00;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(audioSource);
+        dest.writeInt(inputHz);
+        dest.writeInt(outputHz);
+        dest.writeInt(audioEncoding);
+        dest.writeInt(bufferSize);
+        dest.writeInt(numFrames);
+        dest.writeInt(rblock);
+        dest.writeByte((byte) (useArray ? 0x01 : 0x00));
+        dest.writeByte((byte) (permissionToRecordAccepted ? 0x01 : 0x00));
+    }
+
+    @SuppressWarnings("unused")
+    public static final Creator<newRunningActivity> CREATOR = new Creator<newRunningActivity>() {
+        @Override
+        public newRunningActivity createFromParcel(Parcel in) {
+            return new newRunningActivity(in);
+        }
+
+        @Override
+        public newRunningActivity[] newArray(int size) {
+            return new newRunningActivity[size];
+        }
+    };
 
 }
 
