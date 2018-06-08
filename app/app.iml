@@ -119,6 +119,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: com.android.support:support-v4-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.zxing:core:3.3.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: net.danlew:android.joda-2.9.0" level="project" />
     <orderEntry type="library" name="Gradle: com.facebook.android:facebook-messenger-4.27.0" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-media-compat-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.facebook.android:facebook-applinks-4.27.0" level="project" />
@@ -156,6 +157,7 @@
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.2.2@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-compat-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-database-license-11.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: me.grantland:autofittextview-0.2.1" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.lifecycle:viewmodel-1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-core-11.8.0" level="project" />
     <orderEntry type="library" name="Gradle: com.parse.bolts:bolts-applinks:1.4.0@jar" level="project" />
@@ -181,6 +183,7 @@
     <orderEntry type="library" name="Gradle: com.facebook.android:facebook-places-4.27.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-storage-common-11.8.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-database-connection-license-11.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: joda-time:joda-time:2.9:no-tzdb@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:recyclerview-v7-27.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.squareup:javawriter:2.1.1@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.retrofit2:retrofit:2.1.0@jar" level="project" />

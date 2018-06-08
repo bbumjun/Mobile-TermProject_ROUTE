@@ -3,6 +3,7 @@ package com.termproject.route.route;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
+
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
@@ -37,6 +38,7 @@ import com.firebase.client.Query;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.util.DateTime;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -52,11 +54,17 @@ import com.yongbeam.y_photopicker.util.photopicker.utils.YPhotoPickerIntent;
 
 //import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -69,8 +77,7 @@ public class WriteActivity extends AppCompatActivity {
     final int PICTURE_REQUEST_CODE = 100;
     private Firebase postRef;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
-    private String path,Uid,NickName,routeInfo;
-    private String selectedImagePath;
+    private String path,Uid,EmailId,routeInfo,theTime;
     private DatabaseReference mDatabase;
     Button runningBtn,settingBtn;
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
@@ -95,7 +102,7 @@ public class WriteActivity extends AppCompatActivity {
     public static int position=0;
     public final static int REQUEST_CODE = 1;
     boolean isCompleteAll = false;
-    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Post";
+    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,7 +163,7 @@ public class WriteActivity extends AppCompatActivity {
             if(currentUser!=null) {
                String mail  = currentUser.getEmail();
                 int ids = mail.indexOf("@");
-                NickName = mail.substring(0,ids);
+                EmailId = mail.substring(0,ids);
                 boolean emailVerified = currentUser.isEmailVerified();
 
                 Uid = currentUser.getUid();
@@ -164,16 +171,18 @@ public class WriteActivity extends AppCompatActivity {
             }
             else
                 Log.d("abcde","bye"+" ");
-            posting.setName(NickName);
+            posting.setName(EmailId);
             posting.setRoute(routeInfo);
-
+            String timeStamp = new SimpleDateFormat("yyyy MM dd HH mm ss").format(new Date());
+            theTime=timeStamp;
+            posting.setTime(theTime);
             int k=photos.size();
             ArrayList<Uri> imageUri = new ArrayList<Uri>();
             for(int i=0;i<k;i++){
                 imageUri.add(i,Uri.fromFile(new File(photos.get(i))));
             }
             //posting.setImageUrl(imageUri);
-            upLoadImages(posting,k,Uid,NickName,imageUri);
+            upLoadImages(posting,k,Uid,EmailId,imageUri);
 
 
 
@@ -188,18 +197,15 @@ public class WriteActivity extends AppCompatActivity {
     /*1.post 수정함
                     2.이미지 업로드 하기*/
 
-    public void upLoadImages(thePost a,int num, String uid, String filterName, ArrayList<Uri> list) {
-        StorageReference[] childRef = new StorageReference[list.size()];
+    public void upLoadImages(thePost posting,int num, String uid, String id, ArrayList<Uri> list) {
+        StorageReference[] upLoadRef = new StorageReference[list.size()];
         UploadTask[] uploadTask = new UploadTask[list.size()];
         ArrayList<String> theAddress= new ArrayList<String>();
-        final List arrayList = a.getImageUrl();
+        final List arrayList = posting.getImageUrl();
 
         for (int i = 0; i < list.size(); ++i) {
-            childRef[i] = ref.child(uid + "/" + filterName + "/" + (num + i) + ".jpeg");
-           // Log.e("Taggg",filterName);
-           // arrayList.add(childRef[i].getPath());
-            Log.e("TAGG", childRef[i].getPath().toString());
-            uploadTask[i] = childRef[i].putFile(list.get(i));
+            upLoadRef[i] = ref.child("route/"+uid + "/" + id + "/" + (num + i) + ".jpeg");
+            uploadTask[i] = upLoadRef[i].putFile(list.get(i));
 
             uploadTask[i].addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -214,13 +220,34 @@ public class WriteActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
                 }
             });
-        theAddress.add(i,childRef[i].toString());
+        theAddress.add(i,upLoadRef[i].toString());
         }
-        a.setImageUrl(theAddress);
+        posting.setImageUrl(theAddress);
       //postRef.child("Post").child(filterName).child("UID").child(uid).child("ImageList").setValue(arrayList);
-       postRef.child("Post").setValue(a);
+       postRef.child(uid).setValue(posting);
     }
+  /*  String getDiffTimeText(long targetTime) {
+        DateTime curDateTime = new DateTime();
+        DateTime targetDateTime = new DateTime().withMillis(targetTime);
 
+        int diffDay = Days.daysBetween(curDateTime, targetDateTime).getDays();
+        int diffHours = Hours.hoursBetween(targetDateTime, curDateTime).getHours();
+        int diffMinutes = Minutes.minutesBetween(targetDateTime, curDateTime).getMinutes();
+        if (diffDay == 0) {
+            if(diffHours == 0 && diffMinutes == 0){
+                return "방금전";
+            }
+            if(diffHours > 0){
+                return "" + diffHours + "시간 전";
+            }
+            return "" + diffMinutes + "분 전";
+
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            return format.format(new Date(targetTime));
+        }
+    }
+*/
 
   /*  private String setProfile() {
         //path = FilterManger.getInstance().requestProfile();
