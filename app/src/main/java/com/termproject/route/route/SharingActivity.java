@@ -37,6 +37,7 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -87,10 +88,13 @@ private String selectedImagePath;
     public final static int REQUEST_CODE = 1;
     public final static int REQUEST_WRITE=0;
     boolean isCompleteAll = false;
+    private FirebaseDatabase mDatabase;
+
     public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Post";
     public static final String FIREBASE_STORAGE = "gs://routetermproject-f7baa.appspot.com";
     FirebaseStorage storage = FirebaseStorage.getInstance(FIREBASE_STORAGE);
     StorageReference ref = storage.getReference();
+
     public SharingActivity(){
 
     }
@@ -140,7 +144,8 @@ private String selectedImagePath;
         mapRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                thePost value = dataSnapshot.getValue(thePost.class);
+                Log.d("TAGG","?!?!?!?!");
+                thePost value = dataSnapshot.child("Post").getValue(thePost.class);
                 String key = dataSnapshot.getKey();
                 if(s==null){
                     mPost.add(0,value);
@@ -245,7 +250,7 @@ private String selectedImagePath;
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             View view = inflater.inflate(R.layout.row, null);
             ImageView imageView = view.findViewById(R.id.mapImage);
-            Glide.with(SharingActivity.this).load(imageUrls.get(position)).centerCrop().into(imageView);
+            Glide.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).centerCrop().into(imageView);
             container.addView(view);
             return view;
         }
@@ -272,11 +277,11 @@ private String selectedImagePath;
         @Override
         public void onBindViewHolder(final SharingActivity.MyViewHolder holder,final int position){
             final thePost post = mPost.get(position);
-            final mAdapter pager = new mAdapter(getLayoutInflater(),post.getHello());
+            //final mAdapter pager = new mAdapter(getLayoutInflater(),post.getHello());
             //ArrayList<String> arrayList = gson.fromJson(post.getImageUrl(), new TypeToken<ArrayList<String>>(){}.getType());
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
-    pager.notifyDataSetChanged();
+   /* pager.notifyDataSetChanged();
             holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -292,7 +297,7 @@ private String selectedImagePath;
                 public void onPageScrollStateChanged(int state) {
 
                 }
-            });
+            });*/
         }
         @Override
         public int getItemCount(){

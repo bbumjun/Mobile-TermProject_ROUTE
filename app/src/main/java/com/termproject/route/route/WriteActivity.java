@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -70,6 +71,7 @@ public class WriteActivity extends AppCompatActivity {
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private String path,Uid,NickName,routeInfo;
     private String selectedImagePath;
+    private DatabaseReference mDatabase;
     Button runningBtn,settingBtn;
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
     private static final String TAG = WriteActivity.class.getName();
@@ -152,7 +154,9 @@ public class WriteActivity extends AppCompatActivity {
 
             thePost posting = new thePost();
             if(currentUser!=null) {
-                NickName = currentUser.getDisplayName();
+               String mail  = currentUser.getEmail();
+                int ids = mail.indexOf("@");
+                NickName = mail.substring(0,ids);
                 boolean emailVerified = currentUser.isEmailVerified();
 
                 Uid = currentUser.getUid();
@@ -162,12 +166,15 @@ public class WriteActivity extends AppCompatActivity {
                 Log.d("abcde","bye"+" ");
             posting.setName(NickName);
             posting.setRoute(routeInfo);
+
             int k=photos.size();
             ArrayList<Uri> imageUri = new ArrayList<Uri>();
             for(int i=0;i<k;i++){
                 imageUri.add(i,Uri.fromFile(new File(photos.get(i))));
-                upLoadImages(posting,k,Uid,NickName,imageUri);
             }
+            //posting.setImageUrl(imageUri);
+            upLoadImages(posting,k,Uid,NickName,imageUri);
+
 
 
            /* Uri file = Uri.fromFile(new File(selectedImagePath));
@@ -184,8 +191,8 @@ public class WriteActivity extends AppCompatActivity {
     public void upLoadImages(thePost a,int num, String uid, String filterName, ArrayList<Uri> list) {
         StorageReference[] childRef = new StorageReference[list.size()];
         UploadTask[] uploadTask = new UploadTask[list.size()];
-
-        final List arrayList = a.getHello();
+        ArrayList<String> theAddress= new ArrayList<String>();
+        final List arrayList = a.getImageUrl();
 
         for (int i = 0; i < list.size(); ++i) {
             childRef[i] = ref.child(uid + "/" + filterName + "/" + (num + i) + ".jpeg");
@@ -207,9 +214,11 @@ public class WriteActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
                 }
             });
+        theAddress.add(i,childRef[i].toString());
         }
-      postRef.child("f").setValue(arrayList);
-
+        a.setImageUrl(theAddress);
+      //postRef.child("Post").child(filterName).child("UID").child(uid).child("ImageList").setValue(arrayList);
+       postRef.child("Post").setValue(a);
     }
 
 
