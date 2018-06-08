@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.termproject.route.route">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -45,13 +46,17 @@
         </activity>
         <activity android:name=".newRunningActivity"/>
         <activity android:name=".MainActivity"/>
-        <activity android:name=".MyLocationActivity"/>
-        <activity android:name=".RunningActivity"/>
+
+
         <activity android:name=".SettingActivity" />
         <activity android:name=".SharingActivity"/>
        <activity android:name=".WriteActivity"/>
+        <activity android:name=".WebActivity"/>
+        <activity android:name="com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
-
+        <activity android:name="com.yongbeam.y_photopicker.util.photopicker.PhotoPagerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <service
             android:name=".LoopbackService"
             android:exported="false" />
