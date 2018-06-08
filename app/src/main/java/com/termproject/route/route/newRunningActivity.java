@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -14,20 +15,19 @@ import android.location.LocationManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
-import android.media.Image;
+
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
+
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -35,25 +35,21 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
+
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -61,14 +57,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.yongbeam.y_photopicker.util.photopicker.utils.ImageCaptureManager.REQUEST_TAKE_PHOTO;
 
+
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, Parcelable {
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     public static int NEW_LOCATION = 1;
     GoogleMap mMap;
@@ -87,31 +83,15 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
     private static final int MY_PERMISSION_CAMERA =1111;
 
-    private static final String LOG_TAG = "newRunningActivity";
-    //settings
-    int audioSource = MediaRecorder.AudioSource.MIC;
-    int inputHz;
-    int outputHz; /* in Hz*/
-    int audioEncoding;
-    int bufferSize;
-    int numFrames;
-    int rblock= AudioRecord.READ_NON_BLOCKING,wblock= AudioTrack.WRITE_NON_BLOCKING;
-    boolean useArray=false;
-    // Requesting permission to RECORD_AUDIO
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private boolean permissionToRecordAccepted = false;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
-    private boolean playBack;
-    AudioRecord recorder;
-    AudioTrack player;
+
 
 
     Uri imageUri;
-    Uri photoURI, albumURI;
+
     LocationService myService;
     static boolean status;
     LocationManager locationManager;
-    static TextView dist, time2, speed2 ,kmText, calorieText;
+    static TextView dist, speed2 ,kmText, calorieText;
     Button start, pause, stop;
     static long startTime, endTime;
     static ProgressDialog locate;
@@ -185,29 +165,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         super.onPause();
         gps.stopUsingGPS();
     }
-    public void tog (View view) {
-        playBack = hearBtnisOff;
-        if (!playBack) {
-            stopService(new Intent(this, LoopbackService.class));
-            hearBtnisOff=false;
-            return;
-        }
-        startService(new Intent(this, LoopbackService.class).putExtra("info", this));
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case REQUEST_RECORD_AUDIO_PERMISSION:
-                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                break;
-        }
-
-        if (!permissionToRecordAccepted) finish();
-
-    }
 
     float speed = 0;
     public Animation fab_open, fab_close;
@@ -220,11 +177,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
-        setSettings();
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
 
         timeText = (TextView) findViewById(R.id.timeText);
         calorieText = (TextView) findViewById(R.id.calorieText);
-        startBtn = (Button) findViewById(R.id.startButton);
+        startBtn = (Button) findViewById(R.id.dustButton);
         shareBtn = (ImageButton) findViewById(R.id.shareText);
         settingBtn = (ImageButton) findViewById(R.id.setText);
         //velocityText = (TextView) findViewById(R.id.velocityText);
@@ -267,15 +225,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         });
 
 
-
         startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //start
-
-            }
-        });
+                @Override
+                public void onClick(View view){
+                    Intent intent = new Intent(getApplicationContext(), WebActivity.class);
+                    startActivity(intent);
+                }
+            });
 
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -286,6 +242,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
+
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,6 +252,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -302,9 +260,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
 
         });
-
-
-        //
 
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -371,23 +326,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     Log.d("Same Location", "time : " + time);
                                                     befTime = time;
                                                 } else {
-                                                    /*
-                                                    CalDistance calDistance = new CalDistance(bef_lat, bef_long, cur_lat, cur_long);
-                                                    double dist = calDistance.getDistance() / 100;
-                                                    dist = (int) (dist * 100) / 100.0;
-                                                    sum_dist += dist;
-                                                    sum_dist = (int) (sum_dist * 1000) / 10000.0;
-                                                    if ((curTime - befTime) != 0) {
-                                                        avg_speed = dist * 3.6 * (1 / Math.abs(curTime - befTime));
-                                                    }
-                                                    avg_speed = (int) (avg_speed * 1000) / 1000.0;
-                                                    if ((curTime - befTime) != 0) {
-                                                        cur_speed = dist / 0.36;
-                                                    }
-                                                    cur_speed = (int) (cur_speed * 10000) / 1000.0;
-
-                                                    */
-                                                    if (curMarker != null) {
+                                                       if (curMarker != null) {
                                                         curMarker.remove();
                                                     }
 
@@ -441,8 +380,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 }
 
 
-                //The method below checks if Location is enabled on device or not. If not, then an alert dialog box appears with option
-                //to enable gps.
                 checkGps();
                 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -515,65 +452,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
     }
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-    public void setSettings(){
-        boolean temp=playBack;
-        playBack=false;
-        numFrames=500;
-        rblock=AudioRecord.READ_NON_BLOCKING;
-        wblock=AudioTrack.WRITE_NON_BLOCKING;
-
-        useArray=false;
-        inputHz=48000;
-        outputHz=48001;
-        audioEncoding= AudioFormat.ENCODING_PCM_FLOAT;
-        bufferSize =  AudioRecord.getMinBufferSize(inputHz, AudioFormat.CHANNEL_IN_MONO, audioEncoding);
-        audioSource=1;
-
-        if(temp) {
-            tog(findViewById(R.id.on));
-        }
-    }
 
 
-    protected newRunningActivity(Parcel in) {
-        audioSource = in.readInt();
-        inputHz = in.readInt();
-        outputHz = in.readInt();
-        audioEncoding = in.readInt();
-        bufferSize = in.readInt();
-        numFrames = in.readInt();
-        rblock = in.readInt();
-        useArray = in.readByte() != 0x00;
-        permissionToRecordAccepted = in.readByte() != 0x00;
-    }
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(audioSource);
-        dest.writeInt(inputHz);
-        dest.writeInt(outputHz);
-        dest.writeInt(audioEncoding);
-        dest.writeInt(bufferSize);
-        dest.writeInt(numFrames);
-        dest.writeInt(rblock);
-        dest.writeByte((byte) (useArray ? 0x01 : 0x00));
-        dest.writeByte((byte) (permissionToRecordAccepted ? 0x01 : 0x00));
-    }
-
-    @SuppressWarnings("unused")
-    public static final Creator<newRunningActivity> CREATOR = new Creator<newRunningActivity>() {
-        @Override
-        public newRunningActivity createFromParcel(Parcel in) {
-            return new newRunningActivity(in);
-        }
-
-        @Override
-        public newRunningActivity[] newArray(int size) {
-            return new newRunningActivity[size];
-        }
-    };
     class TimeRunnable implements Runnable {
         public void run() {
 
@@ -810,4 +690,3 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 }
-

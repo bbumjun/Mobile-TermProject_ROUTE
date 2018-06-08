@@ -46,8 +46,8 @@ public class FirstActivity extends AppCompatActivity {
         fadeOutAnimation.setAnimationListener(animationFadeOutListener);
         imageView1.startAnimation(fadeInAnimation);
         textView1.startAnimation(fadeInAnimation);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.abs_layout);
+        getSupportActionBar().setDisplayOptions(android.support.v7.app.ActionBar.DISPLAY_USE_LOGO);
+
 
         LottieAnimationView lottie = (LottieAnimationView) findViewById(R.id.lottie);
         lottie.playAnimation();

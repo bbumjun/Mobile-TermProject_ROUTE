@@ -134,12 +134,13 @@ public class LocationService extends Service implements
 
             if(distance>1) {
                 newRunningActivity.dist.setText(new DecimalFormat("#.###").format(distance));
-                newRunningActivity.kmText.setText("km");
+                newRunningActivity.kmText.setText("km ");
+                newRunningActivity.calorieText.setText(new DecimalFormat("###").format(distance*21));
             }
             else {
                 newRunningActivity.dist.setText(new DecimalFormat("###").format(distance*1000));
-                newRunningActivity.kmText.setText("m");
-                newRunningActivity.calorieText.setText(""+(int)distance*21);
+                newRunningActivity.kmText.setText("m ");
+                newRunningActivity.calorieText.setText(new DecimalFormat("###").format(distance*21));
             }
 
             lStart = lEnd;
