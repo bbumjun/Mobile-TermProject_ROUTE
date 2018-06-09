@@ -30,6 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
+
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -80,7 +83,7 @@ float x,u;
 int GALLERY_CODE=10;
 
 final int PICTURE_REQUEST_CODE = 100;
-    private Firebase postRef;
+    //private Firebase postRef;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private String selectedImagePath;
     private DatabaseReference databaseReference;
@@ -96,7 +99,7 @@ final int PICTURE_REQUEST_CODE = 100;
     private SharingActivity.MyAdapter myAdapter;
     private ClipData clipData;
     private Uri photoUri;
-    private Query mapRef;
+    private Query postRef;
     final int REQ_CODE_SELECT_IMAGE=100;
     private RecyclerView rv;
     public final static int REQUEST_CODE = 1;
@@ -239,7 +242,7 @@ final int PICTURE_REQUEST_CODE = 100;
         ImageView mapView;
         TextView routeView;
         ViewPager viewPager;
-        CardView cardView;
+
 
         public MyViewHolder(View itemView){
             super(itemView);
@@ -248,7 +251,7 @@ final int PICTURE_REQUEST_CODE = 100;
             mapView=itemView.findViewById(R.id.mapImage);
             routeView=itemView.findViewById(R.id.routeText);
             viewPager=itemView.findViewById(R.id.vp);
-            cardView=itemView.findViewById(R.id.cardView);
+
         }
     }
     class mAdapter extends PagerAdapter{
@@ -270,7 +273,7 @@ final int PICTURE_REQUEST_CODE = 100;
             Log.d("abcd","asdfghjkl");
             View view = inflater.inflate(R.layout.row, null);
             ImageView imageView = view.findViewById(R.id.mapImage);
-            GlideApp.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).into(imageView);
+            Glide.with(SharingActivity.this).load(imageUrls.get(position)).into(imageView);
             container.addView(view);
             return view;
         }
@@ -295,19 +298,19 @@ final int PICTURE_REQUEST_CODE = 100;
         public void onBindViewHolder(final SharingActivity.MyViewHolder holder,final int position){
             final thePost post = mPost.get(position);
             Log.d("abcd",post.getRoute());
-            //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
             final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
             Log.d("TAGGGGG",pager.imageUrls.get(1));
 
-           // Log.d("TAGGGGG",pager.inflater.toString());
-            //Log.d("TAGGG",pager.imageUrls.get(0));
-           // Log.d("TAGGG",pager.imageUrls.get(1));
+            Log.d("TAGGGGG",pager.inflater.toString());
+            Log.d("TAGGG",pager.imageUrls.get(0));
+            Log.d("TAGGG",pager.imageUrls.get(1));
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
 //            holder.time.setText("1");
             holder.viewPager.setAdapter(pager);
             pager.notifyDataSetChanged();
-         /*   holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -322,7 +325,7 @@ final int PICTURE_REQUEST_CODE = 100;
                 public void onPageScrollStateChanged(int state) {
 
                 }
-            });*/
+            });
         }
         @Override
         public int getItemCount(){
