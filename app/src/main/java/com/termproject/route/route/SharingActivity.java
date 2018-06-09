@@ -270,7 +270,7 @@ final int PICTURE_REQUEST_CODE = 100;
             Log.d("abcd","asdfghjkl");
             View view = inflater.inflate(R.layout.row, null);
             ImageView imageView = view.findViewById(R.id.mapImage);
-            GlideApp.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).into(imageView);
+            GlideApp.with(SharingActivity.this).load(imageUrls.get(position)).into(imageView);
             container.addView(view);
             return view;
         }

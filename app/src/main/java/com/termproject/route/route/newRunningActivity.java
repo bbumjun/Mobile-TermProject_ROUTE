@@ -232,6 +232,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
                 captureCamera();
 
+
             }
         });
 
