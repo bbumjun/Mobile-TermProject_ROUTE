@@ -44,10 +44,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
+
+
+
+
+
+
+
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import com.squareup.picasso.Picasso;
 import com.yongbeam.y_photopicker.util.photopicker.PhotoPagerActivity;
 import com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity;
 import com.yongbeam.y_photopicker.util.photopicker.utils.YPhotoPickerIntent;
@@ -65,6 +75,7 @@ import java.util.List;
 import static android.net.Uri.parse;
 
 public class SharingActivity extends AppCompatActivity {
+
 float x,u;
 int GALLERY_CODE=10;
 
@@ -73,16 +84,12 @@ final int PICTURE_REQUEST_CODE = 100;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private String selectedImagePath;
     private DatabaseReference databaseReference;
-
     ImageButton runningBtn,settingBtn;
     Button addButton;
-
     private static final String TAG = SharingActivity.class.getName();
 
     // Create a storage reference from our app
     private LinearLayoutManager mLinearLayoutManager;
-    //FirebaseStorage storage=FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
-
     private List<thePost> mPost = new ArrayList<>();
     private  List<String> mKeys = new ArrayList<>();
     private FirebaseUser currentUser;
@@ -127,7 +134,8 @@ final int PICTURE_REQUEST_CODE = 100;
         settingBtn=(ImageButton)findViewById(R.id.setText);
         addButton =(Button)findViewById(R.id.addBtn);
 
-        mapRef = new Firebase(FIREBASE_POST_URL).orderByChild("writeTime");
+        postRef=new Firebase(FIREBASE_POST_URL);
+        postRef.orderByChild("write");
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +160,7 @@ final int PICTURE_REQUEST_CODE = 100;
                 finish();
             }
         });
-        mapRef.addChildEventListener(new ChildEventListener() {
+        postRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
@@ -240,6 +248,7 @@ final int PICTURE_REQUEST_CODE = 100;
             mapView=itemView.findViewById(R.id.mapImage);
             routeView=itemView.findViewById(R.id.routeText);
             viewPager=itemView.findViewById(R.id.vp);
+            cardView=itemView.findViewById(R.id.cardView);
         }
     }
     class mAdapter extends PagerAdapter{
@@ -258,9 +267,10 @@ final int PICTURE_REQUEST_CODE = 100;
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            Log.d("abcd","asdfghjkl");
             View view = inflater.inflate(R.layout.row, null);
             ImageView imageView = view.findViewById(R.id.mapImage);
-            Glide.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).into(imageView);
+            GlideApp.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).into(imageView);
             container.addView(view);
             return view;
         }
@@ -275,29 +285,26 @@ final int PICTURE_REQUEST_CODE = 100;
         }
     }
     class MyAdapter extends RecyclerView.Adapter<SharingActivity.MyViewHolder> {
-
-
         @Override
         public SharingActivity.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = getLayoutInflater().inflate(R.layout.sharing_card_view, null);
             SharingActivity.MyViewHolder myViewHolder = new SharingActivity.MyViewHolder(itemView);
-
             return myViewHolder;
         }
         @Override
         public void onBindViewHolder(final SharingActivity.MyViewHolder holder,final int position){
             final thePost post = mPost.get(position);
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final mAdapter pager = new mAdapter(inflater,post.getImageUrl());
-            Log.d("TAGGGGG",pager.inflater.toString());
-            pager.inflater.inflate(R.layout.row,null);
-            Log.d("TAGGGGG",pager.inflater.toString());
-            Log.d("TAGGG",pager.imageUrls.get(0));
-            Log.d("TAGGG",pager.imageUrls.get(1));
+            Log.d("abcd",post.getRoute());
+            //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
+            Log.d("TAGGGGG",pager.imageUrls.get(1));
+
+           // Log.d("TAGGGGG",pager.inflater.toString());
+            //Log.d("TAGGG",pager.imageUrls.get(0));
+           // Log.d("TAGGG",pager.imageUrls.get(1));
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
 //            holder.time.setText("1");
-            pager.notifyDataSetChanged();
             holder.viewPager.setAdapter(pager);
             pager.notifyDataSetChanged();
          /*   holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
