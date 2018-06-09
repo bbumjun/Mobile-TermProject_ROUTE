@@ -25,6 +25,8 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
+        <meta-data android:name="com.termproject.route.route.for.flavor.GlideConfiguration"
+            android:value="GlideModule" />
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.termproject.route.route.newRunningActivity.FileProvider"
