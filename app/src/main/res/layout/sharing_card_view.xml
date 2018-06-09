@@ -17,8 +17,8 @@
         android:id="@+id/dateTime"
         android:layout_gravity="left"/>
   <android.support.v4.view.ViewPager
-      android:layout_width="150dp"
-      android:layout_height="150dp"
+      android:layout_width="200dp"
+      android:layout_height="200dp"
       android:id="@+id/vp">
 
   </android.support.v4.view.ViewPager>
