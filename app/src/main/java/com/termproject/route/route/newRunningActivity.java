@@ -448,7 +448,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 LocationService.distance=0;
                 p = 0;
             }
-        });
+        }
+
+        );
 
 
     }

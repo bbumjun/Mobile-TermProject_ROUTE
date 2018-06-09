@@ -57,6 +57,7 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import com.squareup.picasso.Picasso;
 import com.yongbeam.y_photopicker.util.photopicker.PhotoPagerActivity;
 import com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity;
 import com.yongbeam.y_photopicker.util.photopicker.utils.YPhotoPickerIntent;
@@ -269,7 +270,7 @@ final int PICTURE_REQUEST_CODE = 100;
             Log.d("abcd","asdfghjkl");
             View view = inflater.inflate(R.layout.row, null);
             ImageView imageView = view.findViewById(R.id.mapImage);
-            Glide.with(SharingActivity.this).load("https://cdn1.thr.com/sites/default/files/imagecache/landscape_928x523/2017/04/toy_story_and_inset_of_don_rickles.jpg").into(imageView);
+            GlideApp.with(SharingActivity.this).load(ref.child(imageUrls.get(position))).into(imageView);
             container.addView(view);
             return view;
         }
