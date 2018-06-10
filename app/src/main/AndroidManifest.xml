@@ -30,7 +30,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDn7F_Oe1yxePGbW-Swhcq9O_0heQ0HyLQ" />
+            android:value="AIzaSyBTFYk8IfCqlAfvhkKM9wy9Bz1BUEjJcAo" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

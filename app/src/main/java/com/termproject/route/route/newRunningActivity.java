@@ -529,8 +529,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
                         if (!isAlreadyRun) {
                             timeThread.start();
-                            GPSThread.start();
+
                         } else isAlreadyRun = true;
+
+                        GPSThread.start();
                     } catch (Exception e) {
 
                         Log.e("newRunningActivity", "Exception in processing message", e);
