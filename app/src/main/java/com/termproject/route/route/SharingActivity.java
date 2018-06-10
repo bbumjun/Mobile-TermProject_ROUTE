@@ -30,8 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
+
 
 
 import com.firebase.client.ChildEventListener;
@@ -47,8 +46,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
+
 
 
 
@@ -242,6 +240,7 @@ final int PICTURE_REQUEST_CODE = 100;
         ImageView mapView;
         TextView routeView;
         ViewPager viewPager;
+        CardView cardView;
 
 
 
@@ -252,6 +251,7 @@ final int PICTURE_REQUEST_CODE = 100;
             mapView=itemView.findViewById(R.id.mapImage);
             routeView=itemView.findViewById(R.id.routeText);
             viewPager=itemView.findViewById(R.id.vp);
+            cardView=itemView.findViewById(R.id.cardView);
 
 
         }
@@ -283,7 +283,6 @@ final int PICTURE_REQUEST_CODE = 100;
         public int getCount() {
             return imageUrls.size();
         }
-
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);

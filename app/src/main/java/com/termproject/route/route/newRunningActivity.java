@@ -450,7 +450,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
             @Override
             public void onClick(View v) {
-                CaptureScreen();
+                //CaptureScreen();
 
                 isStarted = false;
 
@@ -472,7 +472,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
     }
-    private void CaptureScreen() {
+   /* private void CaptureScreen() {
         if(mMap()!){
             SnapshotReadyCallback callback = new SnapshotReadyCallback() {
                 Bitmap bitmap=null;
@@ -507,7 +507,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             Toast.makeText(this, "Map is not Initialized yet", Toast.LENGTH_LONG).show();
             return ;
         }
-    }
+    }*/
 
 
 
