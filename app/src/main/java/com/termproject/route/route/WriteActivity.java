@@ -79,7 +79,6 @@ public class WriteActivity extends AppCompatActivity {
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private String path,Uid,EmailId,routeInfo,theTime;
     private DatabaseReference mDatabase;
-    Button runningBtn,settingBtn;
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
     private static final String TAG = WriteActivity.class.getName();
 
@@ -111,21 +110,6 @@ public class WriteActivity extends AppCompatActivity {
         addButton=(Button)findViewById(R.id.goToGallery);
         editText=(EditText)findViewById(R.id.routeTheText);
         postRef=new Firebase(FIREBASE_POST_URL);
-        /*rv = (RecyclerView)findViewById(R.id.recView);
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setReverseLayout(true);
-        mLinearLayoutManager.setStackFromEnd(true);
-        rv.setLayoutManager(mLinearLayoutManager);*/
-    /*    rv = (RecyclerView)findViewById(R.id.recView);
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setReverseLayout(true);
-        mLinearLayoutManager.setStackFromEnd(true);
-        rv.setLayoutManager(mLinearLayoutManager);
-        runningBtn=(Button)findViewById(R.id.runText);
-        settingBtn=(Button)findViewById(R.id.setText);
-        addButton =(Button)findViewById(R.id.addBtn);*/
-
-
 
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
@@ -154,9 +138,7 @@ public class WriteActivity extends AppCompatActivity {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
             }
-          /* if (photos != null) {
-                selectedPhotos.addAll(photos);
-            }*/
+
             currentUser= FirebaseAuth.getInstance().getCurrentUser();
 
             thePost posting = new thePost();
@@ -167,13 +149,11 @@ public class WriteActivity extends AppCompatActivity {
                 boolean emailVerified = currentUser.isEmailVerified();
 
                 Uid = currentUser.getUid()+theTime;
-                Log.d("abcd","hello"+" ");
             }
             else
-                Log.d("abcde","bye"+" ");
             posting.setName(EmailId);
             posting.setRoute(routeInfo);
-            String timeStamp = new SimpleDateFormat("yyyy MM dd HH mm ss").format(new Date());
+            String timeStamp = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
             theTime=timeStamp;
             posting.setTime(theTime);
             int k=photos.size();
@@ -182,8 +162,6 @@ public class WriteActivity extends AppCompatActivity {
                 imageUri.add(i,Uri.fromFile(new File(photos.get(i))));
             }
             upLoadImages(posting,k,Uid,EmailId,imageUri);
-
-
 
 
         }
@@ -221,7 +199,6 @@ public class WriteActivity extends AppCompatActivity {
         theAddress.add(i,uploadRefStr);
         }
         posting.setImageUrl(theAddress);
-      //postRef.child("Post").child(filterName).child("UID").child(uid).child("ImageList").setValue(arrayList);
        postRef.child(uid).setValue(posting);
     }
   /*  String getDiffTimeText(long targetTime) {
