@@ -91,7 +91,7 @@ public class SharingActivity extends AppCompatActivity {
         addBtn =(FloatingActionButton) findViewById(R.id.addBtn);
 
         postRef=new Firebase(FIREBASE_POST_URL);
-        postRef.orderByChild("write");
+        postRef.orderByChild("time");
 
          swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -269,7 +269,8 @@ public class SharingActivity extends AppCompatActivity {
             final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
-            holder.time.setText(post.getTime());
+            String timeText = post.getTime();
+            holder.time.setText(timeText.substring(0,4)+"년 "+timeText.substring(4,6)+"월 "+timeText.substring(6,8)+"일");
             holder.viewPager.setAdapter(pager);
             pager.notifyDataSetChanged();
             holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

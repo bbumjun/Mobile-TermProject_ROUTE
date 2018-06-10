@@ -47,7 +47,9 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:id="@+id/userId"
-                            android:textSize="16dp" />
+                            android:textSize="16dp"
+                            android:textStyle="bold"
+                            />
 
                         <TextView
                             android:gravity="right"
@@ -55,6 +57,7 @@
                             android:layout_height="match_parent"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:id="@+id/timeText"
+                            android:textStyle="bold"
                             android:textSize="13dp" />
                     </LinearLayout>
                 </RelativeLayout>

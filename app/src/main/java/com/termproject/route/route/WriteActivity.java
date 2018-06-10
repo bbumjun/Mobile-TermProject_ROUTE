@@ -140,7 +140,7 @@ public class WriteActivity extends AppCompatActivity  {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ArrayList<String> photos = null;
-        timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        timeStamp = new SimpleDateFormat("yyyyMMddmmss").format(new Date());
 
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             if (data != null) {
@@ -155,8 +155,7 @@ public class WriteActivity extends AppCompatActivity  {
                 int ids = mail.indexOf("@");
                 EmailId = mail.substring(0, ids);
                 boolean emailVerified = currentUser.isEmailVerified();
-
-                Uid = currentUser.getUid() + timeStamp;
+                Uid = currentUser.getUid()+timeStamp;
                 Log.d("Uid check", Uid);
             }
 
@@ -203,7 +202,6 @@ public class WriteActivity extends AppCompatActivity  {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     isCompleteAll = true;
                     Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-
                 }
             });
             theAddress.add(i, uploadRefStr);
