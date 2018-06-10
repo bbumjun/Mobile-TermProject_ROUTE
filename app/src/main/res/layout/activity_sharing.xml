@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
    >
+
+
     <TableLayout
             android:id="@+id/tableMenu"
             android:layout_width="match_parent"
@@ -67,13 +75,8 @@
                 android:textAlignment="center"
                 android:textSize="20dp"
                 android:textStyle="bold" />
-            <Button
-                android:id="@+id/addBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@color/colorPrimary"
-                android:text="add Route" />
+
+
 
         </RelativeLayout>
 
@@ -90,6 +93,21 @@
         android:layout_height="match_parent"
         android:id="@+id/recView">
     </android.support.v7.widget.RecyclerView>
+
     </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
 </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="15sp"
+        android:backgroundTint="#39c9d7"
+        android:src="@drawable/add"
+        app:backgroundTint="@color/colorPrimary" />
+
+
+
+</FrameLayout>

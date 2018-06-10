@@ -1,25 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
 
-    <EditText
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/goTogall"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/routeTheText"/>
-    <Button
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="당신의 운동을 기록해주세요"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_margin="5dp"
+            />
+
+
+        <EditText
+            android:id="@+id/routeTheText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/goToGallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go to" />
+
+
+    </LinearLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/goToGallery"
-
-        android:text="Go to"/>
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-</RelativeLayout>
+        android:layout_gravity="bottom|end"
+        android:layout_margin="15sp"
+        android:backgroundTint="#39c9d7"
+        android:src="@android:drawable/ic_menu_gallery"
+        app:backgroundTint="@color/colorPrimary" />
 
 
+</FrameLayout>
 
-</LinearLayout>
+
+
+
+
+
+
