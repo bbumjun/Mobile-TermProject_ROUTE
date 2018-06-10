@@ -68,6 +68,7 @@ import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -639,68 +640,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
             @Override
             public void onClick(View v) {
+                try{
+                    CaptureMapScreen();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.d("TTAAGG","Can't capture");
+                }
 
-             /*   public void captureScreen()
-                {
-                    GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback()
-                    {
-
-
-                        @Override
-                        public void onSnapshotReady(Bitmap snapshot) {
-                            try {
-                                getWindow().getDecorView().findViewById(android.R.id.content).setDrawingCacheEnabled(true);
-                                Bitmap backBitmap = getWindow().getDecorView().findViewById(android.R.id.content).getDrawingCache();
-                                Bitmap bmOverlay = Bitmap.createBitmap(
-                                        backBitmap.getWidth(), backBitmap.getHeight(),
-                                        backBitmap.getConfig());
-                                Canvas canvas = new Canvas(bmOverlay);
-                                canvas.drawBitmap(snapshot, new Matrix(), null);
-                                canvas.drawBitmap(backBitmap, 0, 0, null);
-
-                                OutputStream fout = null;
-
-                                String filePath = System.currentTimeMillis() + ".jpeg";
-
-                                try
-                                {
-                                    fout = openFileOutput(filePath,
-                                            MODE_WORLD_READABLE);
-
-                                    // Write the string to the file
-                                    bmOverlay.compress(Bitmap.CompressFormat.JPEG, 90, fout);
-                                    fout.flush();
-                                    fout.close();
-                                }
-                                catch (FileNotFoundException e)
-                                {
-                                    // TODO Auto-generated catch block
-                                    Log.d("ImageCapture", "FileNotFoundException");
-                                    Log.d("ImageCapture", e.getMessage());
-                                    filePath = "";
-                                }
-                                catch (IOException e)
-                                {
-                                    // TODO Auto-generated catch block
-                                    Log.d("ImageCapture", "IOException");
-                                    Log.d("ImageCapture", e.getMessage());
-                                    filePath = "";
-                                }
-
-                                openShareImageDialog(filePath);
-
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-
-                    ;
-
-
-                    mMap.snapshot(callback);
-                }*/
                 if (status == true)
                     unbindService();
                 start.setVisibility(View.VISIBLE);
@@ -724,11 +670,34 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
-
-        //
     }
+    public void CaptureMapScreen() {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+            Bitmap bitmap;
+            @Override
 
-
+            public void onSnapshotReady(Bitmap snapshot) {
+                bitmap = snapshot;
+                try {
+                    File imageFile =null;
+                    File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures/RouteImage","Route");
+                    storageDir.toString();
+                    if(!storageDir.exists()) {
+                        Log.i("mCurrentPhotoPath1",storageDir.toString());
+                        storageDir.mkdirs();
+                    }
+                    String path = storageDir.toString()+System.currentTimeMillis() + ".png";
+                    FileOutputStream out = new FileOutputStream(path);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        mMap.snapshot(callback);
+    }
     class TimeRunnable implements Runnable {
         public void run() {
 
@@ -937,7 +906,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         public newRunningActivity createFromParcel(Parcel in) {
             return new newRunningActivity(in);
         }
-
         @Override
         public newRunningActivity[] newArray(int size) {
             return new newRunningActivity[size];

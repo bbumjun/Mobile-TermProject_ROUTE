@@ -1,13 +1,9 @@
 package com.termproject.route.route;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -20,68 +16,34 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-
-
-
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-
-
-
-
-
-
-
-import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import com.squareup.picasso.Picasso;
-import com.yongbeam.y_photopicker.util.photopicker.PhotoPagerActivity;
-import com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity;
-import com.yongbeam.y_photopicker.util.photopicker.utils.YPhotoPickerIntent;
-
-//import net.danlew.android.joda.JodaTimeAndroid;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
-
 import static android.net.Uri.parse;
 
 public class SharingActivity extends AppCompatActivity {
 
-float x,u;
-int GALLERY_CODE=10;
+    int GALLERY_CODE=10;
 
-final int PICTURE_REQUEST_CODE = 100;
-    //private Firebase postRef;
+    final int PICTURE_REQUEST_CODE = 100;
+    private Firebase postRef;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private String selectedImagePath;
     private DatabaseReference databaseReference;
@@ -93,11 +55,10 @@ final int PICTURE_REQUEST_CODE = 100;
     private LinearLayoutManager mLinearLayoutManager;
     private List<thePost> mPost = new ArrayList<>();
     private  List<String> mKeys = new ArrayList<>();
-    private FirebaseUser currentUser;
     private SharingActivity.MyAdapter myAdapter;
     private ClipData clipData;
     private Uri photoUri;
-    private Query postRef;
+    private Query mapRef;
     final int REQ_CODE_SELECT_IMAGE=100;
     private RecyclerView rv;
     public final static int REQUEST_CODE = 1;
@@ -106,7 +67,6 @@ final int PICTURE_REQUEST_CODE = 100;
     //private FirebaseDatabase mDatabase;
 
     public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
-    public static final String FIREBASE_STORAGE = "gs://routetermproject-f7baa.appspot.com/route";
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference ref = storage.getReference();
 
@@ -118,7 +78,7 @@ final int PICTURE_REQUEST_CODE = 100;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
-       // JodaTimeAndroid.init(this);
+        // JodaTimeAndroid.init(this);
         setContentView(R.layout.activity_sharing);
         databaseReference=FirebaseDatabase.getInstance().getReference();
         rv = (RecyclerView)findViewById(R.id.recView);
@@ -137,6 +97,7 @@ final int PICTURE_REQUEST_CODE = 100;
 
         postRef=new Firebase(FIREBASE_POST_URL);
         postRef.orderByChild("write");
+
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,8 +203,6 @@ final int PICTURE_REQUEST_CODE = 100;
         ViewPager viewPager;
         CardView cardView;
 
-
-
         public MyViewHolder(View itemView){
             super(itemView);
             userId=itemView.findViewById(R.id.userId);
@@ -270,10 +229,13 @@ final int PICTURE_REQUEST_CODE = 100;
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            Log.d("abcd","asdfghjkl");
+
             View view = inflater.inflate(R.layout.row, null);
             ImageView imageView = view.findViewById(R.id.mapImage);
-            Glide.with(SharingActivity.this).load(imageUrls.get(position)).into(imageView);
+            StorageReference imgRef = ref.child("route/"+imageUrls.get(position));
+            Glide.with(SharingActivity.this).using(new FirebaseImageLoader()).load(imgRef).into(imageView);
+            Log.d("imgRef",imgRef.toString());
+            Log.d("Uri",imageUrls.get(position));
             container.addView(view);
             return view;
         }
@@ -281,6 +243,7 @@ final int PICTURE_REQUEST_CODE = 100;
         public int getCount() {
             return imageUrls.size();
         }
+
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);
@@ -296,14 +259,9 @@ final int PICTURE_REQUEST_CODE = 100;
         @Override
         public void onBindViewHolder(final SharingActivity.MyViewHolder holder,final int position){
             final thePost post = mPost.get(position);
-            Log.d("abcd",post.getRoute());
-
+            //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
-            Log.d("TAGGGGG",pager.imageUrls.get(1));
 
-            Log.d("TAGGGGG",pager.inflater.toString());
-            Log.d("TAGGG",pager.imageUrls.get(0));
-            Log.d("TAGGG",pager.imageUrls.get(1));
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
 //            holder.time.setText("1");
@@ -325,7 +283,6 @@ final int PICTURE_REQUEST_CODE = 100;
 
                 }
             });
-
         }
         @Override
         public int getItemCount(){
@@ -336,20 +293,20 @@ final int PICTURE_REQUEST_CODE = 100;
 
 // Register observers to listen for when the download is done or if it fails
 
-}
-      public String getImageNameToUri(Uri data)
-      {
-          String[] proj = { MediaStore.Images.Media.DATA };
-          Cursor cursor = managedQuery(data, proj, null, null, null);
-          int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+    }
+    public String getImageNameToUri(Uri data)
+    {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(data, proj, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 
-          cursor.moveToFirst();
+        cursor.moveToFirst();
 
-          String imgPath = cursor.getString(column_index);
-          String imgName = imgPath.substring(imgPath.lastIndexOf("/")+1);
+        String imgPath = cursor.getString(column_index);
+        String imgName = imgPath.substring(imgPath.lastIndexOf("/")+1);
 
-          return imgName;
-      }
+        return imgName;
+    }
     public String getPath(Uri uri) {
 
         if( uri == null ) {
@@ -368,38 +325,11 @@ final int PICTURE_REQUEST_CODE = 100;
         return uri.getPath();
     }
     public ArrayList<Uri> getUritoImageName(List<String> route){
-          ArrayList<Uri> hello= new ArrayList<>();
-          for(int i=0;i<route.size();i++) {
-              hello.add(parse(route.get(i)));
-          }
-          return hello;
-    }
-
-   /* public void upLoadImages(int position, int num, String uid, String filterName, ArrayList<Uri> list) {
-        StorageReference[] childRef = new StorageReference[list.size()];
-        UploadTask[] uploadTask = new UploadTask[list.size()];
-        thePost newPost = mPost.get(position);
-       // final List arrayList = newPost.getHello();
-
-        for (int i = 0; i < list.size(); ++i) {
-            childRef[i] = ref.child(uid + "/" + filterName + "/" + (num + i) + ".jpeg");
-            //arrayList.add(childRef[i].getPath());
-            Log.e(TAG, childRef[i].getPath().toString());
-            uploadTask[i] = childRef[i].putFile(list.get(i));
-
-            uploadTask[i].addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    isCompleteAll = false;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    isCompleteAll = true;
-                }
-            });
+        ArrayList<Uri> hello= new ArrayList<>();
+        for(int i=0;i<route.size();i++) {
+            hello.add(parse(route.get(i)));
         }
-      //  postRef.child(mKeys.get(position)).child("f").setValue(arrayList);
-    }*/
+        return hello;
+    }
 
 }
