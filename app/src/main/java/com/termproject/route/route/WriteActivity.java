@@ -166,7 +166,7 @@ public class WriteActivity extends AppCompatActivity {
                 EmailId = mail.substring(0,ids);
                 boolean emailVerified = currentUser.isEmailVerified();
 
-                Uid = currentUser.getUid();
+                Uid = currentUser.getUid()+theTime;
                 Log.d("abcd","hello"+" ");
             }
             else
@@ -198,8 +198,9 @@ public class WriteActivity extends AppCompatActivity {
         final List arrayList = posting.getImageUrl();
 
         for (int i = 0; i < list.size(); ++i) {
-            upLoadRef[i] = ref.child("route/"+uid + "/" + id + "/" + (num + i) + ".jpeg");
-            String uploadRefStr= uid+"/"+id+"/"+(num+i)+".jpeg";
+
+            upLoadRef[i] = ref.child("route/"+uid +theTime+"/" + id + "/" + (num + i) + ".jpeg");
+            String uploadRefStr= uid+theTime+"/"+id+"/"+(num+i)+".jpeg";
             uploadTask[i] = upLoadRef[i].putFile(list.get(i));
 
             uploadTask[i].addOnFailureListener(new OnFailureListener() {

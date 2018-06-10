@@ -291,7 +291,6 @@ public class SharingActivity extends AppCompatActivity {
 
 
 
-// Register observers to listen for when the download is done or if it fails
 
     }
     public String getImageNameToUri(Uri data)
