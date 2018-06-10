@@ -118,6 +118,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     private String[] permissionsRS = {Manifest.permission.READ_EXTERNAL_STORAGE};
     private String[] permissionsCAM = {Manifest.permission.CAMERA};
     ImageView iv_view;
+    private BackPressCloseHandler backPressCloseHandler;
 
     static boolean playBack = false;
     int on = 0;
@@ -232,12 +233,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
 
-
     @Override
     public void onBackPressed() {
-        if (status == false)
-            super.onBackPressed();
-        else
+        if (status == false) {
+           // super.onBackPressed();
+            backPressCloseHandler.onBackPressed();
+        }
+            else
             moveTaskToBack(true);
     }
 
@@ -259,7 +261,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-
+        backPressCloseHandler =new BackPressCloseHandler(this);
 
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
@@ -286,8 +288,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
                         Manifest.permission.ACCESS_NETWORK_STATE)
                 .check();
-
-
 
 
 
@@ -944,7 +944,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
 
         }
+
     }
+
+
 
 
 }
