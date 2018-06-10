@@ -134,6 +134,7 @@ public class WriteActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         ArrayList<String> photos = null;
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
@@ -149,11 +150,12 @@ public class WriteActivity extends AppCompatActivity {
                 boolean emailVerified = currentUser.isEmailVerified();
 
                 Uid = currentUser.getUid()+theTime;
+                Log.d("Uid check",Uid);
             }
             else
             posting.setName(EmailId);
             posting.setRoute(routeInfo);
-            String timeStamp = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
+
             theTime=timeStamp;
             posting.setTime(theTime);
             int k=photos.size();
