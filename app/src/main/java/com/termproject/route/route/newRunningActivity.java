@@ -458,75 +458,77 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         }
 
 
-                        GPSThread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                while (isStarted) {
-                                    try {
-                                        Thread.sleep(1000);
+                        if (!isAlreadyRun) {
+                            GPSThread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    while (isStarted) {
+                                        try {
+                                            Thread.sleep(1000);
 
-                                        gpsHandler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                curTime = time;
-                                                gps.Update();
+                                            gpsHandler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    curTime = time;
+                                                    gps.Update();
 
-                                                double cur_speed = 0.0;
-                                                double latitude = gps.getLatitude();
-                                                double longitude = gps.getLongitude();
-                                                cur_lat = latitude;
-                                                cur_long = longitude;
+                                                    double cur_speed = 0.0;
+                                                    double latitude = gps.getLatitude();
+                                                    double longitude = gps.getLongitude();
+                                                    cur_lat = latitude;
+                                                    cur_long = longitude;
 
 
-                                                if (cur_lat == bef_lat && cur_long == bef_long) {
-                                                    Log.d("Same Location", "time : " + time);
-                                                    befTime = time;
-                                                } else {
+                                                    if (cur_lat == bef_lat && cur_long == bef_long) {
+                                                        Log.d("Same Location", "time : " + time);
+                                                        befTime = time;
+                                                    } else {
 
-                                                    if (curMarker != null) {
-                                                        curMarker.remove();
+                                                        if (curMarker != null) {
+                                                            curMarker.remove();
+                                                        }
+
+
+                                                        LatLng befLatLng = new LatLng(bef_lat, bef_long);
+                                                        ex_point = befLatLng;
+                                                        bef_lat = cur_lat;
+                                                        bef_long = cur_long;
+
+                                                        LatLng curLatLng = new LatLng(cur_lat, cur_long);
+
+                                                        cur_point = curLatLng;
+
+
+                                                        mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(10.0f).geodesic(true).add(cur_point).add(ex_point));
+
+                                                        MarkerOptions optCurrent = new MarkerOptions();
+                                                        optCurrent.alpha(0.5f);
+                                                        optCurrent.anchor(0.5f, 0.5f);
+                                                        optCurrent.position(cur_point);
+                                                        optCurrent.title("now");
+                                                        optCurrent.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
+                                                        curMarker = mMap.addMarker(optCurrent);
+                                                        mMap.addMarker(optCurrent).showInfoWindow();
+
+
+                                                        Log.d("Speed", gps.location.getSpeed() + "");
+                                                        Log.d("bef time & cur time", befTime + " " + curTime);
+
+                                                        mMap.moveCamera(CameraUpdateFactory.newLatLng(curLatLng));
                                                     }
-
-
-                                                    LatLng befLatLng = new LatLng(bef_lat, bef_long);
-                                                    ex_point = befLatLng;
-                                                    bef_lat = cur_lat;
-                                                    bef_long = cur_long;
-
-                                                    LatLng curLatLng = new LatLng(cur_lat, cur_long);
-
-                                                    cur_point = curLatLng;
-
-
-                                                    mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(20.0f).geodesic(true).add(cur_point).add(ex_point));
-
-                                                    MarkerOptions optCurrent = new MarkerOptions();
-                                                    optCurrent.alpha(0.5f);
-                                                    optCurrent.anchor(0.5f, 0.5f);
-                                                    optCurrent.position(cur_point);
-                                                    optCurrent.title("now");
-                                                    optCurrent.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
-                                                    curMarker = mMap.addMarker(optCurrent);
-                                                    mMap.addMarker(optCurrent).showInfoWindow();
-
-
-                                                    Log.d("Speed", gps.location.getSpeed() + "");
-                                                    Log.d("bef time & cur time", befTime + " " + curTime);
-
-                                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(curLatLng));
                                                 }
-                                            }
-                                        });
+                                            });
 
-                                    } catch (Exception e) {
+                                        } catch (Exception e) {
+                                        }
                                     }
+                                    //
+
                                 }
-                                //
-
-                            }
-                        });
+                            });
 
 
+                        }
                         if (!isAlreadyRun) {
                             timeThread.start();
 
