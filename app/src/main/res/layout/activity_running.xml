@@ -298,11 +298,11 @@
 
                     <ImageView
                         android:id="@+id/distImage"
-                        android:layout_width="17dp"
-                        android:layout_height="17dp"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
 
                         android:layout_centerVertical="true"
-                        android:src="@drawable/distance" />
+                        android:src="@drawable/speedmeter" />
 
 
                 </RelativeLayout>
@@ -369,7 +369,6 @@
             android:visibility="invisible"
             app:backgroundTint="#ffffff"
             android:scaleType="fitXY"
-            android:tooltipText="d"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp" />
 
@@ -394,8 +393,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="15sp"
             android:backgroundTint="#39c9d7"
-            android:src="@drawable/add"
-            android:text="dddd"/>
+            android:src="@drawable/add" />
 
 
 
@@ -411,12 +409,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                android:background="#99FFFFFF"
-                android:layout_marginBottom="12dp"
-                android:textStyle="bold"
-                android:text="Start Route"
-                android:textColor="@color/colorPrimary"
-                android:textSize="15dp"/>
+                android:background="@android:color/white"
+                android:paddingBottom="0dp"
+                android:text="Start Calculating" />
 
             <Button
                 android:id="@+id/pause"
@@ -424,13 +419,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_weight="1"
-                android:background="#99FFFFFF"
-                android:layout_marginBottom="12dp"
+                android:background="@android:color/white"
                 android:text="Pause"
-                android:textColor="@color/colorAccent"
-                android:visibility="gone"
-                android:textStyle="bold"
-                android:textSize="15dp"/>
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/stop"
@@ -439,14 +430,9 @@
                 android:layout_gravity="right"
                 android:layout_marginLeft="2dp"
                 android:layout_weight="1"
-                android:layout_marginBottom="12dp"
-                android:background="#99FFFFFF"
+                android:background="@android:color/white"
                 android:text="Stop"
-                android:textColor="@color/colorAccent"
-                android:visibility="gone"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                />
+                android:visibility="gone" />
 
 
 
