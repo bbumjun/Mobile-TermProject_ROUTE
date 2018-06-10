@@ -252,8 +252,6 @@ final int PICTURE_REQUEST_CODE = 100;
             routeView=itemView.findViewById(R.id.routeText);
             viewPager=itemView.findViewById(R.id.vp);
             cardView=itemView.findViewById(R.id.cardView);
-
-
         }
     }
     class mAdapter extends PagerAdapter{

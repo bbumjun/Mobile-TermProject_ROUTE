@@ -9,6 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioFormat;
@@ -64,8 +67,10 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -638,6 +643,67 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
+             /*   public void captureScreen()
+                {
+                    GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback()
+                    {
+
+
+                        @Override
+                        public void onSnapshotReady(Bitmap snapshot) {
+                            try {
+                                getWindow().getDecorView().findViewById(android.R.id.content).setDrawingCacheEnabled(true);
+                                Bitmap backBitmap = getWindow().getDecorView().findViewById(android.R.id.content).getDrawingCache();
+                                Bitmap bmOverlay = Bitmap.createBitmap(
+                                        backBitmap.getWidth(), backBitmap.getHeight(),
+                                        backBitmap.getConfig());
+                                Canvas canvas = new Canvas(bmOverlay);
+                                canvas.drawBitmap(snapshot, new Matrix(), null);
+                                canvas.drawBitmap(backBitmap, 0, 0, null);
+
+                                OutputStream fout = null;
+
+                                String filePath = System.currentTimeMillis() + ".jpeg";
+
+                                try
+                                {
+                                    fout = openFileOutput(filePath,
+                                            MODE_WORLD_READABLE);
+
+                                    // Write the string to the file
+                                    bmOverlay.compress(Bitmap.CompressFormat.JPEG, 90, fout);
+                                    fout.flush();
+                                    fout.close();
+                                }
+                                catch (FileNotFoundException e)
+                                {
+                                    // TODO Auto-generated catch block
+                                    Log.d("ImageCapture", "FileNotFoundException");
+                                    Log.d("ImageCapture", e.getMessage());
+                                    filePath = "";
+                                }
+                                catch (IOException e)
+                                {
+                                    // TODO Auto-generated catch block
+                                    Log.d("ImageCapture", "IOException");
+                                    Log.d("ImageCapture", e.getMessage());
+                                    filePath = "";
+                                }
+
+                                openShareImageDialog(filePath);
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+
+                    ;
+
+
+                    mMap.snapshot(callback);
+                }*/
                 if (status == true)
                     unbindService();
                 start.setVisibility(View.VISIBLE);
@@ -690,6 +756,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             timeText.setText(" " + hour + ":" + min + "'" + sec + "''" + " ");
         }
     }
+
 
 
     public void onMyLocationClick(@NonNull Location location) {
