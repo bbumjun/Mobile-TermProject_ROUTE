@@ -361,14 +361,11 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="160dp"
             android:layout_marginRight="15sp"
+            android:onClick="tog"
             android:src="@drawable/hear"
             android:visibility="invisible"
             app:backgroundTint="#ffffff"
-            android:onClick="tog"
             android:scaleType="fitXY"
-            android:text="ToggleButton"
-            android:textOff="OFF"
-            android:textOn="ON"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp" />
 

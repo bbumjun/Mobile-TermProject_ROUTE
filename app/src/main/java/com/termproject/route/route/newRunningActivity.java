@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.Manifest;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -68,7 +69,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /*
  D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389022, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
@@ -83,6 +86,7 @@ import static android.Manifest.permission.CAMERA;
 import static android.view.KeyEvent.ACTION_DOWN;
 import static android.view.KeyEvent.ACTION_UP;
 import static android.view.KeyEvent.KEYCODE_HEADSETHOOK;
+import static com.yongbeam.y_photopicker.util.photopicker.utils.ImageCaptureManager.REQUEST_TAKE_PHOTO;
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, Parcelable {
@@ -109,6 +113,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     private String[] permissionsCAM = {Manifest.permission.CAMERA};
 
     Boolean isAlreadyRun=false;
+    ImageView iv_view;
 
     static boolean playBack = false;
     int on = 0;
@@ -154,10 +159,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     static int speedValue2 = 100;
     static boolean onoffBoolean = false;
     static int minmaxValue = 0;
-
+    String mCurrentPhotoPath;
     //
 
-    private Uri imgUri, photoURI, albumURI;
+    private Uri imageUri, photoURI, albumURI;
 
 
     LocationService myService;
@@ -229,9 +234,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         else
             moveTaskToBack(true);
     }
-
-
-    //
 
 
     float speed = 0;
@@ -375,9 +377,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//
-//
 
+                captureCamera();
             }
         });
 
@@ -852,6 +853,83 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             return new newRunningActivity[size];
         }
     };
+    private void captureCamera() {
+        String state = Environment.getExternalStorageState();
+
+        if(Environment.MEDIA_MOUNTED.equals(state)) {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            if(takePictureIntent.resolveActivity(getPackageManager())!=null){
+                File photoFile =null;
+                try{
+                    photoFile = createImageFile();
+                }catch (IOException e) {
+                    Log.e("captureCamera Error", e.toString());
+                }
+                if(photoFile!=null) {
+                    Uri providerURI = FileProvider.getUriForFile(this,getPackageName(),photoFile);
+                    imageUri=providerURI;
+
+
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,providerURI);
+
+                    startActivityForResult(takePictureIntent,REQUEST_TAKE_PHOTO);
+                }
+            }
+        } else {
+            Toast.makeText(this, "저장공간 접근 불가", Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+
+    public File createImageFile() throws  IOException {
+        String timeStamp = new SimpleDateFormat("yyyy MM dd HH mm ss").format(new Date());
+        String imageFileName = timeStamp+".jpg";
+        File imageFile =null;
+        File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures","Route");
+
+        if(!storageDir.exists()) {
+            Log.i("mCurrentPhotoPath1",storageDir.toString());
+            storageDir.mkdirs();
+
+        }
+        imageFile =new File(storageDir,imageFileName) ;
+        mCurrentPhotoPath = imageFile.getAbsolutePath();
+
+        return imageFile;
+
+    }
+
+    private void galleryAddPic() {
+        Log.i ("galleryAddPic","Call");
+        Intent mediaScanIntent =new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f =new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+        Toast.makeText(this ,"저장되었습니다.",Toast.LENGTH_SHORT).show();
+
+    }
+
+    protected  void onActivityResult(int requestCode,int resultCode, Intent data ) {
+        if(requestCode==REQUEST_TAKE_PHOTO) {
+            if(resultCode== Activity.RESULT_OK) {
+                try{
+                    Log.i("REQUEST_TAKE_PHOTO","OK");
+                    galleryAddPic();
+
+                    iv_view.setImageURI(imageUri);
+                } catch (Exception e) {
+                    Log.e("REQUEST_TAKE_PHOTO",e.toString());
+
+                }
+            } else {
+                Toast.makeText(this,"취소",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
 
 }
 
