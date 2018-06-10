@@ -232,9 +232,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     }
 
 
-    //
-
-
     float speed = 0;
     public Animation fab_open, fab_close;
     public Boolean isFabOpen = false;
