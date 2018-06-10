@@ -186,6 +186,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
     int MY_LOCATION_REQUEST_CODE;
     public newRunningActivity() {};
+
+
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
@@ -448,10 +451,30 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         stop.setOnClickListener(new View.OnClickListener() {
 
+
             @Override
             public void onClick(View v) {
                 //CaptureScreen();
 
+                SnapshotReadyCallback callback = new SnapshotReadyCallback() {
+                    Bitmap bitmap;
+
+                    @Override
+                    public void onSnapshotReady(Bitmap snapshot) {
+                        // TODO Auto-generated method stub
+                        bitmap = snapshot;
+                        try {
+                            FileOutputStream out = new FileOutputStream("/mnt/sdcard/Android/media/com.google.android.apps.maps/"
+                                    + System.currentTimeMillis()+".png");
+
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.d("abcde","Can't store image");
+                        }
+                    }
+                };
+                mMap.snapshot(callback);
                 isStarted = false;
 
                 if (status == true)
