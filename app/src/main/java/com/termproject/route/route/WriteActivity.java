@@ -181,16 +181,10 @@ public class WriteActivity extends AppCompatActivity {
             for(int i=0;i<k;i++){
                 imageUri.add(i,Uri.fromFile(new File(photos.get(i))));
             }
-            //posting.setImageUrl(imageUri);
             upLoadImages(posting,k,Uid,EmailId,imageUri);
 
 
 
-           /* Uri file = Uri.fromFile(new File(selectedImagePath));
-            StorageReference uploadRef = storageRef.child("images/"+file.getLastPathSegment());
-            UploadTask uploadTask = uploadRef.putFile(file);
-
-            new Firebase(SharingActivity.FIREBASE_POST_URL).push().setValue(posting);*/
 
         }
     }
@@ -205,6 +199,7 @@ public class WriteActivity extends AppCompatActivity {
 
         for (int i = 0; i < list.size(); ++i) {
             upLoadRef[i] = ref.child("route/"+uid + "/" + id + "/" + (num + i) + ".jpeg");
+            String uploadRefStr= uid+"/"+id+"/"+(num+i)+".jpeg";
             uploadTask[i] = upLoadRef[i].putFile(list.get(i));
 
             uploadTask[i].addOnFailureListener(new OnFailureListener() {
@@ -218,9 +213,11 @@ public class WriteActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     isCompleteAll = true;
                     Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+
+
                 }
             });
-        theAddress.add(i,upLoadRef[i].toString());
+        theAddress.add(i,uploadRefStr);
         }
         posting.setImageUrl(theAddress);
       //postRef.child("Post").child(filterName).child("UID").child(uid).child("ImageList").setValue(arrayList);
@@ -249,165 +246,6 @@ public class WriteActivity extends AppCompatActivity {
     }
 */
 
-  /*  private String setProfile() {
-        //path = FilterManger.getInstance().requestProfile();
 
-        String a=(currentUser.getDisplayName());
-        return a;
-    }*/
-    /*class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView userId;
-        ImageView mapView;
-        TextView routeView;
-        ViewPager viewPager;
-
-        public MyViewHolder(View itemView){
-            super(itemView);
-            userId=itemView.findViewById(R.id.userId);
-            mapView=itemView.findViewById(R.id.mapImage);
-            routeView=itemView.findViewById(R.id.routeText);
-            viewPager=itemView.findViewById(R.id.vp);
-        }
-    }
-    class mAdapter extends PagerAdapter{
-        LayoutInflater inflater;
-        ArrayList<String> imageUrls;
-
-        public mAdapter(LayoutInflater inflater, ArrayList arrayList){
-            this.inflater=inflater;
-            this.imageUrls=arrayList;
-        }
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view == object;
-        }
-
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            View view = inflater.inflate(R.layout.row, null);
-            ImageView imageView = view.findViewById(R.id.mapImage);
-            Glide.with(WriteActivity.this).load(imageUrls.get(position)).centerCrop().into(imageView);
-            container.addView(view);
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return imageUrls.size();
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            container.removeView((View) object);
-        }
-    }*//*
-    class MyAdapter extends RecyclerView.Adapter<WriteActivity.MyViewHolder> {
-
-        @Override
-        public WriteActivity.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = getLayoutInflater().inflate(R.layout.sharing_card_view, null);
-            WriteActivity.MyViewHolder myViewHolder = new WriteActivity.MyViewHolder(itemView);
-
-            return myViewHolder;
-        }
-
-        public void onBindViewHolder(final WriteActivity.MyViewHolder holder,final int position){
-            final thePost post = mPost.get(position);
-            //final mAdapter m = new mAdapter(getLayoutInflater(),post.getHello());
-            //Gson gson = new Gson();
-
-            //ArrayList<String> arrayList = gson.fromJson(post.getImageUrl(), new TypeToken<ArrayList<String>>(){}.getType());
-            holder.routeView.setText("111");
-            holder.userId.setText("333");
-
-            holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    //holder.pageIndicatorView.setSelection(position);
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-
-                }
-            });
-        }
-        @Override
-        public int getItemCount(){
-            return mPost.size();
-        }
-    }
-
-    public String getImageNameToUri(Uri data)
-    {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(data, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-
-        cursor.moveToFirst();
-
-        String imgPath = cursor.getString(column_index);
-        String imgName = imgPath.substring(imgPath.lastIndexOf("/")+1);
-
-        return imgName;
-    }
-    public String getPath(Uri uri) {
-
-        if( uri == null ) {
-            return null;
-        }
-        // receive uri that chosen picture
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if( cursor != null ){
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        // return uri path
-        return uri.getPath();
-    }
-    public ArrayList<Uri> getUritoImageName(List<String> route){
-        ArrayList<Uri> hello= new ArrayList<>();
-        for(int i=0;i<route.size();i++) {
-            hello.add(parse(route.get(i)));
-        }
-        return hello;
-    }
-*/
-   /* public void upLoadImages(int position, int num, String uid, String filterName, ArrayList<Uri> list) {
-        StorageReference[] childRef = new StorageReference[list.size()];
-        UploadTask[] uploadTask = new UploadTask[list.size()];
-        thePost newPost = mPost.get(position);
-        final List arrayList = newPost.getHello();
-
-        for (int i = 0; i < list.size(); ++i) {
-            childRef[i] = ref.child(uid + "/" + filterName + "/" + (num + i) + ".jpeg");
-            arrayList.add(childRef[i].getPath());
-            Log.e(TAG, childRef[i].getPath().toString());
-            uploadTask[i] = childRef[i].putFile(list.get(i));
-
-            uploadTask[i].addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    isCompleteAll = false;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    isCompleteAll = true;
-                }
-            });
-        }
-        postRef.child(mKeys.get(position)).child("f").setValue(arrayList);
-    }*/
 
 }
