@@ -244,6 +244,7 @@ final int PICTURE_REQUEST_CODE = 100;
         ViewPager viewPager;
 
 
+
         public MyViewHolder(View itemView){
             super(itemView);
             userId=itemView.findViewById(R.id.userId);
@@ -251,6 +252,7 @@ final int PICTURE_REQUEST_CODE = 100;
             mapView=itemView.findViewById(R.id.mapImage);
             routeView=itemView.findViewById(R.id.routeText);
             viewPager=itemView.findViewById(R.id.vp);
+
 
         }
     }
@@ -326,6 +328,7 @@ final int PICTURE_REQUEST_CODE = 100;
 
                 }
             });
+
         }
         @Override
         public int getItemCount(){

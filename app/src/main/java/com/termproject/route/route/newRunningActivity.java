@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioFormat;
@@ -56,6 +57,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -215,15 +217,15 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         gps = new GPSTracker(newRunningActivity.this, gpsHandler);
 
+        checkPermission();
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 captureCamera();
-                checkPermission();
+
             }
         });
-
 
         startBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -436,6 +438,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
+              /*  mMap.snapshot(new GoogleMap.SnapshotReadyCallback(){
+                    @Override
+                    public void onSnapshotReady(Bitmap snapshot) {
+                        ImageView snapshotView = (ImageView) findViewById(R.id.imageView);
+                        snapshotView.setImageBitmap(snapshot);
+                    }
+                });*/
                 isStarted = false;
 
                 if (status == true)
@@ -481,6 +490,37 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
+    public void CaptureMapScreen()
+    {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+            Bitmap bitmap;
+
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot) {
+                // TODO Auto-generated method stub
+                bitmap = snapshot;
+                try {
+                    FileOutputStream out = new FileOutputStream("/mnt/"
+                            + "MyMapScreen" + System.currentTimeMillis()
+                            + ".png");
+
+                    // above "/mnt ..... png" => is a storage path (where image will be stored) + name of image you can customize as per your Requirement
+
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        mMap.snapshot(callback);
+
+        // myMap is object of GoogleMap +> GoogleMap myMap;
+        // which is initialized in onCreate() =>
+        // myMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_pass_home_call)).getMap();
+    }
 
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
