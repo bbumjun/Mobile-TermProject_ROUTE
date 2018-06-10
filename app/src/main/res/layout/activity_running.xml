@@ -115,7 +115,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentTop="true"
-                        android:text="onoff" />
+                        android:text="onoff"
+                        android:visibility="invisible" />
 
                     <TextView
                         android:id="@+id/time"
@@ -144,7 +145,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
-                        android:text="limitSpeed" />
+                        android:text="limitSpeed"
+                        android:visibility="invisible" />
 
                     <TextView
                         android:id="@+id/minMax"
@@ -152,7 +154,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentStart="true"
-                        android:text="minMax" />
+                        android:text="minMax"
+                        android:visibility="invisible" />
 
                 </RelativeLayout>
 

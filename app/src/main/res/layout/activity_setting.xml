@@ -246,9 +246,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/toggleLimit"
                     android:layout_centerHorizontal="true"
-                    android:text="Max 39km/h Limit"
-                    android:textSize="16dp"
-                    />
+                    android:text="OFF"
+                    android:textSize="16dp" />
 
 
                 <View
