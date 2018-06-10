@@ -115,7 +115,7 @@ public class WriteActivity extends AppCompatActivity {
             public void onClick(View v){
                 YPhotoPickerIntent intent = new YPhotoPickerIntent(WriteActivity.this);
                 intent.setMaxSelectCount(5);
-                intent.setShowCamera(true);
+                intent.setShowCamera(false);
                 intent.setShowGif(true);
                 intent.setSelectCheckBox(false);
                 intent.setMaxGrideItemCount(3);

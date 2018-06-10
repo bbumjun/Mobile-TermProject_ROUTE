@@ -264,7 +264,6 @@ public class SharingActivity extends AppCompatActivity {
             final thePost post = mPost.get(position);
             //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
-
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
             holder.time.setText(post.getTime());
@@ -273,20 +272,16 @@ public class SharingActivity extends AppCompatActivity {
             holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
                 }
-
                 @Override
                 public void onPageSelected(int position) {
-                    //holder.pageIndicatorView.setSelection(position);
+                    holder.circleIndicator.setId(position);
                 }
-
                 @Override
                 public void onPageScrollStateChanged(int state) {
-
                 }
             });
-
+            holder.circleIndicator.setupWithViewPager(holder.viewPager);
         }
         @Override
         public int getItemCount(){

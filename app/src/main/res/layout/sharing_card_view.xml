@@ -57,29 +57,22 @@
                             android:id="@+id/timeText"
                             android:textSize="13dp" />
                     </LinearLayout>
-
-
-
                 </RelativeLayout>
             </LinearLayout>
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/rl_image">
-
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/iv_image" />
             </RelativeLayout>
-
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#ddd">
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -87,10 +80,14 @@
                     android:background="#fff"
                     >
                     <android.support.v4.view.ViewPager
+                        android:id="@+id/vp"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:id="@+id/vp">
+                        android:layout_height="280dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        >
                     </android.support.v4.view.ViewPager>
+
 
                     <com.pm10.library.CircleIndicator
                         android:id="@+id/circle_indicator"
@@ -100,7 +97,6 @@
                         android:layout_below="@+id/vp"
                         android:layout_centerHorizontal="true"
                         app:p_defaultColor="@color/white"
-
                         app:p_gap="4dp"
                         app:p_radius="4dp"
                         app:p_selectedColor="@color/colorPrimary"
@@ -111,9 +107,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="#ddd">
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
