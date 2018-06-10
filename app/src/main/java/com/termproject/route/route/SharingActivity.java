@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,6 @@ public class SharingActivity extends AppCompatActivity {
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private DatabaseReference databaseReference;
     ImageButton runningBtn,settingBtn;
-    Button addButton;
     private static final String TAG = SharingActivity.class.getName();
 
     // Create a storage reference from our app
@@ -58,6 +58,9 @@ public class SharingActivity extends AppCompatActivity {
     public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference ref = storage.getReference();
+
+
+    public FloatingActionButton addBtn;
 
 
     public SharingActivity(){
@@ -80,13 +83,13 @@ public class SharingActivity extends AppCompatActivity {
 
         runningBtn=(ImageButton)findViewById(R.id.runText);
         settingBtn=(ImageButton)findViewById(R.id.setText);
-        addButton =(Button)findViewById(R.id.addBtn);
+        addBtn =(FloatingActionButton) findViewById(R.id.addBtn);
 
         postRef=new Firebase(FIREBASE_POST_URL);
         postRef.orderByChild("write");
 
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SharingActivity.this, WriteActivity.class);

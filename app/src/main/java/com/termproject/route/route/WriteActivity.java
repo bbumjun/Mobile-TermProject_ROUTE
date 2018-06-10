@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -82,8 +83,8 @@ public class WriteActivity extends AppCompatActivity {
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
     private static final String TAG = WriteActivity.class.getName();
 
+    FloatingActionButton addBtn;
     // Create a storage reference from our app
-    Button addButton;
     EditText editText;
 
     private LinearLayoutManager mLinearLayoutManager;
@@ -107,11 +108,11 @@ public class WriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_write);
-        addButton=(Button)findViewById(R.id.goToGallery);
+        addBtn=(FloatingActionButton) findViewById(R.id.addBtn);
         editText=(EditText)findViewById(R.id.routeTheText);
         postRef=new Firebase(FIREBASE_POST_URL);
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        addBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 YPhotoPickerIntent intent = new YPhotoPickerIntent(WriteActivity.this);
                 intent.setMaxSelectCount(20);
