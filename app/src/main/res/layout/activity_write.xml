@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/goToGallery"
-        
+
         android:text="Go to"/>
 <RelativeLayout
     android:layout_width="match_parent"
