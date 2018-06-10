@@ -105,11 +105,14 @@ public class FirstActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Intent intent = new Intent(getApplicationContext(),newRunningActivity.class);
                 startActivity(intent);
+                finish();
                 // ...
             } else {
                 // Sign in failed, check response for error code
                 // ...
             }
+
+
         }
     }
 }

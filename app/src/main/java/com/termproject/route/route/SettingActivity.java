@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -25,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -37,16 +40,21 @@ ImageButton runningBtn,shareBtn;
 ImageView userIcon, icon;
 TextView userId, userUid;
 TextView speedlimit;
-ToggleButton toggleLimit;
+Switch toggleLimit;
 SeekBar aroundSeek;
 RadioGroup minmax;
 RadioButton max,min;
+
+    static float temp=50;
+
 
 Uri photoUrl;
     static int speedValue=20;
     static boolean toggleon=false;
     boolean isloop=false;
 
+    static FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    UserProfileChangeRequest userProfileChangeRequest;
 com.shawnlin.numberpicker.NumberPicker picker1;
     boolean emailVerified;
 String uid;
@@ -86,7 +94,7 @@ String uid;
 
         picker1.setValue(newRunningActivity.speedValue2);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        aroundSeek.setProgress((int)(temp*100));
 
 
         if (user != null) {
@@ -98,11 +106,18 @@ String uid;
         }
 
 
+
         //photoUrl=user.getPhotoUrl();
-        userId.setText(user.getDisplayName());
         String mail  = user.getEmail();
-        int ids = mail.indexOf("@");
-        String EmailId = mail.substring(0,ids);
+
+        userId.setText(user.getDisplayName());
+        if(user.getDisplayName()==null){
+            int ids = mail.indexOf("@");
+            String EmailId = mail.substring(0,ids);
+            userId.setText(EmailId);
+        }
+
+
         userUid.setText(mail);
 
 
@@ -117,9 +132,6 @@ String uid;
         runningBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(getApplicationContext(), newRunningActivity.class);
-                startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 finish();
             }
@@ -140,9 +152,12 @@ String uid;
         });
 
 
-        toggleLimit.setOnClickListener(new View.OnClickListener() {
+
+        toggleLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                 if (toggleLimit.isChecked()){
                     toggleon=true;
                     speedValue=picker1.getValue();
@@ -180,7 +195,10 @@ String uid;
                 }
 
             }
+
+
         });
+
 
 
 
@@ -207,6 +225,8 @@ String uid;
         deleteIdBtn.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
+
+
                 AuthUI.getInstance().delete(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -225,8 +245,9 @@ String uid;
         volume.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                     float temp =((float)(aroundSeek.getProgress())/100);
+                     temp =((float)(aroundSeek.getProgress())/100);
                 LoopbackService.gain=temp;
+
                 Toast.makeText(getApplicationContext(),"Around Volume Setting :" + temp*100 + "%",Toast.LENGTH_LONG).show();
 
             }
