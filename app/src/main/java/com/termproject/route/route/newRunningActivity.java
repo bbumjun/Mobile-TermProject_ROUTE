@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioFormat;
@@ -57,6 +59,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -179,6 +182,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public Boolean isFabOpen = false;
     public FloatingActionButton fab, hearButton, cameraButton;
 
+    public SupportMapFragment mapFragment;
 
     int MY_LOCATION_REQUEST_CODE;
     public newRunningActivity() {};
@@ -217,7 +221,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         gpsHandler = new Handler();
         runnable = new TimeRunnable();
 
-        SupportMapFragment mapFragment =
+        mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.realtimeMap);
         mapFragment.getMapAsync(this);
 
@@ -446,6 +450,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
             @Override
             public void onClick(View v) {
+                CaptureScreen();
 
                 isStarted = false;
 
@@ -459,7 +464,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 LocationService.distance=0;
                 p = 0;
 
-                  captureScreen();
+
             }
         }
 
@@ -467,6 +472,44 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
     }
+    private void CaptureScreen() {
+        if(mMap()!){
+            SnapshotReadyCallback callback = new SnapshotReadyCallback() {
+                Bitmap bitmap=null;
+
+                @Override
+                public void onSnapshotReady(Bitmap snapshot) {
+                    // TODO Auto-generated method stub
+                    bitmap = snapshot;
+                    try {
+                        saveImage(bitmap);
+                        Toast.makeText(getApplicationContext(), "Image Saved", Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                private void saveImage(Bitmap bitmap) throws IOException{
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 40, bytes);
+                    File f = new File(Environment.getExternalStorageDirectory() + File.separator + "test.png");
+                    f.createNewFile();
+                    FileOutputStream fo = new FileOutputStream(f);
+                    fo.write(bytes.toByteArray());
+                    fo.close();
+
+                }
+            };
+
+            mMap.snapshot(callback);
+        }
+        else{
+            Toast.makeText(this, "Map is not Initialized yet", Toast.LENGTH_LONG).show();
+            return ;
+        }
+    }
+
+
 
 
     class TimeRunnable implements Runnable {
