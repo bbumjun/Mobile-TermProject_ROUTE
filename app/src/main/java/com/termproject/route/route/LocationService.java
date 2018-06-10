@@ -1,5 +1,8 @@
 package com.termproject.route.route;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
@@ -139,8 +142,11 @@ public class LocationService extends Service implements
 
                 if(limitCode==1&&speed>=limitSpeed){//Max Speed Limit
                     newRunningActivity.statusScreen.setBackgroundColor(Color.rgb(255,20,20));
+                    displayNotification();
+
                 }else if(limitCode==2&&speed<limitSpeed){//Min Speed Limit
                     newRunningActivity.statusScreen.setBackgroundColor(Color.rgb(255,20,20));
+                    displayNotification();
                 }else newRunningActivity.statusScreen.setBackgroundColor(Color.rgb(255,255,255));
 
             }
@@ -171,5 +177,29 @@ public class LocationService extends Service implements
         lEnd = null;
         distance = 0;
         return super.onUnbind(intent);
+    }
+
+
+    protected void displayNotification()
+    {
+
+        Intent i = new Intent(getApplicationContext(), newRunningActivity.class);
+        i.putExtra("notificationID", 23);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
+
+        NotificationManager nm = (NotificationManager)
+                getSystemService(NOTIFICATION_SERVICE);
+        Notification.Builder mBuilder =
+                new Notification.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("My notification")
+                        .setContentText("Reminder: Meeting starts in 5 minutes");
+
+        mBuilder.setContentIntent(pendingIntent);
+//---100ms delay, vibrate for 250ms, pause for 100 ms and
+// then vibrate for 500ms---
+        mBuilder.setVibrate(new long[] { 100, 250, 100, 500});
+        nm.notify(23, mBuilder.build());
     }
 }
