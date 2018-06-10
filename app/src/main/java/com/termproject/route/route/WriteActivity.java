@@ -114,7 +114,7 @@ public class WriteActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 YPhotoPickerIntent intent = new YPhotoPickerIntent(WriteActivity.this);
-                intent.setMaxSelectCount(20);
+                intent.setMaxSelectCount(5);
                 intent.setShowCamera(true);
                 intent.setShowGif(true);
                 intent.setSelectCheckBox(false);
@@ -201,29 +201,5 @@ public class WriteActivity extends AppCompatActivity {
         posting.setImageUrl(theAddress);
        postRef.child(uid).setValue(posting);
     }
-  /*  String getDiffTimeText(long targetTime) {
-        DateTime curDateTime = new DateTime();
-        DateTime targetDateTime = new DateTime().withMillis(targetTime);
-
-        int diffDay = Days.daysBetween(curDateTime, targetDateTime).getDays();
-        int diffHours = Hours.hoursBetween(targetDateTime, curDateTime).getHours();
-        int diffMinutes = Minutes.minutesBetween(targetDateTime, curDateTime).getMinutes();
-        if (diffDay == 0) {
-            if(diffHours == 0 && diffMinutes == 0){
-                return "방금전";
-            }
-            if(diffHours > 0){
-                return "" + diffHours + "시간 전";
-            }
-            return "" + diffMinutes + "분 전";
-
-        } else {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            return format.format(new Date(targetTime));
-        }
-    }
-*/
-
-
 
 }

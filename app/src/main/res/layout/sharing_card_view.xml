@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/tools"
+    app:ignore="NamespaceTypo">
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -80,15 +82,30 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:background="#fff"
-                    android:layout_marginBottom="1dp">
+                    >
                     <android.support.v4.view.ViewPager
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
                         android:id="@+id/vp">
                     </android.support.v4.view.ViewPager>
+
+                    <com.pm10.library.CircleIndicator
+                        android:id="@+id/circle_indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_below="@+id/vp"
+                        android:layout_centerHorizontal="true"
+                        app:p_defaultColor="@color/white"
+
+                        app:p_gap="4dp"
+                        app:p_radius="4dp"
+                        app:p_selectedColor="@color/colorPrimary"
+                        app:p_strokeColor="@color/colorPrimary"
+                        app:p_strokeWidth="1dp" />
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout
@@ -96,9 +113,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#ddd">
+
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="wrap_content"
                     android:background="#fff"
                     android:layout_marginBottom="1dp"
                     android:paddingLeft="16dp"
@@ -106,7 +124,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/routeText" />
+                        android:id="@+id/routeText"
+                        android:textSize="15dp"
+                        android:text="asdfasdf"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="11dp"/>
                 </RelativeLayout>
             </LinearLayout>
 
