@@ -291,7 +291,6 @@ final int PICTURE_REQUEST_CODE = 100;
 
 
 
-// Register observers to listen for when the download is done or if it fails
 
 }
       public String getImageNameToUri(Uri data)
