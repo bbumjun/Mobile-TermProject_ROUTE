@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Bundle;
@@ -29,10 +30,15 @@ public class LocationService extends Service implements
 
     private static final long INTERVAL = 1000 * 2;
     private static final long FASTEST_INTERVAL = 1000 * 1;
+
+
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation, lStart, lEnd;
+
     static double distance = 0;
+    static double limitSpeed=0; //speed for Limitation
+    static int limitCode=0;    //0=off 1=Max 2=Min
     double speed;
 
 
@@ -128,10 +134,16 @@ public class LocationService extends Service implements
             long diff = newRunningActivity.endTime - newRunningActivity.startTime;
             diff = TimeUnit.MILLISECONDS.toMinutes(diff);
             //MainActivity.time.setText("Total Time: " + diff + " minutes");
-            if (speed >= 0.0)
+            if (speed >= 0.0) {
                 newRunningActivity.speed2.setText(new DecimalFormat("#.#").format(speed));
 
+                if(limitCode==1&&speed>=limitSpeed){//Max Speed Limit
+                    newRunningActivity.statusScreen.setBackgroundColor(Color.rgb(255,20,20));
+                }else if(limitCode==2&&speed<limitSpeed){//Min Speed Limit
+                    newRunningActivity.statusScreen.setBackgroundColor(Color.rgb(255,20,20));
+                }else newRunningActivity.statusScreen.setBackgroundColor(Color.rgb(255,255,255));
 
+            }
             if(distance>1) {
                 newRunningActivity.dist.setText(new DecimalFormat("#.###").format(distance));
                 newRunningActivity.kmText.setText("km ");

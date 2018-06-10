@@ -176,33 +176,48 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:background="#FFFFFF">
 
+
                 <TextView
+                    android:id="@+id/settingFunction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
+                    android:background="@drawable/shapewithcolor"
+                    android:padding="5dp"
+                    android:text="Function Setting"
+                    android:textSize="20dp"
+                    android:textStyle="bold|italic" />
+
+
+                <TextView
+                    android:id="@+id/ssfText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/settingFunction"
+                    android:layout_marginLeft="5dp"
                     android:paddingBottom="8dp"
                     android:paddingTop="8dp"
-                    android:layout_marginLeft="5dp"
                     android:text="Speed Safety Function"
                     android:textSize="20dp" />
+
 
                 <ToggleButton
                     android:id="@+id/toggleLimit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignBaseline="@+id/ssfText"
+
+                    android:layout_alignEnd="@+id/km"
                     android:onClick="onToggleClicked"
                     android:text="ON"
                     android:textColor="#1994F9"
-                    android:textSize="12sp"
-
-                    />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/speedlimit"
@@ -219,7 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_alignParentStart="true"
-                    android:layout_below="@+id/toggleLimit"
+                    android:layout_below="@+id/ssfText"
                     android:background="#11000000" />
 
 
@@ -253,8 +268,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignStart="@+id/toggleLimit"
-                    android:layout_marginBottom="38dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="33dp"
+                    android:layout_marginEnd="33dp"
                     android:text="km/h"
                     android:textSize="20dp" />
 
@@ -264,8 +280,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_alignTop="@+id/number_picker"
-                    android:layout_marginStart="13dp">
+                    android:layout_alignTop="@+id/km"
+                    android:layout_marginStart="34dp">
 
                     <RadioButton
                         android:id="@+id/max"
@@ -308,11 +324,12 @@
                     android:paddingLeft="5dp"/>
 
                 <Button
-                    android:id="@+id/save"
+                    android:id="@+id/volume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/ssf"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="17dp"
                     android:text="save"
                     android:textSize="12sp" />
 
@@ -340,67 +357,28 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:max="200"
+                    android:max="100"
                     android:progress="50" />
 
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/seekBar2"
+                    android:layout_above="@+id/aroundSeek"
                     android:layout_alignParentStart="true"
                     android:padding="5dp"
                     android:text="Around Volume" />
 
                 <SeekBar
-                    android:id="@+id/seekBar2"
+                    android:id="@+id/aroundSeek"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentStart="true"
                     android:layout_marginBottom="29dp"
-                    android:max="200"
+                    android:max="100"
                     android:progress="50" />
             </RelativeLayout>
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="bbbb" />
-
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="bbbb" />
-
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="bbbb" />
-
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="bbbb" />
-
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="bbbb" />
 
 
         </LinearLayout>
@@ -426,6 +404,14 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="5dp">
+
 
         <ImageView
             android:id="@+id/icon"
@@ -488,6 +474,10 @@
             android:text="박영준 배범준 이원찬"
             android:textAlignment="center"
             android:textSize="15sp" />
+
+
+        </LinearLayout>
+
 
 
     </LinearLayout>

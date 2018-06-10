@@ -1,36 +1,32 @@
 package com.termproject.route.route;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
-
+import android.media.Image;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.provider.Settings;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -39,76 +35,139 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
-import static com.yongbeam.y_photopicker.util.photopicker.utils.ImageCaptureManager.REQUEST_TAKE_PHOTO;
+/*
+ D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389022, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
+ D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_UP, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389183, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
+ */
 
+import android.media.session.MediaSessionManager.OnActiveSessionsChangedListener;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+
+import static android.view.KeyEvent.ACTION_DOWN;
+import static android.view.KeyEvent.ACTION_UP;
+import static android.view.KeyEvent.KEYCODE_HEADSETHOOK;
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener,GoogleMap.SnapshotReadyCallback {
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, Parcelable {
 
-    public static int NEW_LOCATION = 1;
-    GoogleMap mMap;
-    float x = 0;
-    int time = 0, curTime = 0, befTime = 0;
-    double bef_lat = 0, bef_long = 0, cur_lat = 0, cur_long = 0, sum_dist = 0, velocity = 0, avg_speed = 0;
-    LatLng ex_point, cur_point, first_point;
-    boolean isStarted = false,hearBtnisOff=true;
-    Handler gpsHandler, timeHandler;
-    TimeRunnable runnable;
-    GPSTracker gps;
-    ImageButton shareBtn, settingBtn;
-    Button  startBtn;
-    TextView timeText, velocityText, distanceText;
-    Marker curMarker;
-    Bitmap bitmap;
-    private static final int MY_PERMISSION_CAMERA =1111;
+    private static final String LOG_TAG = "newRunningActivity";
+    //settings
+    int audioSource = MediaRecorder.AudioSource.MIC;
+    int inputHz;
+    int outputHz; /* in Hz*/
+    int audioEncoding;
+    int bufferSize;
+    int numFrames;
+    int rblock = AudioRecord.READ_NON_BLOCKING, wblock = AudioTrack.WRITE_NON_BLOCKING;
+    boolean useArray = false;
+    // Requesting permission to RECORD_AUDIO
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private boolean permissionToRecordAccepted = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] permissionsGPS = {Manifest.permission.ACCESS_FINE_LOCATION};
+    private String[] permissionsNET = {Manifest.permission.ACCESS_NETWORK_STATE};
+    private String[] permissionsINTERNET = {Manifest.permission.INTERNET};
+    private String[] permissionsWS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private String[] permissionsRS = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private String[] permissionsCAM = {Manifest.permission.CAMERA};
 
 
-    public final void onSnapshotReady(Bitmap snapshot) {
+    static boolean playBack = false;
+    int on = 0;
+
+    public newRunningActivity() {
+    }
+
+    ;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (!permissionToRecordAccepted) finish();
 
     }
 
 
-    Uri imageUri;
+    //for Sound
+
+    public static int NEW_LOCATION = 1;
+    GoogleMap mMap;
+    float x = 0;
+    static int time = 0, curTime = 0, befTime = 0;
+    double bef_lat = 0, bef_long = 0, cur_lat = 0, cur_long = 0, sum_dist = 0, velocity = 0, avg_speed = 0;
+    LatLng ex_point, cur_point, first_point;
+    static boolean isStarted = false;
+    Handler gpsHandler, timeHandler;
+    TimeRunnable runnable;
+    GPSTracker gps;
+    ImageButton shareBtn, settingBtn;
+    Button tab1, tab2, tab3, startBtn, stopBtn;
+    TextView timeText, velocityText, distanceText;
+    Marker curMarker,startMarker;
+    static RelativeLayout statusScreen;
+    Thread timeThread = new Thread();
+    Thread GPSThread = new Thread();
+    static int speedValue2 = 100;
+    static boolean onoffBoolean = false;
+    static int minmaxValue = 0;
+
+    //
+
+    private Uri imgUri, photoURI, albumURI;
+
 
     LocationService myService;
     static boolean status;
     LocationManager locationManager;
-    static TextView dist, speed2 ,kmText, calorieText;
+    static TextView dist, time2, speed2, kmText, calorieText;
     Button start, pause, stop;
     static long startTime, endTime;
     static ProgressDialog locate;
     static int p = 0;
-    String mCurrentPhotoPath;
-    ImageView iv_view;
+
+
     private ServiceConnection sc = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -122,6 +181,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             status = false;
         }
     };
+
+
 
     void bindService() {
         if (status == true)
@@ -154,13 +215,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService(new Intent(this,LoopbackService.class));
+    protected void onStop() {
+        super.onStop();
 
-        if (status == true)
-            unbindService();
     }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -171,29 +232,58 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     }
 
 
+    //
 
-    public void onPause() {
-        super.onPause();
-        gps.stopUsingGPS();
-    }
 
     float speed = 0;
     public Animation fab_open, fab_close;
     public Boolean isFabOpen = false;
-    public FloatingActionButton fab, hearButton, cameraButton;
+    public FloatingActionButton fab, soundBtn, cameraButton;
 
-    public SupportMapFragment mapFragment;
+
+    private String state;
+
 
     int MY_LOCATION_REQUEST_CODE;
-    public newRunningActivity() {};
-
-
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Toast.makeText(newRunningActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+
+
+
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Toast.makeText(newRunningActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        };
+
+
+        new TedPermission(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_NETWORK_STATE)
+                .check();
+
+
+
+
+
 
         timeText = (TextView) findViewById(R.id.timeText);
         calorieText = (TextView) findViewById(R.id.calorieText);
@@ -205,8 +295,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         cameraButton = (FloatingActionButton) findViewById(R.id.cameraButton);
-        hearButton= (FloatingActionButton) findViewById(R.id.on);
+        soundBtn = findViewById(R.id.on);
 
+
+        statusScreen = findViewById(R.id.status);
+
+        speedValue2 = SettingActivity.speedValue;
 
         dist = (TextView) findViewById(R.id.distanceText);
         //time2 = (TextView) findViewById(R.id.timetext);
@@ -219,37 +313,43 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         stop = (Button) findViewById(R.id.stop);
 
 
+        //
+
+        TextView minmax = findViewById(R.id.minMax);
+        TextView limitSpeed2 = findViewById(R.id.limitSpeed);
+        TextView onoff = findViewById(R.id.onoff);
+
+
+        limitSpeed2.setText(speedValue2 + "");
+        onoff.setText(onoffBoolean + "");
+        minmax.setText(minmaxValue + "");
+
+
+        LocationService.limitSpeed = speedValue2; // speed Value for Limit
+        LocationService.limitCode = minmaxValue; // 1 for Max 2 for Min
+        //
+
+
+
 
         timeHandler = new Handler();
         gpsHandler = new Handler();
         runnable = new TimeRunnable();
 
-        mapFragment =
+        SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.realtimeMap);
         mapFragment.getMapAsync(this);
 
         gps = new GPSTracker(newRunningActivity.this, gpsHandler);
 
-        checkPermission();
-
-
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                captureCamera();
-
-            }
-        });
-
 
         startBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view){
-                    Intent intent = new Intent(getApplicationContext(), WebActivity.class);
-                    startActivity(intent);
-                }
-            });
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), WebActivity.class);
+                startActivity(intent);
+            }
+        });
 
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,10 +380,87 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         });
 
 
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//
+//                public void takePhoto(){
+//
+//                    // 촬영 후 이미지 가져옴
+//
+//                    String state = Environment.getExternalStorageState();
+//
+//
+//                    if(Environment.MEDIA_MOUNTED.equals(state)){
+//
+//                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//
+//                        if(intent.resolveActivity(getPackageManager())!=null){
+//
+//                            File photoFile = null;
+//
+//                            try{
+//
+//                                photoFile = createImageFile();
+//
+//                            }catch (IOException e){
+//
+//                                e.printStackTrace();
+//
+//                            }
+//
+//                            if(photoFile!=null){
+//
+//                                Uri providerURI = FileProvider.getUriForFile(this,getPackageName(),photoFile);
+//
+//                                imgUri = providerURI;
+//
+//                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, providerURI);
+//
+//                                startActivityForResult(intent, FROM_CAMERA);
+//
+//                            }
+//                        }
+//                    }else{
+//
+//                        Log.v("알림", "저장공간에 접근 불가능");
+//                        return;
+//
+//                    }
+//                }
+//          }
+
+            }
+        });
+
+
+        soundBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (on) {
+                    case 0:
+                        playBack = true;
+                        setSettings();
+                        Log.d("info1", "토글 온 ");
+                        on = 1;
+                        break;
+                    case 1:
+                        playBack = false;
+                        setSettings();
+                        Log.d("info1", "토글 오프 ");
+                        on = 0;
+                        break;
+                }
+            }
+        });
+
+
+        //
+
+
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 if (!isStarted) {
                     MarkerOptions optFirst = new MarkerOptions();
@@ -292,7 +469,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                     optFirst.position(first_point);
                     Log.d("Position", first_point.toString());
                     optFirst.title("Running Start Point");
-                    optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
                     mMap.addMarker(optFirst).showInfoWindow();
 
 
@@ -300,9 +476,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
                     try {
 
-                        Thread timeThread = new Thread(new Runnable() {
+                        timeThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
+
                                 while (isStarted) {
                                     try {
                                         Thread.sleep(1000);
@@ -317,10 +494,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         });
 
 
-                        Thread GPSThread = new Thread(new Runnable() {
+
+                        GPSThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-
                                 while (isStarted) {
                                     try {
                                         Thread.sleep(1000);
@@ -331,8 +508,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                 curTime = time;
                                                 gps.Update();
 
-
-                                                //speed=Location.getSpeed();
                                                 double cur_speed = 0.0;
                                                 double latitude = gps.getLatitude();
                                                 double longitude = gps.getLongitude();
@@ -344,9 +519,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     Log.d("Same Location", "time : " + time);
                                                     befTime = time;
                                                 } else {
-                                                       if (curMarker != null) {
+
+                                                    if (curMarker != null) {
                                                         curMarker.remove();
                                                     }
+
+
 
                                                     LatLng befLatLng = new LatLng(bef_lat, bef_long);
                                                     ex_point = befLatLng;
@@ -354,7 +532,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     bef_long = cur_long;
 
                                                     LatLng curLatLng = new LatLng(cur_lat, cur_long);
+
                                                     cur_point = curLatLng;
+
 
                                                     mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(20.0f).geodesic(true).add(cur_point).add(ex_point));
 
@@ -368,12 +548,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     mMap.addMarker(optCurrent).showInfoWindow();
 
 
-                                                    //velocityText.setText(gps.location.getSpeed()+"");
-
                                                     Log.d("Speed", gps.location.getSpeed() + "");
-                                                    //velocityText.setText(cur_speed + "");
-                                                    //distanceText.setText(sum_dist + "");
-                                                    //calorieText.setText(cur_lat + " " + cur_long);
                                                     Log.d("bef time & cur time", befTime + " " + curTime);
 
                                                     mMap.moveCamera(CameraUpdateFactory.newLatLng(curLatLng));
@@ -381,12 +556,14 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                             }
                                         });
 
-
                                     } catch (Exception e) {
                                     }
                                 }
+                                //
+
                             }
                         });
+
                         timeThread.start();
                         GPSThread.start();
                     } catch (Exception e) {
@@ -398,6 +575,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 }
 
 
+                //The method below checks if Location is enabled on device or not. If not, then an alert dialog box appears with option
+                //to enable gps.
                 checkGps();
                 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -426,23 +605,28 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
-                isStarted = false;
-
-
                 if (pause.getText().toString().equalsIgnoreCase("pause")) {
                     pause.setText("Resume");
+                    Toast.makeText(getApplicationContext(), "Pause Exercise", Toast.LENGTH_SHORT).show();
                     p = 1;
+                    isStarted=false;
+                    timeThread.interrupt();
 
                 } else if (pause.getText().toString().equalsIgnoreCase("Resume")) {
-                    checkGps();
                     isStarted = true;
+                    checkGps();
                     locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                         //Toast.makeText(this, "GPS is Enabled in your devide", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     pause.setText("Pause");
+                    Toast.makeText(getApplicationContext(), "Resume Exercise", Toast.LENGTH_SHORT).show();
+                    isStarted = true;
                     p = 0;
+                    timeThread.run();
+
+
 
                 }
             }
@@ -451,31 +635,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         stop.setOnClickListener(new View.OnClickListener() {
 
-
             @Override
             public void onClick(View v) {
-                //CaptureScreen();
-
-                SnapshotReadyCallback callback = new SnapshotReadyCallback() {
-                    Bitmap bitmap;
-
-                    @Override
-                    public void onSnapshotReady(Bitmap snapshot) {
-                        // TODO Auto-generated method stub
-                        bitmap = snapshot;
-                        try {
-                            FileOutputStream out = new FileOutputStream("/mnt/sdcard/Android/media/com.google.android.apps.maps/"
-                                    + System.currentTimeMillis()+".png");
-
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.d("abcde","Can't store image");
-                        }
-                    }
-                };
-                mMap.snapshot(callback);
-                isStarted = false;
 
                 if (status == true)
                     unbindService();
@@ -483,56 +644,26 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 pause.setText("Pause");
                 pause.setVisibility(View.GONE);
                 stop.setVisibility(View.GONE);
-                time=0;
-                LocationService.distance=0;
+
                 p = 0;
+
+                stopService(new Intent(getApplicationContext(), LocationService.class));
+                dist.setText("0.0");
+                calorieText.setText(("0"));
+                isStarted = false;
+                time = 0;
+                timeText.setText("  00:00'00'' ");
+                mMap.clear();
+                Toast.makeText(getApplicationContext(), "Stop Exercise", Toast.LENGTH_SHORT).show();
+                LocationService.distance = 0;
 
 
             }
-        }
-
-        );
+        });
 
 
+        //
     }
-   /* private void CaptureScreen() {
-        if(mMap()!){
-            SnapshotReadyCallback callback = new SnapshotReadyCallback() {
-                Bitmap bitmap=null;
-
-                @Override
-                public void onSnapshotReady(Bitmap snapshot) {
-                    // TODO Auto-generated method stub
-                    bitmap = snapshot;
-                    try {
-                        saveImage(bitmap);
-                        Toast.makeText(getApplicationContext(), "Image Saved", Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                private void saveImage(Bitmap bitmap) throws IOException{
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 40, bytes);
-                    File f = new File(Environment.getExternalStorageDirectory() + File.separator + "test.png");
-                    f.createNewFile();
-                    FileOutputStream fo = new FileOutputStream(f);
-                    fo.write(bytes.toByteArray());
-                    fo.close();
-
-                }
-            };
-
-            mMap.snapshot(callback);
-        }
-        else{
-            Toast.makeText(this, "Map is not Initialized yet", Toast.LENGTH_LONG).show();
-            return ;
-        }
-    }*/
-
-
 
 
     class TimeRunnable implements Runnable {
@@ -579,7 +710,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
 
@@ -616,16 +747,15 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         if (isFabOpen) {
             cameraButton.startAnimation(fab_close);
-            hearButton.startAnimation(fab_close);
+            soundBtn.startAnimation(fab_close);
             cameraButton.setClickable(false);
-            hearButton.setClickable(false);
+            soundBtn.setClickable(false);
             isFabOpen = false;
         } else {
-
             cameraButton.startAnimation(fab_open);
-            hearButton.startAnimation(fab_open);
+            soundBtn.startAnimation(fab_open);
             cameraButton.setClickable(true);
-            hearButton.setClickable(true);
+            soundBtn.setClickable(true);
             isFabOpen = true;
         }
     }
@@ -665,178 +795,90 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         alert.show();
     }
 
-    private void galleryAddPic() {
-        Log.i ("galleryAddPic","Call");
-        Intent mediaScanIntent =new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f =new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        sendBroadcast(mediaScanIntent);
-        Toast.makeText(this ,"저장되었습니다.",Toast.LENGTH_SHORT).show();
 
-    }
-    private void captureCamera() {
-        String state = Environment.getExternalStorageState();
-
-        if(Environment.MEDIA_MOUNTED.equals(state)) {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            if(takePictureIntent.resolveActivity(getPackageManager())!=null){
-                File photoFile =null;
-                try{
-                    photoFile = createImageFile();
-                }catch (IOException e) {
-                    Log.e("captureCamera Error", e.toString());
-                }
-                if(photoFile!=null) {
-                    Uri providerURI = FileProvider.getUriForFile(this,getPackageName(),photoFile);
-                    imageUri=providerURI;
-
-
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,providerURI);
-
-                    startActivityForResult(takePictureIntent,REQUEST_TAKE_PHOTO);
-                }
-            }
-        } else {
-            Toast.makeText(this, "저장공간 접근 불가", Toast.LENGTH_SHORT).show();
+    public void wow() {
+        if (!playBack) {
+            stopService(new Intent(this, LoopbackService.class));
             return;
         }
+        startService(new Intent(this, LoopbackService.class).putExtra("info", this));
+
     }
 
-    public File createImageFile() throws  IOException {
-        String timeStamp = new SimpleDateFormat("yyyy MM dd HH mm ss").format(new Date());
-        String imageFileName = timeStamp+".jpg";
-        File imageFile =null;
-        File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures","Route");
+    public void setSettings() {
+        boolean temp = playBack;
+        Log.d("wow", "" + temp);
 
-        if(!storageDir.exists()) {
-            Log.i("mCurrentPhotoPath1",storageDir.toString());
-            storageDir.mkdirs();
+        numFrames = 500;
+        rblock = AudioRecord.READ_NON_BLOCKING;
+        wblock = AudioTrack.WRITE_NON_BLOCKING;
+        useArray = false;
+        inputHz = 48000;
+        outputHz = 48001;
+        audioEncoding = AudioFormat.ENCODING_PCM_FLOAT;
+        bufferSize = AudioRecord.getMinBufferSize(inputHz, AudioFormat.CHANNEL_IN_MONO, audioEncoding);
+        audioSource = 1;
 
+
+        wow();
+        playBack = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (status == true)
+            unbindService();
+        if(LoopbackService.isLoop){
+            unbindService(sc);
         }
-        imageFile =new File(storageDir,imageFileName) ;
-        mCurrentPhotoPath = imageFile.getAbsolutePath();
-
-        return imageFile;
-
+        stopService(new Intent(this,LoopbackService.class));
     }
 
-    protected  void onActivityResult(int requestCode,int resultCode, Intent data ) {
-        if(requestCode==REQUEST_TAKE_PHOTO) {
-                if(resultCode== Activity.RESULT_OK) {
-                    try{
-                        Log.i("REQUEST_TAKE_PHOTO","OK");
-                        galleryAddPic();
 
-                        iv_view.setImageURI(imageUri);
-                    } catch (Exception e) {
-                        Log.e("REQUEST_TAKE_PHOTO",e.toString());
 
-                    }
-                } else {
-                    Toast.makeText(this,"취소",Toast.LENGTH_SHORT).show();
-                }
+    protected newRunningActivity(Parcel in) {
+        audioSource = in.readInt();
+        inputHz = in.readInt();
+        outputHz = in.readInt();
+        audioEncoding = in.readInt();
+        bufferSize = in.readInt();
+        numFrames = in.readInt();
+        rblock = in.readInt();
+        useArray = in.readByte() != 0x00;
+        permissionToRecordAccepted = in.readByte() != 0x00;
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(audioSource);
+        dest.writeInt(inputHz);
+        dest.writeInt(outputHz);
+        dest.writeInt(audioEncoding);
+        dest.writeInt(bufferSize);
+        dest.writeInt(numFrames);
+        dest.writeInt(rblock);
+        dest.writeByte((byte) (useArray ? 0x01 : 0x00));
+        dest.writeByte((byte) (permissionToRecordAccepted ? 0x01 : 0x00));
+    }
+
+    @SuppressWarnings("unused")
+    public static final Creator<newRunningActivity> CREATOR = new Creator<newRunningActivity>() {
+        @Override
+        public newRunningActivity createFromParcel(Parcel in) {
+            return new newRunningActivity(in);
         }
-    }
-    public void captureScreen()
-    {
-        SnapshotReadyCallback callback = new SnapshotReadyCallback()
-        {
 
-            @Override
-            public void onSnapshotReady(Bitmap snapshot)
-            {
-                // TODO Auto-generated method stub
-                bitmap = snapshot;
-
-                OutputStream fout = null;
-
-                String filePath = System.currentTimeMillis() + ".jpeg";
-
-                try
-                {
-                    fout = openFileOutput(filePath,MODE_PRIVATE);
-
-                    // Write the string to the file
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fout);
-                    Toast.makeText(getApplicationContext(),"비트맵 압축",Toast.LENGTH_SHORT).show();
-                    fout.flush();
-                    fout.close();
-                }
-                catch (FileNotFoundException e)
-                {
-                    // TODO Auto-generated catch block
-                    Log.d("ImageCapture", "FileNotFoundException");
-                    Log.d("ImageCapture", e.getMessage());
-                    filePath = "";
-                }
-                catch (IOException e)
-                {
-                    // TODO Auto-generated catch block
-                    Log.d("ImageCapture", "IOException");
-                    Log.d("ImageCapture", e.getMessage());
-                    filePath = "";
-                }
-
-                openShareImageDialog(filePath);
-            }
-        };
-
-        mMap.snapshot(callback);
-    }
-    public void openShareImageDialog(String filePath)
-    {
-        File file = this.getFileStreamPath(filePath);
-
-        if(!filePath.equals(""))
-        {
-            final ContentValues values = new ContentValues(2);
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-            values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
-            final Uri contentUriFile = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-            final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-            intent.setType("image/jpeg");
-            intent.putExtra(android.content.Intent.EXTRA_STREAM, contentUriFile);
-            startActivity(Intent.createChooser(intent, "Share Image"));
+        @Override
+        public newRunningActivity[] newArray(int size) {
+            return new newRunningActivity[size];
         }
-        else
-        {
-            //This is a custom class I use to show dialogs...simply replace this with whatever you want to show an error message, Toast, etc.
-        }
-    }
+    };
 
-
-
-    private void checkPermission() {
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED) {
-
-            if((ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))||
-                    (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA))) {
-                new AlertDialog.Builder(this)
-                        .setTitle("알림")
-                        .setMessage("저장소 권한이 거부되었습니다. 사용을 원하시면 해당 권한을 직접 허용해 주세요.")
-                        .setNeutralButton("설정",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogInterface,int i) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:" + getPackageName()));
-                                startActivity(intent);
-                            }
-                        })
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-
-                                    finish();
-                                }
-
-                        })
-                        .setCancelable(false).create().show();
-            } else {
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA},MY_PERMISSION_CAMERA);
-            }
-        }
-    }
 }
+
