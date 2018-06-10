@@ -40,12 +40,8 @@ import static android.net.Uri.parse;
 
 public class SharingActivity extends AppCompatActivity {
 
-int GALLERY_CODE=10;
-
-final int PICTURE_REQUEST_CODE = 100;
     private Firebase postRef;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
-    private String selectedImagePath;
     private DatabaseReference databaseReference;
     ImageButton runningBtn,settingBtn;
     Button addButton;
@@ -56,16 +52,9 @@ final int PICTURE_REQUEST_CODE = 100;
     private List<thePost> mPost = new ArrayList<>();
     private  List<String> mKeys = new ArrayList<>();
     private SharingActivity.MyAdapter myAdapter;
-    private ClipData clipData;
-    private Uri photoUri;
-    private Query mapRef;
-    final int REQ_CODE_SELECT_IMAGE=100;
     private RecyclerView rv;
-    public final static int REQUEST_CODE = 1;
     public final static int REQUEST_WRITE=0;
     boolean isCompleteAll = false;
-    //private FirebaseDatabase mDatabase;
-
     public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference ref = storage.getReference();
@@ -78,7 +67,6 @@ final int PICTURE_REQUEST_CODE = 100;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
-       // JodaTimeAndroid.init(this);
         setContentView(R.layout.activity_sharing);
         databaseReference=FirebaseDatabase.getInstance().getReference();
         rv = (RecyclerView)findViewById(R.id.recView);
@@ -90,7 +78,6 @@ final int PICTURE_REQUEST_CODE = 100;
         rv.setLayoutManager(mLinearLayoutManager);
         rv.setAdapter(myAdapter);
 
-        //mPost = new thePost();
         runningBtn=(ImageButton)findViewById(R.id.runText);
         settingBtn=(ImageButton)findViewById(R.id.setText);
         addButton =(Button)findViewById(R.id.addBtn);
@@ -264,7 +251,7 @@ final int PICTURE_REQUEST_CODE = 100;
 
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
-//            holder.time.setText("1");
+//
             holder.viewPager.setAdapter(pager);
             pager.notifyDataSetChanged();
             holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

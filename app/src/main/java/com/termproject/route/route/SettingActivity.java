@@ -48,8 +48,7 @@ Uri photoUrl;
     boolean isloop=false;
 
 com.shawnlin.numberpicker.NumberPicker picker1;
-    boolean emailVerified;
-String uid;
+
     private static final int RC_SIGN_IN =123;
 
     @Override
@@ -90,7 +89,6 @@ String uid;
 
 
         if (user != null) {
-            //photoUrl = user.getPhotoUrl();
             String mail  = user.getEmail();
             int ids = mail.indexOf("@");
             String EmailId = mail.substring(0,ids);
@@ -98,7 +96,6 @@ String uid;
         }
 
 
-        //photoUrl=user.getPhotoUrl();
         userId.setText(user.getDisplayName());
         String mail  = user.getEmail();
         int ids = mail.indexOf("@");
@@ -107,10 +104,6 @@ String uid;
 
 
         userIcon.setImageURI(photoUrl);
-
-//        06-07 15:18:18.092 11902-11902/com.termproject.route.route D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45042678, downTime=45042678, deviceId=2, displayId=0, source=0x101 }
-//        06-07 15:18:18.109 11902-11902/com.termproject.route.route D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_UP, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45042838, downTime=45042678, deviceId=2, displayId=0, source=0x101 }
-        //user.getPhotoUrl();
 
         runningBtn = findViewById(R.id.runText);
 
@@ -235,22 +228,4 @@ String uid;
 
     }
 
-    @Override
-
-    public boolean onTouchEvent(MotionEvent event) {
-
-        if(event.getAction()==MotionEvent.ACTION_DOWN) {
-            x=event.getX();
-        }
-
-
-        if(event.getAction()==MotionEvent.ACTION_UP) {
-            if(x<event.getX()) {
-
-                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-                finish();
-            }
-        }
-        return true;
-    }
 }
