@@ -4,12 +4,14 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -35,6 +37,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.pm10.library.CircleIndicator;
+
 import java.util.ArrayList;
 import java.util.List;
 import static android.net.Uri.parse;
@@ -53,6 +57,7 @@ public class SharingActivity extends AppCompatActivity {
     private  List<String> mKeys = new ArrayList<>();
     private SharingActivity.MyAdapter myAdapter;
     private RecyclerView rv;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public final static int REQUEST_WRITE=0;
     boolean isCompleteAll = false;
     public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
@@ -87,6 +92,15 @@ public class SharingActivity extends AppCompatActivity {
 
         postRef=new Firebase(FIREBASE_POST_URL);
         postRef.orderByChild("write");
+
+         swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
 
 
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -192,6 +206,7 @@ public class SharingActivity extends AppCompatActivity {
         TextView routeView;
         ViewPager viewPager;
         CardView cardView;
+        CircleIndicator circleIndicator;
 
         public MyViewHolder(View itemView){
             super(itemView);
@@ -201,6 +216,7 @@ public class SharingActivity extends AppCompatActivity {
             routeView=itemView.findViewById(R.id.routeText);
             viewPager=itemView.findViewById(R.id.vp);
             cardView=itemView.findViewById(R.id.cardView);
+            circleIndicator=itemView.findViewById(R.id.circle_indicator);
         }
     }
     class mAdapter extends PagerAdapter{
@@ -251,38 +267,30 @@ public class SharingActivity extends AppCompatActivity {
             final thePost post = mPost.get(position);
             //LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
-
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
-//
+            holder.time.setText(post.getTime());
             holder.viewPager.setAdapter(pager);
             pager.notifyDataSetChanged();
             holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
                 }
-
                 @Override
                 public void onPageSelected(int position) {
-                    //holder.pageIndicatorView.setSelection(position);
+                    holder.circleIndicator.setId(position);
                 }
-
                 @Override
                 public void onPageScrollStateChanged(int state) {
-
                 }
             });
+            holder.circleIndicator.setupWithViewPager(holder.viewPager);
         }
         @Override
         public int getItemCount(){
             return mPost.size();
         }
-
-
-
-
-}
+    }
       public String getImageNameToUri(Uri data)
       {
           String[] proj = { MediaStore.Images.Media.DATA };

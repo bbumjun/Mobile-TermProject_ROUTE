@@ -225,6 +225,7 @@
     <orderEntry type="library" name="Gradle: com.android.support:customtabs-27.0.2" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-storage-common-license-11.8.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-storage-11.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.pm10:indicator-1.0.2" level="project" />
     <orderEntry type="library" name="Gradle: com.shawnlin:number-picker-2.4.6" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.android.support.test.espresso:espresso-core-3.0.2" level="project" />
     <orderEntry type="library" name="Gradle: com.firebase:firebase-client-android:2.5.0@jar" level="project" />

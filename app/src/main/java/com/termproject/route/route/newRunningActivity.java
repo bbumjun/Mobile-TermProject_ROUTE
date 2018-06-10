@@ -10,6 +10,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioFormat;
@@ -65,8 +68,11 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -107,6 +113,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
     Boolean isAlreadyRun=false;
     ImageView iv_view;
+    private BackPressCloseHandler backPressCloseHandler;
 
     static boolean playBack = false;
     int on = 0;
@@ -222,9 +229,11 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onBackPressed() {
-        if (status == false)
-            super.onBackPressed();
-        else
+        if (status == false) {
+           // super.onBackPressed();
+            backPressCloseHandler.onBackPressed();
+        }
+            else
             moveTaskToBack(true);
     }
 
@@ -246,7 +255,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-
+        backPressCloseHandler =new BackPressCloseHandler(this);
 
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
@@ -272,6 +281,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
                         Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.VIBRATE)
                 .check();
+
+
 
 
         timeText = (TextView) findViewById(R.id.timeText);
@@ -598,6 +609,12 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
             @Override
             public void onClick(View v) {
+                try{
+                    CaptureMapScreen();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.d("TTAAGG","Can't capture");
+                }
 
                 if (status == true)
                     unbindService();
@@ -624,11 +641,34 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         });
 
-
-        //
     }
+    public void CaptureMapScreen() {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+            Bitmap bitmap;
+            @Override
 
-
+            public void onSnapshotReady(Bitmap snapshot) {
+                bitmap = snapshot;
+                try {
+                    File imageFile =null;
+                    File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures/RouteImage","Route");
+                    storageDir.toString();
+                    if(!storageDir.exists()) {
+                        Log.i("mCurrentPhotoPath1",storageDir.toString());
+                        storageDir.mkdirs();
+                    }
+                    String path = storageDir.toString()+System.currentTimeMillis() + ".png";
+                    FileOutputStream out = new FileOutputStream(path);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        mMap.snapshot(callback);
+    }
     class TimeRunnable implements Runnable {
         public void run() {
 
@@ -658,6 +698,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
 
     }
+
 
 
     public void onMyLocationClick(@NonNull Location location) {
@@ -840,7 +881,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         public newRunningActivity createFromParcel(Parcel in) {
             return new newRunningActivity(in);
         }
-
         @Override
         public newRunningActivity[] newArray(int size) {
             return new newRunningActivity[size];
@@ -921,7 +961,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             }
 
         }
+
     }
+
+
 
 
 }

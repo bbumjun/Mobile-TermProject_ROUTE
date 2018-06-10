@@ -2,6 +2,7 @@ package com.termproject.route.route;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 
 import android.content.CursorLoader;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -27,16 +29,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.client.util.DateTime;
@@ -72,13 +75,13 @@ import java.util.List;
 
 import static android.net.Uri.parse;
 
-public class WriteActivity extends AppCompatActivity {
-    float x,u;
-    int GALLERY_CODE=10;
+public class WriteActivity extends AppCompatActivity  {
+
+    int GALLERY_CODE = 10;
     final int PICTURE_REQUEST_CODE = 100;
     private Firebase postRef;
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
-    private String path,Uid,EmailId,routeInfo,theTime;
+    private String path, Uid, EmailId, routeInfo;
     private DatabaseReference mDatabase;
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
     private static final String TAG = WriteActivity.class.getName();
@@ -86,34 +89,38 @@ public class WriteActivity extends AppCompatActivity {
     FloatingActionButton addBtn;
     // Create a storage reference from our app
     EditText editText;
-
+    String timeStamp;
     private LinearLayoutManager mLinearLayoutManager;
     StorageReference ref = storage.getReference();
     private List<thePost> mPost = new ArrayList<>();
-    private  List<String> mKeys = new ArrayList<>();
+    private List<String> mKeys = new ArrayList<>();
     private FirebaseUser currentUser;
     //private SharingActivity.MyAdapter myAdapter;
     private ClipData clipData;
     private Uri photoUri;
     private RecyclerView mRecyclerView;
     private Query mapRef;
-    final int REQ_CODE_SELECT_IMAGE=100;
+    final int REQ_CODE_SELECT_IMAGE = 100;
     private RecyclerView rv;
-    public static int position=0;
+    public static int position = 0;
     public final static int REQUEST_CODE = 1;
     boolean isCompleteAll = false;
-    public static final String FIREBASE_POST_URL ="https://routetermproject-f7baa.firebaseio.com/Route";
+    int progress = 0;
+    public static final String FIREBASE_POST_URL = "https://routetermproject-f7baa.firebaseio.com/Route";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_write);
+
         addBtn=(FloatingActionButton) findViewById(R.id.addBtn);
         editText=(EditText)findViewById(R.id.routeTheText);
         postRef=new Firebase(FIREBASE_POST_URL);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
+
                 YPhotoPickerIntent intent = new YPhotoPickerIntent(WriteActivity.this);
                 intent.setMaxSelectCount(20);
                 intent.setShowCamera(true);
@@ -121,11 +128,10 @@ public class WriteActivity extends AppCompatActivity {
                 intent.setSelectCheckBox(false);
                 intent.setMaxGrideItemCount(3);
                 startActivityForResult(intent, REQUEST_CODE);
-                routeInfo=editText.getText().toString();
+                routeInfo = editText.getText().toString();
             }
 
         });
-
 
 
     }
@@ -133,36 +139,38 @@ public class WriteActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         ArrayList<String> photos = null;
+        timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
             }
 
-            currentUser= FirebaseAuth.getInstance().getCurrentUser();
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
             thePost posting = new thePost();
-            if(currentUser!=null) {
-               String mail  = currentUser.getEmail();
+            if (currentUser != null) {
+                String mail = currentUser.getEmail();
                 int ids = mail.indexOf("@");
-                EmailId = mail.substring(0,ids);
+                EmailId = mail.substring(0, ids);
                 boolean emailVerified = currentUser.isEmailVerified();
 
-                Uid = currentUser.getUid()+theTime;
+                Uid = currentUser.getUid() + timeStamp;
+                Log.d("Uid check", Uid);
             }
-            else
+
             posting.setName(EmailId);
             posting.setRoute(routeInfo);
-            String timeStamp = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
-            theTime=timeStamp;
-            posting.setTime(theTime);
-            int k=photos.size();
+
+            posting.setTime(timeStamp);
+            int k = photos.size();
             ArrayList<Uri> imageUri = new ArrayList<Uri>();
-            for(int i=0;i<k;i++){
-                imageUri.add(i,Uri.fromFile(new File(photos.get(i))));
+            for (int i = 0; i < k; i++) {
+                imageUri.add(i, Uri.fromFile(new File(photos.get(i))));
             }
-            upLoadImages(posting,k,Uid,EmailId,imageUri);
+
+            upLoadImages(posting, k, Uid, EmailId, imageUri);
 
 
         }
@@ -170,60 +178,78 @@ public class WriteActivity extends AppCompatActivity {
     /*1.post 수정함
                     2.이미지 업로드 하기*/
 
-    public void upLoadImages(thePost posting,int num, String uid, String id, ArrayList<Uri> list) {
+    public void upLoadImages(thePost posting, int num, String uid, String id, ArrayList<Uri> list) {
         StorageReference[] upLoadRef = new StorageReference[list.size()];
         UploadTask[] uploadTask = new UploadTask[list.size()];
-        ArrayList<String> theAddress= new ArrayList<String>();
+        ArrayList<String> theAddress = new ArrayList<String>();
         final List arrayList = posting.getImageUrl();
+        CheckTypesTask task =new CheckTypesTask();
+        task.execute();
 
         for (int i = 0; i < list.size(); ++i) {
 
-            upLoadRef[i] = ref.child("route/"+uid +theTime+"/" + id + "/" + (num + i) + ".jpeg");
-            String uploadRefStr= uid+theTime+"/"+id+"/"+(num+i)+".jpeg";
+            upLoadRef[i] = ref.child("route/" + uid + timeStamp + "/" + id + "/" + (num + i) + ".jpeg");
+            String uploadRefStr = uid + timeStamp + "/" + id + "/" + (num + i) + ".jpeg";
             uploadTask[i] = upLoadRef[i].putFile(list.get(i));
 
             uploadTask[i].addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     isCompleteAll = false;
-                    Toast.makeText(getApplicationContext(),"Failure",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_SHORT).show();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     isCompleteAll = true;
-                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
 
                 }
             });
-        theAddress.add(i,uploadRefStr);
+            theAddress.add(i, uploadRefStr);
         }
         posting.setImageUrl(theAddress);
-       postRef.child(uid).setValue(posting);
+        postRef.child(uid).setValue(posting);
+
+
     }
-  /*  String getDiffTimeText(long targetTime) {
-        DateTime curDateTime = new DateTime();
-        DateTime targetDateTime = new DateTime().withMillis(targetTime);
 
-        int diffDay = Days.daysBetween(curDateTime, targetDateTime).getDays();
-        int diffHours = Hours.hoursBetween(targetDateTime, curDateTime).getHours();
-        int diffMinutes = Minutes.minutesBetween(targetDateTime, curDateTime).getMinutes();
-        if (diffDay == 0) {
-            if(diffHours == 0 && diffMinutes == 0){
-                return "방금전";
-            }
-            if(diffHours > 0){
-                return "" + diffHours + "시간 전";
-            }
-            return "" + diffMinutes + "분 전";
 
-        } else {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            return format.format(new Date(targetTime));
+    private class CheckTypesTask extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog asyncDialog = new ProgressDialog(
+                WriteActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            asyncDialog.setMessage("Uploding..");
+
+            // show dialog
+            asyncDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            try {
+                for (int i = 0; i < 7; i++) {
+                    //asyncDialog.setProgress(i * 30);
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            asyncDialog.dismiss();
+            super.onPostExecute(result);
         }
     }
-*/
+
 
 
 
