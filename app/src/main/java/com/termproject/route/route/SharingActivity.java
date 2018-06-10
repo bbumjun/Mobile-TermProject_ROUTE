@@ -116,6 +116,8 @@ protected  void onActivityResult(int requestCode,int resultCode,Intent data) {
                 Toast.makeText(getApplicationContext(), "Image Path = "+selectedImagePath, Toast.LENGTH_SHORT).show();
             }
         }
+
+
     Uri file = Uri.fromFile(new File(selectedImagePath));
     StorageReference uploadRef = storageRef.child("images/"+file.getLastPathSegment());
     UploadTask uploadTask = uploadRef.putFile(file);

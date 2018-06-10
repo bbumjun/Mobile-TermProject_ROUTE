@@ -60,20 +60,25 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /*
-
  D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389022, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
  D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_UP, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389183, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
-
-
  */
 
 import android.media.session.MediaSessionManager.OnActiveSessionsChangedListener;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
 
 import static android.view.KeyEvent.ACTION_DOWN;
 import static android.view.KeyEvent.ACTION_UP;
@@ -96,6 +101,14 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] permissionsGPS = {Manifest.permission.ACCESS_FINE_LOCATION};
+    private String[] permissionsNET = {Manifest.permission.ACCESS_NETWORK_STATE};
+    private String[] permissionsINTERNET = {Manifest.permission.INTERNET};
+    private String[] permissionsWS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private String[] permissionsRS = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private String[] permissionsCAM = {Manifest.permission.CAMERA};
+
+
     static boolean playBack = false;
     int on = 0;
 
@@ -112,7 +125,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-
         if (!permissionToRecordAccepted) finish();
 
     }
@@ -123,17 +135,17 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public static int NEW_LOCATION = 1;
     GoogleMap mMap;
     float x = 0;
-    int time = 0, curTime = 0, befTime = 0;
+    static int time = 0, curTime = 0, befTime = 0;
     double bef_lat = 0, bef_long = 0, cur_lat = 0, cur_long = 0, sum_dist = 0, velocity = 0, avg_speed = 0;
     LatLng ex_point, cur_point, first_point;
-    static boolean isRunning = true, isStarted = false;
+    static boolean isStarted = false;
     Handler gpsHandler, timeHandler;
     TimeRunnable runnable;
     GPSTracker gps;
     ImageButton shareBtn, settingBtn;
     Button tab1, tab2, tab3, startBtn, stopBtn;
     TextView timeText, velocityText, distanceText;
-    Marker curMarker;
+    Marker curMarker,startMarker;
     static RelativeLayout statusScreen;
     Thread timeThread = new Thread();
     Thread GPSThread = new Thread();
@@ -170,13 +182,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
     };
 
-    private LoopbackService lbs = new LoopbackService(){
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-            stopService(new Intent(this,LoopbackService.class));
-        }
-    };
 
 
     void bindService() {
@@ -209,6 +214,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     }
 
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+
 
 
     @Override
@@ -229,6 +241,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public FloatingActionButton fab, soundBtn, cameraButton;
 
 
+    private String state;
+
+
     int MY_LOCATION_REQUEST_CODE;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -237,6 +252,38 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_layout);
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Toast.makeText(newRunningActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+
+
+
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Toast.makeText(newRunningActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        };
+
+
+        new TedPermission(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_NETWORK_STATE)
+                .check();
+
+
+
+
+
 
         timeText = (TextView) findViewById(R.id.timeText);
         calorieText = (TextView) findViewById(R.id.calorieText);
@@ -422,7 +469,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                     optFirst.position(first_point);
                     Log.d("Position", first_point.toString());
                     optFirst.title("Running Start Point");
-                    optFirst.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
                     mMap.addMarker(optFirst).showInfoWindow();
 
 
@@ -433,7 +479,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         timeThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                time = 0;
+
                                 while (isStarted) {
                                     try {
                                         Thread.sleep(1000);
@@ -448,10 +494,10 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                         });
 
 
+
                         GPSThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-
                                 while (isStarted) {
                                     try {
                                         Thread.sleep(1000);
@@ -478,13 +524,17 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                         curMarker.remove();
                                                     }
 
+
+
                                                     LatLng befLatLng = new LatLng(bef_lat, bef_long);
                                                     ex_point = befLatLng;
                                                     bef_lat = cur_lat;
                                                     bef_long = cur_long;
 
                                                     LatLng curLatLng = new LatLng(cur_lat, cur_long);
+
                                                     cur_point = curLatLng;
+
 
                                                     mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(20.0f).geodesic(true).add(cur_point).add(ex_point));
 
@@ -509,8 +559,11 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                     } catch (Exception e) {
                                     }
                                 }
+                                //
+
                             }
                         });
+
                         timeThread.start();
                         GPSThread.start();
                     } catch (Exception e) {
@@ -552,23 +605,28 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
-                isStarted = false;
-
                 if (pause.getText().toString().equalsIgnoreCase("pause")) {
                     pause.setText("Resume");
+                    Toast.makeText(getApplicationContext(), "Pause Exercise", Toast.LENGTH_SHORT).show();
                     p = 1;
+                    isStarted=false;
+                    timeThread.interrupt();
 
                 } else if (pause.getText().toString().equalsIgnoreCase("Resume")) {
-                    checkGps();
                     isStarted = true;
+                    checkGps();
                     locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                         //Toast.makeText(this, "GPS is Enabled in your devide", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     pause.setText("Pause");
-                    timeThread.run();
+                    Toast.makeText(getApplicationContext(), "Resume Exercise", Toast.LENGTH_SHORT).show();
+                    isStarted = true;
                     p = 0;
+                    timeThread.run();
+
+
 
                 }
             }
@@ -580,23 +638,25 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
-                isStarted = false;
-
                 if (status == true)
                     unbindService();
                 start.setVisibility(View.VISIBLE);
                 pause.setText("Pause");
                 pause.setVisibility(View.GONE);
                 stop.setVisibility(View.GONE);
-                LocationService.distance = 0;
 
                 p = 0;
 
-
                 stopService(new Intent(getApplicationContext(), LocationService.class));
+                dist.setText("0.0");
+                calorieText.setText(("0"));
                 isStarted = false;
                 time = 0;
                 timeText.setText("  00:00'00'' ");
+                mMap.clear();
+                Toast.makeText(getApplicationContext(), "Stop Exercise", Toast.LENGTH_SHORT).show();
+                LocationService.distance = 0;
+
 
             }
         });
@@ -650,7 +710,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
 
@@ -772,6 +832,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         if(LoopbackService.isLoop){
             unbindService(sc);
         }
+        stopService(new Intent(this,LoopbackService.class));
     }
 
 
