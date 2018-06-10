@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -20,7 +21,7 @@ import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
-
+import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -57,8 +58,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,7 +69,7 @@ import static com.yongbeam.y_photopicker.util.photopicker.utils.ImageCaptureMana
 
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener,GoogleMap.SnapshotReadyCallback {
 
     public static int NEW_LOCATION = 1;
     GoogleMap mMap;
@@ -82,10 +85,13 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     Button  startBtn;
     TextView timeText, velocityText, distanceText;
     Marker curMarker;
-
+    Bitmap bitmap;
     private static final int MY_PERMISSION_CAMERA =1111;
 
 
+    public final void onSnapshotReady(Bitmap snapshot) {
+
+    }
 
 
     Uri imageUri;
@@ -219,13 +225,16 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         checkPermission();
 
+
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 captureCamera();
 
             }
         });
+
 
         startBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -438,13 +447,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
 
-              /*  mMap.snapshot(new GoogleMap.SnapshotReadyCallback(){
-                    @Override
-                    public void onSnapshotReady(Bitmap snapshot) {
-                        ImageView snapshotView = (ImageView) findViewById(R.id.imageView);
-                        snapshotView.setImageBitmap(snapshot);
-                    }
-                });*/
                 isStarted = false;
 
                 if (status == true)
@@ -456,6 +458,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 time=0;
                 LocationService.distance=0;
                 p = 0;
+
+                  captureScreen();
             }
         }
 
@@ -490,37 +494,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-    public void CaptureMapScreen()
-    {
-        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
-            Bitmap bitmap;
-
-
-            @Override
-            public void onSnapshotReady(Bitmap snapshot) {
-                // TODO Auto-generated method stub
-                bitmap = snapshot;
-                try {
-                    FileOutputStream out = new FileOutputStream("/mnt/"
-                            + "MyMapScreen" + System.currentTimeMillis()
-                            + ".png");
-
-                    // above "/mnt ..... png" => is a storage path (where image will be stored) + name of image you can customize as per your Requirement
-
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        mMap.snapshot(callback);
-
-        // myMap is object of GoogleMap +> GoogleMap myMap;
-        // which is initialized in onCreate() =>
-        // myMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_pass_home_call)).getMap();
-    }
 
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
@@ -667,7 +640,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
     public File createImageFile() throws  IOException {
         String timeStamp = new SimpleDateFormat("yyyy MM dd HH mm ss").format(new Date());
-        String imageFileName = "JPEG_"+timeStamp+".jpg";
+        String imageFileName = timeStamp+".jpg";
         File imageFile =null;
         File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures","Route");
 
@@ -701,6 +674,75 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
 
         }
     }
+    public void captureScreen()
+    {
+        SnapshotReadyCallback callback = new SnapshotReadyCallback()
+        {
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot)
+            {
+                // TODO Auto-generated method stub
+                bitmap = snapshot;
+
+                OutputStream fout = null;
+
+                String filePath = System.currentTimeMillis() + ".jpeg";
+
+                try
+                {
+                    fout = openFileOutput(filePath,MODE_PRIVATE);
+
+                    // Write the string to the file
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fout);
+                    Toast.makeText(getApplicationContext(),"비트맵 압축",Toast.LENGTH_SHORT).show();
+                    fout.flush();
+                    fout.close();
+                }
+                catch (FileNotFoundException e)
+                {
+                    // TODO Auto-generated catch block
+                    Log.d("ImageCapture", "FileNotFoundException");
+                    Log.d("ImageCapture", e.getMessage());
+                    filePath = "";
+                }
+                catch (IOException e)
+                {
+                    // TODO Auto-generated catch block
+                    Log.d("ImageCapture", "IOException");
+                    Log.d("ImageCapture", e.getMessage());
+                    filePath = "";
+                }
+
+                openShareImageDialog(filePath);
+            }
+        };
+
+        mMap.snapshot(callback);
+    }
+    public void openShareImageDialog(String filePath)
+    {
+        File file = this.getFileStreamPath(filePath);
+
+        if(!filePath.equals(""))
+        {
+            final ContentValues values = new ContentValues(2);
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+            values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
+            final Uri contentUriFile = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+            final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent.setType("image/jpeg");
+            intent.putExtra(android.content.Intent.EXTRA_STREAM, contentUriFile);
+            startActivity(Intent.createChooser(intent, "Share Image"));
+        }
+        else
+        {
+            //This is a custom class I use to show dialogs...simply replace this with whatever you want to show an error message, Toast, etc.
+        }
+    }
+
+
 
     private void checkPermission() {
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED) {
