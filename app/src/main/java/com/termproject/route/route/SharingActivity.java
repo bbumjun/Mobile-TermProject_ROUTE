@@ -1,5 +1,6 @@
 package com.termproject.route.route;
 
+import android.app.ActionBar;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -76,6 +77,8 @@ public class SharingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_sharing);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
         databaseReference=FirebaseDatabase.getInstance().getReference();
         rv = (RecyclerView)findViewById(R.id.recView);
         mLinearLayoutManager = new LinearLayoutManager(this);
