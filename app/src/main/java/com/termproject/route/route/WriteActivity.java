@@ -157,10 +157,8 @@ public class WriteActivity extends AppCompatActivity  {
                 Uid = currentUser.getUid() + timeStamp;
                 Log.d("Uid check", Uid);
             }
-
             posting.setName(EmailId);
             posting.setRoute(routeInfo);
-
             posting.setTime(timeStamp);
             int k = photos.size();
             ArrayList<Uri> imageUri = new ArrayList<Uri>();
