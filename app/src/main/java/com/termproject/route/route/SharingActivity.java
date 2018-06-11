@@ -82,7 +82,7 @@ public class SharingActivity extends AppCompatActivity {
         databaseReference=FirebaseDatabase.getInstance().getReference();
         rv = (RecyclerView)findViewById(R.id.recView);
         mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setReverseLayout(true);
+        mLinearLayoutManager.setReverseLayout(false);
         mLinearLayoutManager.setStackFromEnd(true);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         myAdapter= new SharingActivity.MyAdapter();
@@ -94,8 +94,7 @@ public class SharingActivity extends AppCompatActivity {
         addBtn =(FloatingActionButton) findViewById(R.id.addBtn);
 
         postRef=new Firebase(FIREBASE_POST_URL);
-        postRef.orderByChild("time");
-
+        postRef.orderByKey();
          swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

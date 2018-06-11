@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/runningFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-
-    >
-
-
-
-
+    android:orientation="vertical">
 
     <View
         android:layout_width="match_parent"
@@ -22,9 +17,7 @@
     <RelativeLayout
         android:id="@+id/menuLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        >
+        android:layout_height="wrap_content">
 
 
         <TableLayout
@@ -35,7 +28,6 @@
 
 
             <TableRow android:layout_width="match_parent">
-
 
                 <ImageButton
                     android:id="@+id/runText"
@@ -48,7 +40,6 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/travel" />
 
-
                 <ImageButton
                     android:id="@+id/shareText"
                     android:layout_width="50dp"
@@ -60,20 +51,16 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/share" />
 
-
                 <ImageButton
                     android:id="@+id/setText"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-
                     android:background="@drawable/shape"
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/settings" />
 
-
             </TableRow>
-
 
         </TableLayout>
 
@@ -96,7 +83,6 @@
                     android:layout_height="180dp"
                     android:layout_span="3">
 
-
                     <TextView
                         android:id="@+id/timeText"
                         android:layout_width="wrap_content"
@@ -104,7 +90,7 @@
                         android:layout_centerInParent="true"
                         android:layout_marginEnd="51dp"
                         android:padding="10dp"
-                        android:text="  00:00'00'' "
+                        android:text=" 00:00'00'' "
                         android:textColor="#66000000"
                         android:textSize="50dp"
                         android:textStyle="bold|italic" />
@@ -129,7 +115,6 @@
                         android:textColor="#E94C41"
                         android:textSize="10dp"
                         android:textStyle="bold" />
-
 
                     <ImageView
                         android:id="@+id/watchImage"
@@ -159,15 +144,13 @@
 
                 </RelativeLayout>
 
-
             </TableRow>
 
 
             <TableRow>
 
 
-                <RelativeLayout
-                    android:paddingLeft="10dp">
+                <RelativeLayout android:paddingLeft="10dp">
 
                     <TextView
                         android:id="@+id/calorie"
@@ -178,7 +161,6 @@
                         android:textSize="8dp"
                         android:textStyle="bold" />
 
-
                     <TextView
                         android:id="@+id/calorieText"
                         android:layout_width="wrap_content"
@@ -188,7 +170,6 @@
                         android:text="0"
                         android:textSize="30dp"
                         android:textStyle="bold" />
-
 
                     <TextView
                         android:id="@+id/KcalText"
@@ -201,7 +182,6 @@
                         android:textSize="13dp"
                         android:textStyle="bold|italic" />
 
-
                     <ImageView
                         android:id="@+id/caloImage"
                         android:layout_width="15dp"
@@ -212,8 +192,8 @@
 
                 </RelativeLayout>
 
-                <RelativeLayout android:layout_width="87dp">
 
+                <RelativeLayout android:layout_width="87dp">
 
                     <TextView
                         android:id="@+id/velocity"
@@ -228,10 +208,8 @@
                         android:id="@+id/veloImage"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
-
                         android:layout_centerVertical="true"
                         android:src="@drawable/speedmeter" />
-
 
                     <TextView
                         android:id="@+id/velocityText"
@@ -242,7 +220,6 @@
                         android:text="0.0"
                         android:textSize="30dp"
                         android:textStyle="bold" />
-
 
                     <TextView
                         android:id="@+id/kmhText"
@@ -255,7 +232,6 @@
                         android:text="Km/h "
                         android:textSize="13dp"
                         android:textStyle="bold|italic" />
-
 
                 </RelativeLayout>
 
@@ -270,7 +246,6 @@
                         android:textColor="#E94C41"
                         android:textSize="8dp"
                         android:textStyle="bold" />
-
 
                     <TextView
                         android:id="@+id/distanceText"
@@ -288,28 +263,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBaseline="@id/distanceText"
-                        android:paddingLeft="5dp"
                         android:layout_toRightOf="@id/distanceText"
                         android:paddingBottom="3dp"
+                        android:paddingLeft="5dp"
                         android:text="Km "
                         android:textSize="13dp"
                         android:textStyle="bold|italic" />
-
 
                     <ImageView
                         android:id="@+id/distImage"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
-
                         android:layout_centerVertical="true"
                         android:src="@drawable/speedmeter" />
 
-
                 </RelativeLayout>
 
-
             </TableRow>
-
 
         </TableLayout>
 
@@ -329,6 +299,7 @@
             android:layout_margin="3dp"
             tools:context=".newRunningActivity" />
 
+
         <RelativeLayout
             android:id="@+id/viewview"
             android:layout_width="match_parent"
@@ -336,26 +307,20 @@
             android:layout_alignEnd="@+id/distance"
             android:layout_alignParentTop="true">
 
-
             <Button
                 android:id="@+id/dustButton"
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:background="@drawable/goodcolor"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:visibility="visible" />
 
-
         </RelativeLayout>
-
-
-
-
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/on"
@@ -365,13 +330,12 @@
             android:layout_marginBottom="160dp"
             android:layout_marginRight="15sp"
             android:onClick="tog"
+            android:scaleType="fitXY"
             android:src="@drawable/hear"
             android:visibility="invisible"
             app:backgroundTint="#ffffff"
-            android:scaleType="fitXY"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp" />
-
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/cameraButton"
@@ -394,8 +358,6 @@
             android:layout_margin="15sp"
             android:backgroundTint="#39c9d7"
             android:src="@drawable/add" />
-
-
 
 
         <LinearLayout
@@ -434,13 +396,8 @@
                 android:text="Stop"
                 android:visibility="gone" />
 
-
-
         </LinearLayout>
+
     </FrameLayout>
-
-
-
-
 
 </LinearLayout>

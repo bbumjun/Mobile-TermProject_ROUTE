@@ -111,7 +111,7 @@ public class WriteActivity extends AppCompatActivity  {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ArrayList<String> photos = null;
-        timeStamp = new SimpleDateFormat("yyyyMMddmmss").format(new Date());
+        timeStamp = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
 
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             if (data != null) {
@@ -126,7 +126,7 @@ public class WriteActivity extends AppCompatActivity  {
                 int ids = mail.indexOf("@");
                 EmailId = mail.substring(0, ids);
                 boolean emailVerified = currentUser.isEmailVerified();
-                Uid = currentUser.getUid()+timeStamp;
+                Uid = timeStamp;
                 Log.d("Uid check", Uid);
             }
 
