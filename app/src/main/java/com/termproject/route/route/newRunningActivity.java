@@ -652,29 +652,36 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
     public void CaptureMapScreen() {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
             Bitmap bitmap;
+            Intent intent = new Intent(MediaStore.INTENT_ACTION_MEDIA_SEARCH);
             @Override
-
             public void onSnapshotReady(Bitmap snapshot) {
                 bitmap = snapshot;
                 try {
+
                     File imageFile =null;
-                    File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures/RouteImage","Route");
-                    storageDir.toString();
+                    File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures","Route");
                     if(!storageDir.exists()) {
                         Log.i("mCurrentPhotoPath1",storageDir.toString());
                         storageDir.mkdirs();
                     }
                     String path = storageDir.toString()+System.currentTimeMillis() + ".png";
+                    imageFile =new File(storageDir,path) ;
+                    String mCurrentPhotoPath3 = imageFile.getAbsolutePath();
                     FileOutputStream out = new FileOutputStream(path);
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                     out.flush();
                     out.close();
+                    Uri contentUri = Uri.fromFile(storageDir);
+                    intent.setData(contentUri);
+                    sendBroadcast(intent);
+                    Toast.makeText(newRunningActivity.this,"저장되었습니다!",Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         };
         mMap.snapshot(callback);
+
     }
     class TimeRunnable implements Runnable {
         public void run() {
@@ -970,9 +977,5 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
 
     }
-
-
-
-
 }
 

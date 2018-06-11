@@ -115,25 +115,19 @@ public class WriteActivity extends AppCompatActivity  {
         addButton = (Button) findViewById(R.id.goToGallery);
         editText = (EditText) findViewById(R.id.routeTheText);
         postRef = new Firebase(FIREBASE_POST_URL);
-
-
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 YPhotoPickerIntent intent = new YPhotoPickerIntent(WriteActivity.this);
-                intent.setMaxSelectCount(20);
-                intent.setShowCamera(true);
+                intent.setMaxSelectCount(5);
+                intent.setShowCamera(false);
                 intent.setShowGif(true);
                 intent.setSelectCheckBox(false);
                 intent.setMaxGrideItemCount(3);
                 startActivityForResult(intent, REQUEST_CODE);
                 routeInfo = editText.getText().toString();
             }
-
         });
-
-
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -165,10 +159,7 @@ public class WriteActivity extends AppCompatActivity  {
             for (int i = 0; i < k; i++) {
                 imageUri.add(i, Uri.fromFile(new File(photos.get(i))));
             }
-
             upLoadImages(posting, k, Uid, EmailId, imageUri);
-
-
         }
     }
     /*1.post 수정함
