@@ -537,7 +537,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                     bindService();
 
                 locate = new
-
                         ProgressDialog(newRunningActivity.this);
                 locate.setIndeterminate(true);
                 locate.setCancelable(false);
@@ -612,6 +611,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                 LocationService.distance = 0;
 
                 timeText.setText("  00:00'00'' ");
+                dist.setText("0.0");
+                calorieText.setText(("0"));
             }
 
         });
