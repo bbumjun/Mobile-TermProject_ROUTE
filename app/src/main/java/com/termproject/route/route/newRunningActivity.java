@@ -305,7 +305,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         LocationService.limitCode = minmaxValue; // 1 for Max 2 for Min
         //
 
-
         timeHandler = new Handler();
         gpsHandler = new Handler();
         runnable = new TimeRunnable();
@@ -473,7 +472,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     cur_point = curLatLng;
 
 
-                                                    mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(20.0f).geodesic(true).add(cur_point).add(ex_point));
+                                                    mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(10.0f).geodesic(true).add(cur_point).add(ex_point));
 
                                                     MarkerOptions optCurrent = new MarkerOptions();
                                                     optCurrent.alpha(0.5f);
@@ -587,7 +586,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                     CaptureMapScreen();
                 }catch (Exception e){
                     e.printStackTrace();
-                    Log.d("TTAAGG","Can't capture");
                 }
 
                 if (status == true)
@@ -618,6 +616,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         });
 
     }
+
+
     public void CaptureMapScreen() {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
             Bitmap bitmap;
