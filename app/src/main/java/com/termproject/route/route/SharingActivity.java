@@ -1,5 +1,6 @@
 package com.termproject.route.route;
 
+import android.app.ActionBar;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -48,7 +50,6 @@ public class SharingActivity extends AppCompatActivity {
     public static ArrayList<String> selectedPhotos = new ArrayList<>();
     private DatabaseReference databaseReference;
     ImageButton runningBtn,settingBtn;
-    Button addButton;
     private static final String TAG = SharingActivity.class.getName();
 
     // Create a storage reference from our app
@@ -65,6 +66,9 @@ public class SharingActivity extends AppCompatActivity {
     StorageReference ref = storage.getReference();
 
 
+    public FloatingActionButton addBtn;
+
+
     public SharingActivity(){
 
     }
@@ -73,6 +77,8 @@ public class SharingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_sharing);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.abs_layout);
         databaseReference=FirebaseDatabase.getInstance().getReference();
         rv = (RecyclerView)findViewById(R.id.recView);
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -85,10 +91,10 @@ public class SharingActivity extends AppCompatActivity {
 
         runningBtn=(ImageButton)findViewById(R.id.runText);
         settingBtn=(ImageButton)findViewById(R.id.setText);
-        addButton =(Button)findViewById(R.id.addBtn);
+        addBtn =(FloatingActionButton) findViewById(R.id.addBtn);
 
         postRef=new Firebase(FIREBASE_POST_URL);
-        postRef.orderByChild("write");
+        postRef.orderByChild("time");
 
          swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -100,7 +106,7 @@ public class SharingActivity extends AppCompatActivity {
 
 
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SharingActivity.this, WriteActivity.class);
@@ -266,7 +272,8 @@ public class SharingActivity extends AppCompatActivity {
             final mAdapter pager = new mAdapter(getLayoutInflater(),post.getImageUrl());
             holder.routeView.setText(post.getRoute());
             holder.userId.setText(post.getName());
-            holder.time.setText(post.getTime());
+            String timeText = post.getTime();
+            holder.time.setText(timeText.substring(0,4)+"년 "+timeText.substring(4,6)+"월 "+timeText.substring(6,8)+"일");
             holder.viewPager.setAdapter(pager);
             pager.notifyDataSetChanged();
             holder.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

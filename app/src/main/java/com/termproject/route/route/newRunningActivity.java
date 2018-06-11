@@ -64,8 +64,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -79,19 +77,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-/*
- D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389022, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
- D/MediaSessionHelper: dispatched media key KeyEvent { action=ACTION_UP, keyCode=KEYCODE_HEADSETHOOK, scanCode=226, metaState=0, flags=0x8, repeatCount=0, eventTime=45389183, downTime=45389022, deviceId=2, displayId=0, source=0x101 }
- */
 
 import android.media.session.MediaSessionManager.OnActiveSessionsChangedListener;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 
-import static android.view.KeyEvent.ACTION_DOWN;
-import static android.view.KeyEvent.ACTION_UP;
-import static android.view.KeyEvent.KEYCODE_HEADSETHOOK;
 import static com.yongbeam.y_photopicker.util.photopicker.utils.ImageCaptureManager.REQUEST_TAKE_PHOTO;
 
 public class newRunningActivity extends AppCompatActivity implements OnMapReadyCallback,
@@ -264,30 +255,8 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         backPressCloseHandler =new BackPressCloseHandler(this);
 
-        PermissionListener permissionlistener = new PermissionListener() {
-            @Override
-            public void onPermissionGranted() {
-                Toast.makeText(newRunningActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
 
 
-            }
-
-            @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                Toast.makeText(newRunningActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-            }
-
-
-        };
-
-
-        new TedPermission(this)
-                .setPermissionListener(permissionlistener)
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,
-                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET,
-                        Manifest.permission.ACCESS_NETWORK_STATE)
-                .check();
 
 
 
@@ -335,7 +304,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         LocationService.limitSpeed = speedValue2; // speed Value for Limit
         LocationService.limitCode = minmaxValue; // 1 for Max 2 for Min
         //
-
 
         timeHandler = new Handler();
         gpsHandler = new Handler();
@@ -388,7 +356,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 captureCamera();
             }
         });
@@ -505,7 +472,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                                                     cur_point = curLatLng;
 
 
-                                                    mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(20.0f).geodesic(true).add(cur_point).add(ex_point));
+                                                    mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(10.0f).geodesic(true).add(cur_point).add(ex_point));
 
                                                     MarkerOptions optCurrent = new MarkerOptions();
                                                     optCurrent.alpha(0.5f);
@@ -620,7 +587,6 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
                     CaptureMapScreen();
                 }catch (Exception e){
                     e.printStackTrace();
-                    Log.d("TTAAGG","Can't capture");
                 }
 
                 if (status == true)
@@ -649,39 +615,38 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         });
 
     }
+
+
     public void CaptureMapScreen() {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
             Bitmap bitmap;
-            Intent intent = new Intent(MediaStore.INTENT_ACTION_MEDIA_SEARCH);
             @Override
+
             public void onSnapshotReady(Bitmap snapshot) {
                 bitmap = snapshot;
                 try {
-
                     File imageFile =null;
-                    File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures","Route");
+                    File storageDir =new File(Environment.getExternalStorageDirectory()+"/Pictures/","Route");
+                    storageDir.toString();
                     if(!storageDir.exists()) {
                         Log.i("mCurrentPhotoPath1",storageDir.toString());
                         storageDir.mkdirs();
                     }
                     String path = storageDir.toString()+System.currentTimeMillis() + ".png";
-                    imageFile =new File(storageDir,path) ;
-                    String mCurrentPhotoPath3 = imageFile.getAbsolutePath();
+                    Log.d("mapPath",path);
+                    mCurrentPhotoPath=path;
+                    galleryAddPic();
                     FileOutputStream out = new FileOutputStream(path);
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                     out.flush();
                     out.close();
-                    Uri contentUri = Uri.fromFile(storageDir);
-                    intent.setData(contentUri);
-                    sendBroadcast(intent);
-                    Toast.makeText(newRunningActivity.this,"저장되었습니다!",Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         };
-        mMap.snapshot(callback);
 
+        mMap.snapshot(callback);
     }
     class TimeRunnable implements Runnable {
         public void run() {
@@ -951,6 +916,7 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         Log.i ("galleryAddPic","Call");
         Intent mediaScanIntent =new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f =new File(mCurrentPhotoPath);
+        Log.i("mCurrent",mCurrentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         sendBroadcast(mediaScanIntent);
@@ -977,5 +943,9 @@ public class newRunningActivity extends AppCompatActivity implements OnMapReadyC
         }
 
     }
+
+
+
+
 }
 

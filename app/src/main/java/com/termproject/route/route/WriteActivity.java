@@ -1,40 +1,19 @@
 package com.termproject.route.route;
-
-import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ClipData;
-
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
@@ -50,17 +29,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import com.yongbeam.y_photopicker.util.photopicker.PhotoPagerActivity;
 import com.yongbeam.y_photopicker.util.photopicker.PhotoPickerActivity;
 import com.yongbeam.y_photopicker.util.photopicker.utils.YPhotoPickerIntent;
-
 //import net.danlew.android.joda.JodaTimeAndroid;
-
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -69,9 +44,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-
-
 import static android.net.Uri.parse;
 
 public class WriteActivity extends AppCompatActivity  {
@@ -85,8 +57,8 @@ public class WriteActivity extends AppCompatActivity  {
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://routetermproject-f7baa.appspot.com/");
     private static final String TAG = WriteActivity.class.getName();
 
+    FloatingActionButton addBtn;
     // Create a storage reference from our app
-    Button addButton;
     EditText editText;
     String timeStamp;
     private LinearLayoutManager mLinearLayoutManager;
@@ -112,11 +84,14 @@ public class WriteActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_write);
-        addButton = (Button) findViewById(R.id.goToGallery);
-        editText = (EditText) findViewById(R.id.routeTheText);
-        postRef = new Firebase(FIREBASE_POST_URL);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+
+        addBtn=(FloatingActionButton) findViewById(R.id.addBtn);
+        editText=(EditText)findViewById(R.id.routeTheText);
+        postRef=new Firebase(FIREBASE_POST_URL);
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+
                 YPhotoPickerIntent intent = new YPhotoPickerIntent(WriteActivity.this);
                 intent.setMaxSelectCount(5);
                 intent.setShowCamera(false);
@@ -126,13 +101,17 @@ public class WriteActivity extends AppCompatActivity  {
                 startActivityForResult(intent, REQUEST_CODE);
                 routeInfo = editText.getText().toString();
             }
+
         });
+
+
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ArrayList<String> photos = null;
-        timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        timeStamp = new SimpleDateFormat("yyyyMMddmmss").format(new Date());
 
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             if (data != null) {
@@ -147,19 +126,23 @@ public class WriteActivity extends AppCompatActivity  {
                 int ids = mail.indexOf("@");
                 EmailId = mail.substring(0, ids);
                 boolean emailVerified = currentUser.isEmailVerified();
-
-                Uid = currentUser.getUid() + timeStamp;
+                Uid = currentUser.getUid()+timeStamp;
                 Log.d("Uid check", Uid);
             }
+
             posting.setName(EmailId);
             posting.setRoute(routeInfo);
+
             posting.setTime(timeStamp);
             int k = photos.size();
             ArrayList<Uri> imageUri = new ArrayList<Uri>();
             for (int i = 0; i < k; i++) {
                 imageUri.add(i, Uri.fromFile(new File(photos.get(i))));
             }
+
             upLoadImages(posting, k, Uid, EmailId, imageUri);
+
+
         }
     }
     /*1.post 수정함
@@ -190,7 +173,6 @@ public class WriteActivity extends AppCompatActivity  {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     isCompleteAll = true;
                     Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-
                 }
             });
             theAddress.add(i, uploadRefStr);
